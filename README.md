@@ -1,8 +1,13 @@
 # pyModelChecking
-pyModelChecking is a simple Python model checking package. Currently, it is
-able to represent Kripke structures and CTL formulas and it provides model
-checking methods for them. In future, it will hopefully support LTL and CTL*
-as well.
+pyModelChecking is a simple Python model checking package. Currently, it is able to represent 
+[Kripke structures][Kripke] and [CTL][CTL] formulas and it provides [model checking][modelchecking] 
+methods for them. In future, it will hopefully support [LTL][LTL], [CTL*][CTLS], and other temporal logics as well.
+
+[Kripke]: https://en.wikipedia.org/wiki/Kripke_structure_%28model_checking%29
+[CTL]: https://en.wikipedia.org/wiki/Computation_tree_logic
+[modelchecking]: https://en.wikipedia.org/wiki/Model_checking
+[LTL]: https://en.wikipedia.org/wiki/Linear_temporal_logic
+[CTLS]: https://en.wikipedia.org/wiki/CTL*
 
 ### A simple example
 ```python
