@@ -24,7 +24,7 @@ A(True U (q or not (EX p)))
 
 set([0, 1, 2])
 
-'''
+```
 
 ### Copyright and license
 
