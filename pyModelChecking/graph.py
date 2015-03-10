@@ -187,14 +187,14 @@ class DiGraph(object):
 
         return DiGraph(E=E)
 
-    def get_reversed_edges_graph(self):
-        ''' Build the reversed edges graph
+    def get_reversed_graph(self):
+        ''' Build the reversed graph
 
-        The *reversed edges graph* of a DiGraph (V,E) is the DiGraph (V,E')
+        The *reversed graph* of a DiGraph (V,E) is the DiGraph (V,E')
         where E'={(dst,src) | (src,dst) in E}.
         :param self: the DiGraph object
         :type self: DiGraph
-        :returns: the reversed edges graph
+        :returns: the reversed graph
         :rtype: DiGraph
         '''
         rE=[]

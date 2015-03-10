@@ -82,7 +82,7 @@ def modelcheck(kripke,formula,L=None):
                 Lphi.append(modelcheck(kripke,subformula,L))
 
             subgraph=kripke.get_subgraph(Lphi[0])
-            subgraph=subgraph.get_reversed_edges_graph()
+            subgraph=subgraph.get_reversed_graph()
 
             for v in Lphi[0]:
                 for w in kripke.next(v)&Lphi[1]:
@@ -111,7 +111,7 @@ def modelcheck(kripke,formula,L=None):
             Lphi=modelcheck(kripke,formula.phi,L)
 
             subgraph=kripke.get_subgraph(Lphi)
-            subgraph=subgraph.get_reversed_edges_graph()
+            subgraph=subgraph.get_reversed_graph()
             SCCs=compute_strongly_connected_components(subgraph)
 
             T=set()

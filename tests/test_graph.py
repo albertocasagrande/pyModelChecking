@@ -81,6 +81,16 @@ class TestDiGraph(unittest.TestCase):
 
             self.assertEqual(self.G.next(s), N)
 
+    def test_reversed(self):
+        rG=self.G.get_reversed_graph()
+
+        rE=[]
+        for (s,d) in self.G.edges():
+            rE.append((d,s))
+
+        self.assertEqual(set(rE), rG.edges())
+        self.assertEqual(self.G.nodes(), rG.nodes())
+
     def test_subgraph(self):
         Vp=set([0,1,5])
         SG=self.G.get_subgraph(Vp)

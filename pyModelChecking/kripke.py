@@ -41,7 +41,7 @@ class Kripke(DiGraph):
         if S0==None:
             self.S0=set()
         else:
-            self.S0=set(super(Kripke,self)._nodes)&set(S0)
+            self.S0=set(self._nodes)&set(S0) #set(super(Kripke,self)._nodes)&set(S0)
 
         pots=self._nodes-set(self._next.keys())
         if len(pots)>0:
@@ -79,9 +79,8 @@ class Kripke(DiGraph):
         '''
         if state!=None:
             if state not in self._nodes:
-                raise RuntimeError(('state=\'%s\' is not a state ' % (src))+
-                                    'of this Kripke structure' )
-
+                raise RuntimeError(('state=\'%s\' is not a state ' % (state))+
+                                    'of this Kripke structure')
             return self._labels[state]
 
         AP=set()

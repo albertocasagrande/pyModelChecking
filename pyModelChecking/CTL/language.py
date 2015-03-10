@@ -9,7 +9,7 @@ language CTL*. In CTL, beside the standard logical operators "not", "and", and
 to one of the temporal operators "X", "G", "F", "U", or "R" and form one of the
 10 possible CTL temporal operators. Despite this, "not", "or", and "E" coupled
 to "X", "U", or "G" are sufficient to express any possible property definable
-in CTL (e.g., see [Clarke2000]).
+in CTL (e.g., see [Clarke2000]_).
 
 
 [Clarke2000] Edmund M. Clarke, Jr., Orna Grumberg, and Doron A. Peled. 2000. Model Checking. MIT Press, Cambridge, MA, USA.
