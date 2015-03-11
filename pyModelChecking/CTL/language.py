@@ -60,7 +60,7 @@ class Atom(CTLFormula):
 
         '''
         if not isinstance(name,str):
-            raise RuntimeError('name=\'%s\' must be a string' % (name))
+            raise TypeError('name=\'%s\' must be a string' % (name))
         self.name=str(name)
 
     def copy(self):
@@ -86,7 +86,7 @@ class Bool(Atom):
 
         '''
         if not isinstance(value,bool):
-            raise RuntimeError('\'%s\' must be boolean value' % (value))
+            raise TypeError('\'%s\' must be boolean value' % (value))
         self._value=value
 
     def copy(self):
@@ -168,7 +168,7 @@ class AX(UnaryOperator):
         return AX(self.phi.copy())
 
     def __str__(self):
-        return '(AX %s)' % (self.phi)
+        return 'AX %s' % (self.phi)
 
 class EX(UnaryOperator):
     def __init__(self,phi):
@@ -191,7 +191,7 @@ class EX(UnaryOperator):
         return EX(self.phi.copy())
 
     def __str__(self):
-        return '(EX %s)' % (self.phi)
+        return 'EX %s' % (self.phi)
 
 class AG(UnaryOperator):
     def __init__(self,phi):
@@ -214,7 +214,7 @@ class AG(UnaryOperator):
         return AG(self.phi.copy())
 
     def __str__(self):
-        return '(AG %s)' % (self.phi)
+        return 'AG %s' % (self.phi)
 
 class EG(UnaryOperator):
     def __init__(self,phi):
@@ -237,7 +237,7 @@ class EG(UnaryOperator):
         return EG(self.phi.copy())
 
     def __str__(self):
-        return '(EG %s)' % (self.phi)
+        return 'EG %s' % (self.phi)
 
 class AF(UnaryOperator):
     def __init__(self,phi):
@@ -260,7 +260,7 @@ class AF(UnaryOperator):
         return AF(self.phi.copy())
 
     def __str__(self):
-        return '(AF %s)' % (self.phi)
+        return 'AF %s' % (self.phi)
 
 class EF(UnaryOperator):
     def __init__(self,phi):
@@ -283,7 +283,7 @@ class EF(UnaryOperator):
         return EF(self.phi.copy())
 
     def __str__(self):
-        return '(EF %s)' % (self.phi)
+        return 'EF %s' % (self.phi)
 
 class BinaryOperator(CTLFormula):
     def __init__(self,phi0,phi1):
