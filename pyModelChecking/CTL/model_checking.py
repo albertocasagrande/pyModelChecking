@@ -3,7 +3,8 @@
 from language import *
 from pyModelChecking.graph import compute_strongly_connected_components
 from pyModelChecking.kripke import Kripke
-from pyModelChecking.CTL import *
+import pyModelChecking.CTLS as CTLS
+import sys
 
 __author__ = "Alberto Casagrande"
 __copyright__ = "Copyright 2015"
@@ -22,7 +23,6 @@ def modelcheck(kripke,formula,L=None):
     def checkAtom(kripke,formula,L):
         if formula not in L:
             Lformula=set()
-
             for v in kripke.states():
                 if formula.name in kripke.labels(v):
                     Lformula.add(v)
@@ -33,10 +33,9 @@ def modelcheck(kripke,formula,L=None):
 
     def checkNot(kripke,formula,L):
         if formula not in L:
+            Lphi=modelcheck(kripke,formula.subformula(0),L)
+
             Lformula=set()
-
-            Lphi=modelcheck(kripke,formula.phi,L)
-
             for v in kripke.states()-Lphi:
                 Lformula.add(v)
 
@@ -46,10 +45,11 @@ def modelcheck(kripke,formula,L=None):
 
     def checkEX(kripke,formula,L):
         if formula not in L:
+
+            p_formula=formula.subformula(0)
+            Lphi=modelcheck(kripke,p_formula.subformula(0),L)
+
             Lformula=set()
-
-            Lphi=modelcheck(kripke,formula.phi,L)
-
             for (src,dst) in kripke.transitions():
                 if dst in Lphi:
                     Lformula.add(src)
@@ -60,12 +60,12 @@ def modelcheck(kripke,formula,L=None):
 
     def checkOr(kripke,formula,L):
         if formula not in L:
-            Lformula=set()
-
             Lphi=[]
-            for subformula in formula.phi:
+            for i in range(2):
+                subformula=formula.subformula(i)
                 Lphi.append(modelcheck(kripke,subformula,L))
 
+            Lformula=set()
             for v in Lphi[0]|Lphi[1]:
                 Lformula.add(v)
 
@@ -75,24 +75,24 @@ def modelcheck(kripke,formula,L=None):
 
     def checkEU(kripke,formula,L):
         if formula not in L:
-            Lformula=set()
-
             Lphi=[]
-            for subformula in formula.phi:
-                Lphi.append(modelcheck(kripke,subformula,L))
+            p_formula=formula.subformula(0)
+            for i in range(2):
+                Lphi.append(modelcheck(kripke,p_formula.subformula(i),L))
 
             subgraph=kripke.get_subgraph(Lphi[0])
             subgraph=subgraph.get_reversed_graph()
 
             for v in Lphi[0]:
                 for w in kripke.next(v)&Lphi[1]:
-                    subgraph.add_edge((w,v))
+                    try:
+                        subgraph.add_edge(w,v)
+                    except:
+                        pass
 
             T=Lphi[1]
 
-            for v in T:
-                Lformula.add(v)
-
+            Lformula=set(T)
             while len(T)!=0:
                 w=T.pop()
                 for v in subgraph.next(w):
@@ -106,9 +106,8 @@ def modelcheck(kripke,formula,L=None):
 
     def checkEG(kripke,formula,L):
         if formula not in L:
-            Lformula=set()
-
-            Lphi=modelcheck(kripke,formula.phi,L)
+            p_formula=formula.subformula(0)
+            Lphi=modelcheck(kripke,p_formula.subformula(0),L)
 
             subgraph=kripke.get_subgraph(Lphi)
             subgraph=subgraph.get_reversed_graph()
@@ -120,8 +119,7 @@ def modelcheck(kripke,formula,L=None):
                 if len(scc)>1 or v in subgraph.next(v):
                     T.add(v)
 
-            Lformula.update(T)
-
+            Lformula=set(T)
             while len(T)!=0:
                 w=T.pop()
                 for v in subgraph.next(w):
@@ -134,22 +132,13 @@ def modelcheck(kripke,formula,L=None):
         return L[formula]
 
     def check(kripke,formula,L):
-        if isinstance(formula,EG):
-            return checkEG(kripke,formula,L)
-
-        if isinstance(formula,EU):
-            return checkEU(kripke,formula,L)
-
-        if isinstance(formula,EX):
-            return checkEX(kripke,formula,L)
-
-        if isinstance(formula,Not):
+        if isinstance(formula,CTLS.Not):
             return checkNot(kripke,formula,L)
 
-        if isinstance(formula,Or):
+        if isinstance(formula,CTLS.Or):
             return checkOr(kripke,formula,L)
 
-        if (isinstance(formula,Bool) or
+        if (isinstance(formula,CTLS.Bool) or
             isinstance(formula,bool)):
             if formula==Bool(True):
                 Lformula=kripke.states()
@@ -160,21 +149,23 @@ def modelcheck(kripke,formula,L=None):
 
             return Lformula
 
-        if isinstance(formula,Atom):
+        if isinstance(formula,CTLS.Atom):
             return checkAtom(kripke,formula,L)
 
-        EGUX_op=formula.get_equivalent_EGUX_operator()
+        if isinstance(formula,CTLS.E):
+            p_formula=formula.subformula(0)
+            if isinstance(p_formula,CTLS.G):
+                return checkEG(kripke,formula,L)
 
-        if isinstance(formula,UnaryOperator):
-            alter_formula=EGUX_op(formula.phi)
-        else: #is a BinaryOperator
-            if isinstance(formula,BinaryOperator):
-                alter_formula=EGUX_op(formula.phi[0],formula.phi[1])
-            else:
-                raise RuntimeError('%s is an unknown CTLFormula subclass' %
-                                    (formula.__class__))
+            if isinstance(p_formula,CTLS.U):
+                return checkEU(kripke,formula,L)
 
-        Lalter_formula=check(kripke,alter_formula,L)
+            if isinstance(p_formula,CTLS.X):
+                return checkEX(kripke,formula,L)
+
+        restr_f=formula.get_equivalent_restricted_formula()
+
+        Lalter_formula=check(kripke,restr_f,L)
 
         L[formula]=Lalter_formula
 
@@ -183,10 +174,23 @@ def modelcheck(kripke,formula,L=None):
     if L==None:
         L=dict()
 
-    if not isinstance(formula,CTLFormula):
-        raise RuntimeError('%s is not a CTL formula' % (formula))
+    old_formula=None
+    if not isinstance(formula,Formula):
+        try:
+            old_formula=formula
+            formula=formula.cast_to(sys.modules[__name__])
+        except:
+            raise RuntimeError('%s is not a CTL formula' % (formula))
+
+    if not isinstance(formula,StateFormula):
+        raise RuntimeError('%s is not a CTL state formula' % (formula))
 
     if not isinstance(kripke,Kripke):
         raise RuntimeError('%s is not a Kripke structure' % (kripke))
 
-    return check(kripke,formula,L)
+    S=check(kripke,formula,L)
+
+    if old_formula!=None:
+        L[old_formula]=S
+
+    return S
