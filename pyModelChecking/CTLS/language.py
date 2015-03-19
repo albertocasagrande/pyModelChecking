@@ -23,16 +23,18 @@ class Formula(object):
 
     def wrap_subformulas(self,subformulas,FormulaClass):
         self._subformula=[]
+        self.height=0
 
         for phi in subformulas:
             if isinstance(phi,bool):
                 self._subformula.append(Bool(phi))
             else:
                 if isinstance(phi,str):
-                    self._subformula.append(Atom(phi))
+                    self._subformula.append(AtomicProposition(phi))
                 else:
                     if isinstance(phi,FormulaClass):
                         self._subformula.append(phi)
+                        self.height=max(self.height,phi.height+1)
                     else:
                         if ((not isinstance(phi,sys.modules[self.__module__].Formula)) and
                                 isinstance(phi,Formula)):
@@ -40,6 +42,7 @@ class Formula(object):
 
                             if isinstance(psi,FormulaClass):
                                 self._subformula.append(psi)
+                                self.height=max(self.height,psi.height+1)
                             else:
                                 raise TypeError('%s must be a %s' % (phi,FormulaClass.__name__))
                         else:
@@ -73,21 +76,21 @@ class Formula(object):
             return self.subformula(0)
         return sys.modules[self.__module__].Not(self)
 
-    def cast_to(self,lang_module):
+    def cast_to(self,Lang):
         if isinstance(self,Bool):
-            return lang_module.Bool(bool(self._value))
-        if isinstance(self,Atom):
-            return lang_module.Atom(str(self.name))
+            return Lang.Bool(bool(self._value))
+        if isinstance(self,AtomicProposition):
+            return Lang.AtomicProposition(str(self.name))
 
         symbol_name=self.__class__.__name__
-        if symbol_name not in lang_module.alphabet:
-            raise TypeError('%s is not a %s formula' % (self,lang_module.__name__))
+        if symbol_name not in Lang.alphabet:
+            raise TypeError('%s is not a %s formula' % (self,Lang.__name__))
 
         subformulas=[]
         for subformula in self.subformulas():
-            subformulas.append(Formula.cast_to(subformula,lang_module))
+            subformulas.append(Formula.cast_to(subformula,Lang))
 
-        return lang_module.alphabet[symbol_name](*subformulas)
+        return Lang.alphabet[symbol_name](*subformulas)
 
     def __repr__(self):
         return str(self)
@@ -95,24 +98,26 @@ class Formula(object):
 class AlphabeticSymbol(object):
     pass
 
-class Atom(Formula,AlphabeticSymbol):
+class AtomicProposition(Formula,AlphabeticSymbol):
     '''
-    The class representing atoms.
+    The class representing atomic propositionic propositions.
 
     '''
     def __init__(self,name):
-        ''' Initialize a CTL* atom.
+        ''' Initialize a CTL* atomic proposition.
 
-        This method builds a CTL* atom.
-        :param self: the Atom object that should be initializated.
-        :type self: Atom
-        :param name: the name of the atom that should be represented.
+        This method builds a CTL* atomic propositionic proposition.
+        :param self: the AtomicProposition object that should be
+	             initializated.
+        :type self: AtomicProposition
+        :param name: the name of the atomic proposition that should be represented.
         :type name: str
 
         '''
         if not isinstance(name,str):
             raise TypeError('name=\'%s\' must be a string' % (name))
         self.name=str(name)
+        self.height=0
 
     def copy(self):
         return self.__class__(str(self.name))
@@ -121,7 +126,7 @@ class Atom(Formula,AlphabeticSymbol):
         return self.copy()
 
     def subformula(self,idx):
-        raise TypeError('Atoms have not subformulas.')
+        raise TypeError('AtomicPropositions have not subformulas.')
 
     def subformulas(self):
         return []
@@ -129,25 +134,26 @@ class Atom(Formula,AlphabeticSymbol):
     def __str__(self):
         return '%s' % (self.name)
 
-class Bool(Atom):
+class Bool(AtomicProposition):
     '''
-    The class of Boolean atoms.
+    The class of Boolean atomic propositions.
 
     '''
 
     def __init__(self,value):
-        ''' Initialize a Boolean atom.
+        ''' Initialize a Boolean atomic proposition.
 
-        This method builds either a True or a False atom.
+        This method builds either a True or a False atomic proposition.
         :param self: the Bool object that should be initializated.
         :type self: Bool
-        :param value: the boolean atom that should be represented.
+        :param value: the boolean atomic proposition that should be represented.
         :type value: bool
 
         '''
         if not isinstance(value,bool):
             raise TypeError('\'%s\' must be boolean value' % (value))
         self._value=value
+        self.height=0
 
     def copy(self):
         ''' Copy the current object.
@@ -164,11 +170,11 @@ class Bool(Atom):
         raise TypeError('Bools have not subformulas.')
 
     def __str__(self):
-        ''' Return a string depicting the Boolean atom.
+        ''' Return a string depicting the Boolean atomic proposition.
 
         :param self: the current object
         :type self: Bool
-        :returns: a string depicting the current Boolean atom.
+        :returns: a string depicting the current Boolean atomic proposition.
         :rtype: str
 
         '''
@@ -188,10 +194,11 @@ class Not(Formula,AlphabeticSymbol):
         :rtype: Not
         '''
         subformula=self.subformula(0).get_equivalent_restricted_formula()
+
         return subformula.negate_and_simplify()
 
     def __str__(self):
-        return 'not(%s)' % (self._subformula[0])
+        return 'not %s' % (self._subformula[0])
 
 class A(Formula,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
@@ -207,8 +214,8 @@ class A(Formula,AlphabeticSymbol):
         '''
         subformula=self.subformula(0).get_equivalent_restricted_formula()
 
-        return sys.modules[self.__module__].Not(
-                    sys.modules[self.__module__].E(subformula.negate_and_simplify()))
+        Lang=sys.modules[self.__module__]
+        return Lang.Not(Lang.E(subformula.negate_and_simplify()))
 
 
     def __str__(self):
@@ -228,8 +235,8 @@ class E(Formula,AlphabeticSymbol):
         '''
         subformula=self.subformula(0).get_equivalent_restricted_formula()
 
-        return sys.modules[self.__module__].E(subformula)
-
+        Lang=sys.modules[self.__module__]
+        return Lang.E(subformula)
 
     def __str__(self):
         return 'E(%s)' % (self._subformula[0])
@@ -247,7 +254,9 @@ class X(Formula,AlphabeticSymbol):
         :rtype: X
         '''
         subformula=self.subformula(0).get_equivalent_restricted_formula()
-        return sys.modules[self.__module__].X(subformula)
+
+        Lang=sys.modules[self.__module__]
+        return Lang.X(subformula)
 
     def __str__(self):
         return 'X(%s)' % (self._subformula[0])
@@ -265,7 +274,9 @@ class F(Formula,AlphabeticSymbol):
         :rtype: U
         '''
         subformula=self.subformula(0).get_equivalent_restricted_formula()
-        return sys.modules[self.__module__].U(True,subformula)
+
+        Lang=sys.modules[self.__module__]
+        return Lang.U(True,subformula)
 
     def __str__(self):
         return 'F(%s)' % (self._subformula[0])
@@ -283,8 +294,9 @@ class G(Formula,AlphabeticSymbol):
         :rtype: Not
         '''
         subformula=self.subformula(0).get_equivalent_restricted_formula()
-        return sys.modules[self.__module__].Not(
-                    sys.modules[self.__module__].U(True,subformula.negate_and_simplify()))
+
+        Lang=sys.modules[self.__module__]
+        return Lang.Not(Lang.U(True,subformula.negate_and_simplify()))
 
     def __str__(self):
         return 'G(%s)' % (self._subformula[0])
@@ -302,7 +314,9 @@ class Or(Formula,AlphabeticSymbol):
         :rtype: Or
         '''
         subformulas=[p.get_equivalent_restricted_formula() for p in self._subformula]
-        return sys.modules[self.__module__].Or(*subformulas)
+
+        Lang=sys.modules[self.__module__]
+        return Lang.Or(*subformulas)
 
     def __str__(self):
         return '(%s or %s)' % (self._subformula[0],self._subformula[1])
@@ -324,8 +338,8 @@ class And(Formula,AlphabeticSymbol):
             equi_p=p.get_equivalent_restricted_formula()
             subformulas.append(equi_p.negate_and_simplify())
 
-        return sys.modules[self.__module__].Not(
-                    sys.modules[self.__module__].Or(*subformulas))
+        Lang=sys.modules[self.__module__]
+        return Lang.Not(Lang.Or(*subformulas))
 
     def __str__(self):
         return '(%s and %s)' % (self._subformula[0],self._subformula[1])
@@ -343,7 +357,9 @@ class Imply(Formula,AlphabeticSymbol):
         :rtype: Not
         '''
         equiv_sf0=self.subformula(0).get_equivalent_restricted_formula()
-        return sys.modules[self.__module__].Or(equiv_sf0.negate_and_simplify(),
+
+        Lang=sys.modules[self.__module__]
+        return Lang.Or(equiv_sf0.negate_and_simplify(),
                     self.subformula(1).get_equivalent_restricted_formula())
 
     def __str__(self):
@@ -365,7 +381,8 @@ class U(Formula,AlphabeticSymbol):
         for p in self._subformula:
             subformulas.append(p.get_equivalent_restricted_formula())
 
-        return sys.modules[self.__module__].U(*subformulas)
+        Lang=sys.modules[self.__module__]
+        return Lang.U(*subformulas)
 
     def __str__(self):
         return '(%s U %s)' % (self._subformula[0],self._subformula[1])
@@ -387,8 +404,8 @@ class R(Formula,AlphabeticSymbol):
             equi_p=p.get_equivalent_restricted_formula()
             subformulas.append(equi_p.negate_and_simplify())
 
-        return sys.modules[self.__module__].Not(
-                    sys.modules[self.__module__].U(*subformulas))
+        Lang=sys.modules[self.__module__]
+        return Lang.Not(Lang.U(*subformulas))
 
     def __str__(self):
         return '(%s R %s)' % (self._subformula[0],self._subformula[1])
@@ -400,5 +417,6 @@ def get_alphabet(name):
             alphabet[name]=obj
 
     return alphabet
+
 
 alphabet=get_alphabet(__name__)

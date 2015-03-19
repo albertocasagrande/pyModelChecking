@@ -28,11 +28,11 @@ class DiGraph(object):
         :param E: a collection of edges
         :type E: a collection
         '''
-        self._nodes=set()
-        if V!=None:
-            self._nodes.update(V)
 
         self._next=dict()
+        if V!=None:
+            for v in V:
+                self._next[v]=set()
 
         if E!=None:
             try:
@@ -41,9 +41,9 @@ class DiGraph(object):
                         self._next[src].add(dst)
                     else:
                         self._next[src]=set([dst])
-                        self._nodes.add(src)
 
-                    self._nodes.add(dst)
+                    if dst not in self._next:
+                        self._next[dst]=set()
             except:
                 raise RuntimeError(('E=\'%s\' must be a container ' % (E))+
                                    'of pairs.')
@@ -55,10 +55,10 @@ class DiGraph(object):
         :type self: DiGraph
         :param v: a node
         '''
-        if v in self._nodes:
+        if v in self._next:
             raise RuntimeError(('v=\'%s\' is already a node ' % (v))+
                                 'of this DiGraph' )
-        self._nodes.add(v)
+        self._next[v]=set()
 
     def add_edge(self,src,dst):
         ''' Add a new edge to a DiGraph
@@ -68,18 +68,15 @@ class DiGraph(object):
         :param src: the source node of the edge
         :param dst: the destination node of the edge
         '''
-        if src not in self._nodes:
-            self.add_node(src)
+        if src not in self._next:
+            self._next[src]=set()
         else:
             if dst in self._next[src]:
                 raise RuntimeError(('(%s,%s) is already an edge ' % (src,dst))+
                                     'of this DiGraph' )
 
-        if dst not in self._nodes:
+        if dst not in self._next:
             self.add_node(dst)
-
-        if src not in self._next:
-            self._next[src]=set()
 
         self._next[src].add(dst)
 
@@ -93,7 +90,12 @@ class DiGraph(object):
         :returns: a list of all the nodes that are sources of some edges
         :rtype: list
         '''
-        return set(self._next.keys())
+        srcs=set()
+        for src, dsts in self._next.items():
+            if len(dsts)>0:
+                srcs.add(src)
+
+        return srcs
 
     def nodes(self):
         ''' Return the nodes of a DiGraph
@@ -103,7 +105,7 @@ class DiGraph(object):
         :returns: the set of nodes
         :rtype: set
         '''
-        return self._nodes
+        return set(self._next.keys())
 
     def next(self,src):
         ''' Return the next of a node
@@ -116,11 +118,10 @@ class DiGraph(object):
         :returns: the set of nodes {v' | (v,v') in E}
         :rtype: set
         '''
-        if src not in self._nodes:
+        if src not in self._next:
             raise RuntimeError(('src=\'%s\' is not a node ' % (src))+
                                 'of this DiGraph' )
-        if src not in self._next:
-            return set()
+
         return self._next[src]
 
     def edges(self):
@@ -148,8 +149,6 @@ class DiGraph(object):
         '''
         nDG=DiGraph()
 
-        nDG._nodes=set(self._nodes)
-
         nDG._next=dict()
         for src, dsts in self._next.items():
             nDG._next[src]=set(dsts)
@@ -164,7 +163,7 @@ class DiGraph(object):
         :returns: a string that represents the DiGraph
         :rtype: str
         '''
-        return '(V=%s,E=%s)' % (self._nodes,self.edges())
+        return '(V=%s,E=%s)' % (self.nodes(),self.edges())
 
     def get_subgraph(self,nodes):
         ''' Build the subgraph that respects a set of nodes
@@ -202,7 +201,7 @@ class DiGraph(object):
         for (s,d) in self.edges():
             rE.append((d,s))
 
-        return DiGraph(V=self._nodes,E=rE)
+        return DiGraph(V=self.nodes(),E=rE)
 
 def compute_strongly_connected_components(G):
     ''' Compute the strongly connected components of a DiGraph

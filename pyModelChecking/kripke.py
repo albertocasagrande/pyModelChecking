@@ -15,10 +15,10 @@ class Kripke(DiGraph):
     '''
     A class to represent Kripke structures.
 
-    A Kripke structure is a directed graph equipped with a set of initial nodes,
-    S0, and a labelling function that maps each node in the set of atomic
-    propositions that hold in the node itself. The nodes of Kripke structure
-    are called *states*.
+    A Kripke structure is a directed graph equipped with a set of initial
+    nodes, S0, and a labelling function that maps each node in the set of
+    atomic propositions that hold in the node itself. The nodes of Kripke
+    structure are called *states*.
     '''
 
     def __init__(self,S=None,S0=None, R=None,L=None):
@@ -41,9 +41,9 @@ class Kripke(DiGraph):
         if S0==None:
             self.S0=set()
         else:
-            self.S0=set(self._nodes)&set(S0) #set(super(Kripke,self)._nodes)&set(S0)
+            self.S0=self.nodes()&set(S0)
 
-        pots=self._nodes-set(self._next.keys())
+        pots=self.nodes()-self.sources()
         if len(pots)>0:
             raise RuntimeError(('R=\'%s\' must be total, while it ' % (R))+
                                 ('does not contains the states %s' % (pots)))
@@ -55,7 +55,7 @@ class Kripke(DiGraph):
             raise RuntimeError('L=\'%s\' must be a dictionary' % (L))
 
         self._labels=dict()
-        for state in self._nodes:
+        for state in self.nodes():
             if state in L:
                 try:
                     self._labels[state]=set(L[state])
@@ -78,7 +78,7 @@ class Kripke(DiGraph):
         :rtype: set
         '''
         if state!=None:
-            if state not in self._nodes:
+            if state not in self.nodes():
                 raise RuntimeError(('state=\'%s\' is not a state ' % (state))+
                                     'of this Kripke structure')
             return self._labels[state]

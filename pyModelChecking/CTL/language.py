@@ -8,12 +8,12 @@ import pyModelChecking.CTLS as CTLS
 This module represents the CTL language.
 
 The **Computational Tree Language** or **CTL** is a subset of the temporal
-language CTL*. In CTL, beside the standard logical operators "not", "and", and
-"or", each occurence of the two path quantifiers "A" and "E" should be coupled
-to one of the temporal operators "X", "G", "F", "U", or "R" and form one of the
-10 possible CTL temporal operators. Despite this, "not", "or", and "E" coupled
-to "X", "U", or "G" are sufficient to express any possible property definable
-in CTL (e.g., see [Clarke2000]_).
+language CTL*. In CTL, beside the standard logical operators "not", "and",
+"or", and "implies" each occurence of the two path quantifiers "A" and "E"
+should be coupled to one of the temporal operators "X", "G", "F", "U", or
+"R" and form one of the 10 possible CTL temporal operators. Despite this,
+"not", "or", and "E" coupled to "X", "U", or "G" are sufficient to express
+any possible property definable in CTL (e.g., see [Clarke2000]_).
 
 
 [Clarke2000] Edmund M. Clarke, Jr., Orna Grumberg, and Doron A. Peled. 2000. Model Checking. MIT Press, Cambridge, MA, USA.
@@ -62,15 +62,14 @@ class StateFormula(Formula):
     def __init__(self,*phi):
         self.wrap_subformulas(phi,StateFormula)
 
-class Atom(CTLS.Atom,StateFormula):
+class AtomicProposition(CTLS.AtomicProposition,StateFormula):
     pass
 
 class Bool(CTLS.Bool,StateFormula):
     pass
 
 class Not(StateFormula,CTLS.Not):
-    def __str__(self):
-        return 'not %s' % (self._subformula[0])
+    pass
 
 class Or(StateFormula,CTLS.Or):
     pass

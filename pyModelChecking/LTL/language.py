@@ -58,7 +58,7 @@ class U(PathFormula,CTLS.U):
 class R(PathFormula,CTLS.R):
     pass
 
-class Atom(CTLS.Atom,PathFormula):
+class AtomicProposition(CTLS.AtomicProposition,PathFormula):
     pass
 
 class Bool(CTLS.Bool,PathFormula):

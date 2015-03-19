@@ -14,17 +14,17 @@ __status__ = "Development"
 
 class TestFormulas(unittest.TestCase):
     def setUp(self):
-        self.formulas=[True,'p',Atom('q')]
+        self.formulas=[True,'p',AtomicProposition('q')]
 
     def test_atomic_proposition(self):
         s='p'
-        a=Atom(s)
+        a=AtomicProposition(s)
         self.assertEquals(s,a)
 
         self.assertEquals(s,'%s' % (a))
 
         with self.assertRaises(TypeError):
-            Atom(1)
+            AtomicProposition(1)
 
     def test_boolean(self):
         b=False
@@ -43,10 +43,14 @@ class TestFormulas(unittest.TestCase):
             self.assertEquals(s,'%s' % (op(phi)))
             if (equivalent_restricted_op!=None and isinstance(phi,Formula)):
                 self.assertEquals(op(phi).get_equivalent_restricted_formula(),
-                                    equivalent_restricted_op(phi))
+                                  equivalent_restricted_op(phi))
 
     def test_not(self):
-        self.generic_test_unaryop(Not,'not',(lambda phi: (phi.get_equivalent_restricted_formula()).negate_and_simplify()))
+        for phi in self.formulas:
+            self.assertEquals('not %s' % (phi),'%s' % (Not(phi)))
+            if (isinstance(phi,Formula)):
+                self.assertEquals(Not(phi).get_equivalent_restricted_formula(),
+                                 (phi.get_equivalent_restricted_formula()).negate_and_simplify())
 
     def test_A(self):
         self.generic_test_unaryop(A,'A',(lambda phi: Not(E((phi.get_equivalent_restricted_formula()).negate_and_simplify()))))

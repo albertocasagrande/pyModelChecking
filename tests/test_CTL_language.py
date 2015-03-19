@@ -14,17 +14,17 @@ __status__ = "Development"
 
 class TestFormulas(unittest.TestCase):
     def setUp(self):
-        self.formulas=[True,'p',Atom('q')]
+        self.formulas=[True,'p',AtomicProposition('q')]
 
     def test_atomic_proposition(self):
         s='p'
-        a=Atom(s)
+        a=AtomicProposition(s)
         self.assertEquals(s,a)
 
         self.assertEquals(s,'%s' % (a))
 
         with self.assertRaises(TypeError):
-            Atom(1)
+            AtomicProposition(1)
 
     def test_boolean(self):
         b=False

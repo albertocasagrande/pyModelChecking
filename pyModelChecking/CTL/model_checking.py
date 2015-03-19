@@ -20,7 +20,7 @@ def modelcheck(kripke,formula,L=None):
         if formula not in L:
             L[formula]=set()
 
-    def checkAtom(kripke,formula,L):
+    def checkAtomicProposition(kripke,formula,L):
         if formula not in L:
             Lformula=set()
             for v in kripke.states():
@@ -149,8 +149,8 @@ def modelcheck(kripke,formula,L=None):
 
             return Lformula
 
-        if isinstance(formula,CTLS.Atom):
-            return checkAtom(kripke,formula,L)
+        if isinstance(formula,CTLS.AtomicProposition):
+            return checkAtomicProposition(kripke,formula,L)
 
         if isinstance(formula,CTLS.E):
             p_formula=formula.subformula(0)
