@@ -1,23 +1,11 @@
 #!/usr/bin/env python
 
 import sys
-import inspect
-import pyModelChecking.CTLS as CTLS
 
-'''
-This module represents the CTL language.
+if 'pyModelChecking.CTLS' not in sys.modules:
+    import pyModelChecking.CTLS
 
-The **Computational Tree Language** or **CTL** is a subset of the temporal
-language CTL*. In CTL, beside the standard logical operators "not", "and",
-"or", and "implies" each occurence of the two path quantifiers "A" and "E"
-should be coupled to one of the temporal operators "X", "G", "F", "U", or
-"R" and form one of the 10 possible CTL temporal operators. Despite this,
-"not", "or", and "E" coupled to "X", "U", or "G" are sufficient to express
-any possible property definable in CTL (e.g., see [Clarke2000]_).
-
-
-[Clarke2000] Edmund M. Clarke, Jr., Orna Grumberg, and Doron A. Peled. 2000. Model Checking. MIT Press, Cambridge, MA, USA.
-'''
+CTLS=sys.modules['pyModelChecking.CTLS']
 
 __author__ = "Alberto Casagrande"
 __copyright__ = "Copyright 2015"
@@ -34,53 +22,134 @@ class Formula(CTLS.Formula):
     A class representing CTL formulas.
 
     '''
-    pass
+
+    __desc__='CTL formula'
 
 class PathFormula(Formula):
+    '''
+    A class representing CTL path formulas.
+
+    '''
+
+    __desc__='CTL path formula'
+
+    def is_a_state_formula(self):
+        return False
+
     def __init__(self,*phi):
         self.wrap_subformulas(phi,StateFormula)
 
 class X(PathFormula,CTLS.X):
+    '''
+    A class representing CTL X-formulas.
+
+    '''
+
     def __str__(self):
         return 'X %s' % (self._subformula[0])
 
 class F(PathFormula,CTLS.F):
+    '''
+    A class representing CTL F-formulas.
+
+    '''
+
     def __str__(self):
         return 'F %s' % (self._subformula[0])
 
 class G(PathFormula,CTLS.G):
+    '''
+    A class representing CTL G-formulas.
+
+    '''
+
     def __str__(self):
         return 'G %s' % (self._subformula[0])
 
 class U(PathFormula,CTLS.U):
+    '''
+    A class representing CTL U-formulas.
+
+    '''
+
     pass
 
 class R(PathFormula,CTLS.R):
+    '''
+    A class representing CTL R-formulas.
+
+    '''
+
     pass
 
 class StateFormula(Formula):
+    '''
+    A class representing CTL state formulas.
+
+    '''
+
+    __desc__='CTL state formula'
+
+    def is_a_state_formula(self):
+        return True
+
     def __init__(self,*phi):
         self.wrap_subformulas(phi,StateFormula)
 
 class AtomicProposition(CTLS.AtomicProposition,StateFormula):
+    '''
+    A class representing CTL atomic propositions.
+
+    '''
+
     pass
 
 class Bool(CTLS.Bool,StateFormula):
+    '''
+    A class representing CTL Boolean atomic propositions.
+
+    '''
+
     pass
 
 class Not(StateFormula,CTLS.Not):
+    '''
+    A class representing CTL negations.
+
+    '''
+
     pass
 
 class Or(StateFormula,CTLS.Or):
+    '''
+    A class representing CTL disjunctions.
+
+    '''
+
     pass
 
 class And(StateFormula,CTLS.And):
+    '''
+    A class representing CTL conjunctions.
+
+    '''
+
     pass
 
 class Imply(StateFormula,CTLS.Imply):
+    '''
+    A class representing CTL implications.
+
+    '''
+
     pass
 
 class A(StateFormula,CTLS.A):
+    '''
+    A class representing CTL A-formulas.
+
+    '''
+
     def __init__(self,phi):
         self.wrap_subformulas([phi],PathFormula)
 
@@ -116,13 +185,17 @@ class A(StateFormula,CTLS.A):
         if (isinstance(p_formula,CTLS.R)):
             return Not(EU(neg_sf0,neg_sf1))
 
-        raise RuntimeError('%s is not a CTL formula' %
-                            (self))
+        raise TypeError('%s is not a CTL formula' % (self))
 
     def __str__(self):
         return 'A%s' % (self._subformula[0])
 
 class E(StateFormula,CTLS.E):
+    '''
+    A class representing CTL E-formulas.
+
+    '''
+
     def __init__(self,phi):
         self.wrap_subformulas([phi],PathFormula)
 
@@ -159,8 +232,7 @@ class E(StateFormula,CTLS.E):
 
             return Or(EU(sf1,Not(Or(neg_sf0,neg_sf1))),EG(sf1))
 
-        raise RuntimeError('%s is not a CTL formula' %
-                            (self))
+        raise TypeError('%s is not a CTL formula' % (self))
 
     def __str__(self):
         return 'E%s' % (self._subformula[0])

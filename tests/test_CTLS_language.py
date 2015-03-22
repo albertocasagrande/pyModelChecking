@@ -59,7 +59,7 @@ class TestFormulas(unittest.TestCase):
         self.generic_test_unaryop(E,'E',(lambda phi: E(phi.get_equivalent_restricted_formula())))
 
     def test_G(self):
-        self.generic_test_unaryop(G,'G',(lambda phi: Not(U(True,(phi.get_equivalent_restricted_formula()).negate_and_simplify()))))
+        self.generic_test_unaryop(G,'G',(lambda phi: Not(F(phi.negate_and_simplify())).get_equivalent_restricted_formula()))
 
     def test_F(self):
         self.generic_test_unaryop(F,'F',(lambda phi: U(True,phi.get_equivalent_restricted_formula())))

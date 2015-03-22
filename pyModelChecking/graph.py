@@ -21,8 +21,6 @@ class DiGraph(object):
     def __init__(self,V=None,E=None):
         ''' Initialize a new DiGraph
 
-        :param self: the DiGraph object that should be initializated
-        :type self: DiGraph
         :param V: a collection of nodes
         :type V: a collection
         :param E: a collection of edges
@@ -63,8 +61,6 @@ class DiGraph(object):
     def add_edge(self,src,dst):
         ''' Add a new edge to a DiGraph
 
-        :param self: the DiGraph object
-        :type self: DiGraph
         :param src: the source node of the edge
         :param dst: the destination node of the edge
         '''
@@ -85,8 +81,7 @@ class DiGraph(object):
 
         The *sources* of a DiGraph G are the nodes that are sources of some
         edges in G itself.
-        :param self: the DiGraph object
-        :type self: DiGraph
+
         :returns: a list of all the nodes that are sources of some edges
         :rtype: list
         '''
@@ -100,8 +95,6 @@ class DiGraph(object):
     def nodes(self):
         ''' Return the nodes of a DiGraph
 
-        :param self: the DiGraph object
-        :type self: DiGraph
         :returns: the set of nodes
         :rtype: set
         '''
@@ -110,12 +103,11 @@ class DiGraph(object):
     def next(self,src):
         ''' Return the next of a node
 
-        Given a DiGraph (V,E) and one of its node v, the *next* of v in (V,E)
-        is the set of all those nodes that are destination of some edges whose
-        source is v itself i.e., (V,E).next(s)={v' | (v,v') in E}.
-        :param self: the DiGraph object
-        :type self: DiGraph
-        :returns: the set of nodes {v' | (v,v') in E}
+        Given a DiGraph :math:`(V,E)` and one of its node v, the
+        *next* of :math:`v \in V` is the set of all those nodes :math:`v'` that
+        are destination of some edge :math:`(v,v') \in E`.
+
+        :returns: the set of nodes :math:`{v' | (v,v') in E}`
         :rtype: set
         '''
         if src not in self._next:
@@ -127,8 +119,6 @@ class DiGraph(object):
     def edges(self):
         ''' Return the edges of a DiGraph
 
-        :param self: the DiGraph object
-        :type self: DiGraph
         :returns: the set of edges of the DiGraph
         :rtype: set
         '''
@@ -142,8 +132,6 @@ class DiGraph(object):
     def copy(self):
         ''' Copy a DiGraph
 
-        :param self: the DiGraph object
-        :type self: DiGraph
         :returns: a copy of the DiGraph
         :rtype: DiGraph
         '''
@@ -158,8 +146,6 @@ class DiGraph(object):
     def __str__(self):
         ''' Return a string that represents a DiGraph
 
-        :param self: the DiGraph object
-        :type self: DiGraph
         :returns: a string that represents the DiGraph
         :rtype: str
         '''
@@ -168,14 +154,7 @@ class DiGraph(object):
     def get_subgraph(self,nodes):
         ''' Build the subgraph that respects a set of nodes
 
-        A *subgraph* of a DiGraph (V,E) is a DiGraph (V',E') such that V' is
-        a subset of V and E' is a subset of E. The *subgraph that respects V'*
-        is the subgraph (V',(V'xV')&E).
-        :param self: the DiGraph object
-        :type self: DiGraph
-        :param nodes: a set of nodes
-        :type nodes: set
-        :returns: the subgraph that respects :nodes
+        :returns: the subgraph that respects :param nodes:
         :rtype: DiGraph
         '''
         E=[]
@@ -189,10 +168,6 @@ class DiGraph(object):
     def get_reversed_graph(self):
         ''' Build the reversed graph
 
-        The *reversed graph* of a DiGraph (V,E) is the DiGraph (V,E')
-        where E'={(dst,src) | (src,dst) in E}.
-        :param self: the DiGraph object
-        :type self: DiGraph
         :returns: the reversed graph
         :rtype: DiGraph
         '''
@@ -203,79 +178,92 @@ class DiGraph(object):
 
         return DiGraph(V=self.nodes(),E=rE)
 
+    def get_reachable_set_from(self,nodes):
+        ''' Compute the reachable set
+
+        :param nodes: the set of nodes from which the reachability
+        should be evaluated
+        :type nodes: a container of nodes
+        :returns: the set of the reachable nodes
+        :rtype: set
+        '''
+        queue=list(nodes)
+        R=set(nodes)
+
+        while queue:
+            s=queue.pop()
+            for d in self.next(s):
+                if d not in R:
+                    R.add(d)
+                    queue.append(d)
+
+        return R
+
 def compute_strongly_connected_components(G):
     ''' Compute the strongly connected components of a DiGraph
 
-    The node *v' is reachable from v in (V,E)* iff either:
-    1. v is v' or
-    2. there exists an edge (v,v'') in E in such that v' is reachable from
-       v in (V,E).
-    A *strong connected component* of (V,E) is a maximal subgraph (V',E') of
-    (V,E) such that, for any pair or vertices v,v' in V', v is reachable
-    from v' and v' is reachable from v in (V',E').
-    This method uses the Tarjan's algorithm ([Tarjan]_) to compute all the strongly
-    connected components of a DiGraph.
-    [Tarjan] Tarjan, R. E. 1972. "Depth-first search and linear graph algorithms",
-             SIAM Journal on Computing 1 (2): 146-160
+    This method implements a non-recursive version of the
+    Nuutila and Soisalon-Soinen's algorithm ([ns94]_) to compute the
+    strongly connected components of a DiGraph.
+
+    ..[ns94] E. Nuutila and E. Soisalon-Soinen. "On finding the strongly
+             connected components in a directed graph.",Information Processing
+             Letters 49(1): 9-14, (1994)
+
     :param G: the DiGraph object
     :type G: DiGraph
-    :returns: a list whose elements are the sets of nodes of the strongly
-                connected components of the DiGraph
+    :returns: a generator of a list whose elements are the sets of
+                nodes of the strongly connected components of the DiGraph
     :rtype: list
     '''
-    def popStack(stack,stackSet):
-        v=stack.pop()
-        stackSet.remove(v)
-        return v
-
-    def pushStack(v,stack,stackSet):
-        stackSet.add(v)
-        stack.append(v)
-
-    def _Tarjan(G,v,disc,lowlink,stack,stackSet,time, SCCs):
-        if v in disc:
-            return time
-
-        disc[v]=time
-        lowlink[v]=time
-        pushStack(v,stack,stackSet)
-        time+=1
-
-        for w in G.next(v):
-            if w not in disc:
-                time=_Tarjan(G,w,disc,lowlink,stack,stackSet,time,SCCs)
-                lowlink[v]=min(lowlink[v],lowlink[w])
-            else:
-                if w in stackSet:
-                    lowlink[v]=min(lowlink[v],disc[w])
-
-        if lowlink[v]==disc[v]:
-            w=popStack(stack,stackSet)
-            scc=set([w])
-            while v!=w:
-                w=popStack(stack,stackSet)
-                scc.add(w)
-            SCCs.append(frozenset(scc))
-
-        return time
 
     if not isinstance(G,DiGraph):
         raise TypeError('%s is not a DiGraph'  % (G))
 
-    SCCs=[]
-
     disc=dict()
     lowlink=dict()
-    stackSet=set()
-    stack=[]
-
+    in_a_scc=set()
+    scc_stack=[]
     time=0
-    for v in G.nodes():
-        if v not in disc:
-            time=_Tarjan(G,v,disc,lowlink,stack,stackSet,time,SCCs)
 
-    return SCCs
+    for s in G.nodes():
+        if s not in in_a_scc:
+            stack=[s]
+            while stack:
+                v=stack[-1]
+                if v not in disc:
+                    time=time+1
+                    disc[v]=time
 
+                di=iter(G.next(v))
+                try:
+                    d=next(di)
+                    while (d in disc):
+                        d=next(di)
+                    stack.append(d)
+                except:
+                    d=None
+
+                if stack[-1]!=d:
+                    lowlink[v]=disc[v]
+                    for w in G.next(v):
+                        if w not in in_a_scc:
+                            if disc[w]>disc[v]:
+                                lowlink[v]=min([lowlink[v],lowlink[w]])
+                            else:
+                                lowlink[v]=min([lowlink[v],disc[w]])
+                    stack.pop()
+
+                    if lowlink[v]==disc[v]:
+                        in_a_scc.add(v)
+                        scc=set([v])
+                        while scc_stack and disc[scc_stack[-1]]>disc[v]:
+                            k=scc_stack.pop()
+                            in_a_scc.add(k)
+                            scc.add(k)
+                        yield scc
+                    else:
+                        scc_stack.append(v)
 
 if __name__=='__main__':
     G0=DiGraph(V=['a','b','c'],

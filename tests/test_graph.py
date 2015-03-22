@@ -104,7 +104,7 @@ class TestDiGraph(unittest.TestCase):
 
     def test_strongly_connected_components(self):
         SCCs=set([frozenset([0,1]),frozenset([2]),frozenset([3])])
-        computed_SCCs=set(compute_strongly_connected_components(self.G))
+        computed_SCCs=set([frozenset(s) for s in compute_strongly_connected_components(self.G)])
 
         self.assertEqual(computed_SCCs, SCCs)
 
