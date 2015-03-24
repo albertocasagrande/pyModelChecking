@@ -5,6 +5,8 @@ import sys
 if 'pyModelChecking.CTLS' not in sys.modules:
     import pyModelChecking.CTLS
 
+from pyModelChecking.CTLS import LNot as LNot
+
 CTLS=sys.modules['pyModelChecking.CTLS']
 
 __author__ = "Alberto Casagrande"
@@ -167,7 +169,7 @@ class A(StateFormula,CTLS.A):
 
         p_formula=self.subformula(0)
         sf0=p_formula.subformula(0).get_equivalent_restricted_formula()
-        neg_sf0=sf0.negate_and_simplify()
+        neg_sf0=LNot(sf0)
         if (isinstance(p_formula,CTLS.X)):
             return Not(EX(neg_sf0))
 
@@ -178,12 +180,36 @@ class A(StateFormula,CTLS.A):
             return Not(EU(True,neg_sf0))
 
         sf1=p_formula.subformula(1).get_equivalent_restricted_formula()
-        neg_sf1=sf1.negate_and_simplify()
+        neg_sf1=LNot(sf1)
         if (isinstance(p_formula,CTLS.U)):
             return Not(Or(EU(neg_sf1,Not(Or(sf0,sf1))),EG(neg_sf1)))
 
         if (isinstance(p_formula,CTLS.R)):
             return Not(EU(neg_sf0,neg_sf1))
+
+        raise TypeError('%s is not a CTL formula' % (self))
+
+    def get_equivalent_non_fair_formula(self,fairAP):
+        p_formula=self.subformula(0)
+        sf0=p_formula.subformula(0).get_equivalent_non_fair_formula(fairAP)
+        neg_sf0=LNot(sf0)
+        if (isinstance(p_formula,CTLS.X)):
+            return Not(EX(And(neg_sf0,fairAP)))
+
+        if (isinstance(p_formula,CTLS.F)):
+            return Not(EG(And(neg_sf0,fairAP)))
+
+        if (isinstance(p_formula,CTLS.G)):
+            return Not(EU(True,And(neg_sf0,fairAP)))
+
+        sf1=p_formula.subformula(1).get_equivalent_non_fair_formula(fairAP)
+        neg_sf1=LNot(sf1)
+        if (isinstance(p_formula,CTLS.U)):
+            return Not(Or(EU(neg_sf1,And(Not(Or(sf0,sf1)),fairAP)),
+                            EG(And(neg_sf1,fairAP))))
+
+        if (isinstance(p_formula,CTLS.R)):
+            return Not(EU(neg_sf0,And(neg_sf1,fairAP)))
 
         raise TypeError('%s is not a CTL formula' % (self))
 
@@ -227,10 +253,35 @@ class E(StateFormula,CTLS.E):
             return EU(sf0,sf1)
 
         if (isinstance(p_formula,CTLS.R)):
-            neg_sf1=sf1.negate_and_simplify()
-            neg_sf0=sf0.negate_and_simplify()
+            neg_sf1=LNot(sf1)
+            neg_sf0=LNot(sf0)
 
             return Or(EU(sf1,Not(Or(neg_sf0,neg_sf1))),EG(sf1))
+
+        raise TypeError('%s is not a CTL formula' % (self))
+
+    def get_equivalent_non_fair_formula(self,fairAP):
+        p_formula=self.subformula(0)
+        sf0=p_formula.subformula(0).get_equivalent_non_fair_formula(fairAP)
+        if (isinstance(p_formula,CTLS.X)):
+            return EX(And(sf0,fairAP))
+
+        if (isinstance(p_formula,CTLS.F)):
+            return EU(True,And(sf0,fairAP))
+
+        if (isinstance(p_formula,CTLS.G)):
+            return EG(And(sf0,fairAP))
+
+        sf1=p_formula.subformula(1).get_equivalent_non_fair_formula(fairAP)
+        if (isinstance(p_formula,CTLS.U)):
+            return EU(sf0,And(sf1,fairAP))
+
+        if (isinstance(p_formula,CTLS.R)):
+            neg_sf1=LNot(sf1)
+            neg_sf0=LNot(sf0)
+
+            return Or(EU(sf1,And(Not(Or(neg_sf0,neg_sf1))),fairAP),
+                        EG(And(sf1,fairAP)))
 
         raise TypeError('%s is not a CTL formula' % (self))
 

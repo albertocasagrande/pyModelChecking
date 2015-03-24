@@ -9,6 +9,8 @@ import sys
 if 'pyModelChecking.CTLS' not in sys.modules:
     import pyModelChecking.CTLS
 
+from pyModelChecking.CTLS import LNot as LNot
+
 CTLS=sys.modules['pyModelChecking.CTLS']
 
 __author__ = "Alberto Casagrande"
@@ -40,8 +42,9 @@ def checkNot(kripke,formula,L):
         Lphi=checkStateFormula(kripke,formula.subformula(0),L)
 
         Lformula=set()
-        for v in kripke.states()-Lphi:
-            Lformula.add(v)
+        for v in kripke.states():
+            if v not in Lphi:
+                Lformula.add(v)
 
         L[formula]=Lformula
 
@@ -88,7 +91,7 @@ def checkEU(kripke,formula,L):
         subgraph=subgraph.get_reversed_graph()
 
         for v in Lphi[0]:
-            for w in kripke.next(v)&Lphi[1]:
+            for w in (kripke.next(v)&Lphi[1]):
                 try:
                     subgraph.add_edge(w,v)
                 except:
@@ -113,7 +116,7 @@ def checkEG(kripke,formula,L):
         for scc in SCCs:
             v = next(iter(scc))
             if len(scc)>1 or v in subgraph.next(v):
-                T.add(v)
+                T.update(scc)
 
         L[formula]=subgraph.get_reachable_set_from(T)
 
@@ -130,7 +133,7 @@ def checkStateFormula(kripke,formula,L):
         isinstance(formula,bool)):
         Lang=sys.modules[formula.__module__]
         if formula==Bool(True):
-            Lformula=kripke.states()
+            Lformula=set(kripke.states())
             L[Lang.Bool(True)]=Lformula
         else:
             Lformula=set()
@@ -160,7 +163,7 @@ def checkStateFormula(kripke,formula,L):
 
     return Lalter_formula
 
-def modelcheck(kripke,formula):
+def modelcheck(kripke,formula,F=None):
 
     if not isinstance(formula,Formula):
         try:
@@ -173,5 +176,12 @@ def modelcheck(kripke,formula):
 
     if not isinstance(kripke,Kripke):
         raise TypeError('expected a Kripke structure, got %s' % (kripke))
+
+    if F!=None:
+        kripke=kripke.copy()
+
+        fair_label=kripke.label_fair_states(F)
+
+        formula=formula.get_equivalent_non_fair_formula(fair_label)
 
     return checkStateFormula(kripke,formula,L=dict())

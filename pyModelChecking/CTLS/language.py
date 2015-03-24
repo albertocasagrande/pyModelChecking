@@ -81,13 +81,13 @@ class Formula(object):
     def subformulas(self):
         return self._subformula
 
+    def get_equivalent_non_fair_formula(self,fairAP):
+        fair_sfs=[sf.get_equivalent_non_fair_formula(fairAP) for sf in self._subformula]
+
+        return self.__class__(*fair_sfs)
+
     def is_a_state_formula(self):
         raise RuntimeError('%s.is_a_state_formula() not implemented yet' % (self.__class__))
-
-    def negate_and_simplify(self):
-        if isinstance(self,sys.modules[self.__module__].Not):
-            return self.subformula(0)
-        return sys.modules[self.__module__].Not(self)
 
     def cast_to(self,Lang):
         if isinstance(self,Bool):
@@ -113,6 +113,15 @@ class Formula(object):
 class AlphabeticSymbol(object):
     pass
 
+class TemporalOperator(Formula):
+    pass
+
+class PathQuantifier(Formula):
+    pass
+
+class LogicaOperator(Formula):
+    pass
+
 class AtomicProposition(Formula,AlphabeticSymbol):
     '''
     The class representing atomic propositionic propositions.
@@ -136,6 +145,11 @@ class AtomicProposition(Formula,AlphabeticSymbol):
 
     def get_equivalent_restricted_formula(self):
         return self.copy()
+
+    def get_equivalent_non_fair_formula(self,fairAP):
+        Lang=sys.modules[self.__module__]
+
+        return Lang.And(self,fairAP)
 
     def subformula(self,idx):
         raise TypeError('AtomicPropositions have not subformulas.')
@@ -189,7 +203,7 @@ class Bool(AtomicProposition):
         '''
         return '%s' % (self._value)
 
-class Not(Formula,AlphabeticSymbol):
+class Not(LogicaOperator,AlphabeticSymbol):
 
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
@@ -203,7 +217,7 @@ class Not(Formula,AlphabeticSymbol):
         '''
         subformula=self.subformula(0).get_equivalent_restricted_formula()
 
-        return subformula.negate_and_simplify()
+        return LNot(subformula)
 
     def is_a_state_formula(self):
         return self.subformula(0).is_a_state_formula()
@@ -211,7 +225,7 @@ class Not(Formula,AlphabeticSymbol):
     def __str__(self):
         return 'not %s' % (self._subformula[0])
 
-class A(Formula,AlphabeticSymbol):
+class A(PathQuantifier,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -225,7 +239,12 @@ class A(Formula,AlphabeticSymbol):
         subformula=self.subformula(0).get_equivalent_restricted_formula()
 
         Lang=sys.modules[self.__module__]
-        return Lang.Not(Lang.E(subformula.negate_and_simplify()))
+        return Lang.Not(Lang.E(LNot(subformula)))
+
+    def get_equivalent_non_fair_formula(self,fairAP):
+        formula=Lang.E(LNot(self.subformula(0)))
+
+        return Lang.Not(formula.get_equivalent_non_fair_formula(fairAP))
 
     def is_a_state_formula(self):
         return True
@@ -233,7 +252,7 @@ class A(Formula,AlphabeticSymbol):
     def __str__(self):
         return 'A(%s)' % (self._subformula[0])
 
-class E(Formula,AlphabeticSymbol):
+class E(PathQuantifier,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -249,13 +268,19 @@ class E(Formula,AlphabeticSymbol):
         Lang=sys.modules[self.__module__]
         return Lang.E(subformula)
 
+    def get_equivalent_non_fair_formula(self,fairAP):
+        fair_sf=self.subformula(0).get_equivalent_non_fair_formula(fairAP)
+
+        Lang=sys.modules[self.__module__]
+        return Lang.E(Lang.And(fairAP,fair_sf))
+
     def is_a_state_formula(self):
         return True
 
     def __str__(self):
         return 'E(%s)' % (self._subformula[0])
 
-class X(Formula,AlphabeticSymbol):
+class X(TemporalOperator,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -277,7 +302,7 @@ class X(Formula,AlphabeticSymbol):
     def __str__(self):
         return 'X(%s)' % (self._subformula[0])
 
-class F(Formula,AlphabeticSymbol):
+class F(TemporalOperator,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -293,13 +318,14 @@ class F(Formula,AlphabeticSymbol):
         Lang=sys.modules[self.__module__]
         return Lang.U(True,subformula)
 
+
     def is_a_state_formula(self):
         return False
 
     def __str__(self):
         return 'F(%s)' % (self._subformula[0])
 
-class G(Formula,AlphabeticSymbol):
+class G(TemporalOperator,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -313,7 +339,7 @@ class G(Formula,AlphabeticSymbol):
         subformula=self.subformula(0).get_equivalent_restricted_formula()
 
         Lang=sys.modules[self.__module__]
-        return Lang.Not(Lang.U(True,subformula.negate_and_simplify()))
+        return Lang.Not(Lang.U(True,LNot(subformula)))
 
     def is_a_state_formula(self):
         return False
@@ -321,7 +347,7 @@ class G(Formula,AlphabeticSymbol):
     def __str__(self):
         return 'G(%s)' % (self._subformula[0])
 
-class Or(Formula,AlphabeticSymbol):
+class Or(LogicaOperator,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -347,7 +373,7 @@ class Or(Formula,AlphabeticSymbol):
     def __str__(self):
         return '(%s or %s)' % (self._subformula[0],self._subformula[1])
 
-class And(Formula,AlphabeticSymbol):
+class And(LogicaOperator,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -361,7 +387,7 @@ class And(Formula,AlphabeticSymbol):
         subformulas=[]
         for p in self._subformula:
             equi_p=p.get_equivalent_restricted_formula()
-            subformulas.append(equi_p.negate_and_simplify())
+            subformulas.append(LNot(equi_p))
 
         Lang=sys.modules[self.__module__]
         return Lang.Not(Lang.Or(*subformulas))
@@ -376,7 +402,7 @@ class And(Formula,AlphabeticSymbol):
     def __str__(self):
         return '(%s and %s)' % (self._subformula[0],self._subformula[1])
 
-class Imply(Formula,AlphabeticSymbol):
+class Imply(LogicaOperator,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -390,7 +416,7 @@ class Imply(Formula,AlphabeticSymbol):
         equiv_sf0=self.subformula(0).get_equivalent_restricted_formula()
 
         Lang=sys.modules[self.__module__]
-        return Lang.Or(equiv_sf0.negate_and_simplify(),
+        return Lang.Or(LNot(equiv_sf0),
                     self.subformula(1).get_equivalent_restricted_formula())
 
     def is_a_state_formula(self):
@@ -403,7 +429,7 @@ class Imply(Formula,AlphabeticSymbol):
     def __str__(self):
         return '(%s --> %s)' % (self._subformula[0],self._subformula[1])
 
-class U(Formula,AlphabeticSymbol):
+class U(TemporalOperator,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -427,7 +453,7 @@ class U(Formula,AlphabeticSymbol):
     def __str__(self):
         return '(%s U %s)' % (self._subformula[0],self._subformula[1])
 
-class R(Formula,AlphabeticSymbol):
+class R(TemporalOperator,AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -441,7 +467,7 @@ class R(Formula,AlphabeticSymbol):
         subformulas=[]
         for p in self._subformula:
             equi_p=p.get_equivalent_restricted_formula()
-            subformulas.append(equi_p.negate_and_simplify())
+            subformulas.append(LNot(equi_p))
 
         Lang=sys.modules[self.__module__]
         return Lang.Not(Lang.U(*subformulas))
@@ -460,5 +486,26 @@ def get_alphabet(name):
 
     return alphabet
 
+
+def LNot(formula):
+    ''' Logical Not - Return an equivalent formula that does not begin with two
+    negations.
+
+    This method negates the parameter and removes all the pairs of negations at
+    the begin of the obtained formula.
+
+    :param formula: a formula
+    :type formula: Formula
+    :returns: a formula equivalent to the parameter that does not begin with
+        two negations
+    :rtype: Formula
+    '''
+
+    if isinstance(formula,Not):
+        if isinstance(formula.subformula(0),Not):
+            return LNot(formula.subformula(0))
+        return formula.subformula(0)
+
+    return sys.modules[formula.__module__].Not(formula)
 
 alphabet=get_alphabet(__name__)

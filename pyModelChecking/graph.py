@@ -82,23 +82,20 @@ class DiGraph(object):
         The *sources* of a DiGraph G are the nodes that are sources of some
         edges in G itself.
 
-        :returns: a list of all the nodes that are sources of some edges
-        :rtype: list
+        :returns: a generator of all the nodes that are sources of some edges
+        :rtype: generator
         '''
-        srcs=set()
         for src, dsts in self._next.items():
             if len(dsts)>0:
-                srcs.add(src)
-
-        return srcs
+                yield src
 
     def nodes(self):
         ''' Return the nodes of a DiGraph
 
-        :returns: the set of nodes
-        :rtype: set
+        :returns: the list of the nodes of the DiGraph
+        :rtype: list
         '''
-        return set(self._next.keys())
+        return self._next.keys()
 
     def next(self,src):
         ''' Return the next of a node
@@ -119,15 +116,13 @@ class DiGraph(object):
     def edges(self):
         ''' Return the edges of a DiGraph
 
-        :returns: the set of edges of the DiGraph
-        :rtype: set
+        :returns: the generator of edges of the DiGraph
+        :rtype: generator
         '''
-        E=set()
         for src, dsts in self._next.items():
             for dst in dsts:
-                E.add((src,dst))
+                yield (src,dst)
 
-        return E
 
     def copy(self):
         ''' Copy a DiGraph
@@ -212,9 +207,9 @@ def compute_strongly_connected_components(G):
 
     :param G: the DiGraph object
     :type G: DiGraph
-    :returns: a generator of a list whose elements are the sets of
-                nodes of the strongly connected components of the DiGraph
-    :rtype: list
+    :returns: a generator of the sets of nodes of the strongly connected
+              components of the DiGraph
+    :rtype: generator
     '''
 
     if not isinstance(G,DiGraph):
@@ -227,52 +222,39 @@ def compute_strongly_connected_components(G):
     time=0
 
     for s in G.nodes():
-        if s not in in_a_scc:
-            stack=[s]
+        if s not in disc:
+            disc[s]=time
+            lowlink[s]=time
+
+            stack=[[s,iter(G.next(s))]]
             while stack:
-                v=stack[-1]
-                if v not in disc:
-                    time=time+1
-                    disc[v]=time
-
-                di=iter(G.next(v))
                 try:
-                    d=next(di)
-                    while (d in disc):
-                        d=next(di)
-                    stack.append(d)
-                except:
-                    d=None
+                    w=next(stack[-1][1])
 
-                if stack[-1]!=d:
-                    lowlink[v]=disc[v]
+                    if w not in disc:
+                        time=time+1
+                        disc[w]=time
+                        lowlink[w]=time
+
+                        stack.append([w,iter(G.next(w))])
+
+                except StopIteration:
+                    [v,v_next_it]=stack.pop()
+
                     for w in G.next(v):
                         if w not in in_a_scc:
                             if disc[w]>disc[v]:
                                 lowlink[v]=min([lowlink[v],lowlink[w]])
                             else:
                                 lowlink[v]=min([lowlink[v],disc[w]])
-                    stack.pop()
 
                     if lowlink[v]==disc[v]:
                         in_a_scc.add(v)
-                        scc=set([v])
+                        scc=[v]
                         while scc_stack and disc[scc_stack[-1]]>disc[v]:
                             k=scc_stack.pop()
                             in_a_scc.add(k)
-                            scc.add(k)
+                            scc.append(k)
                         yield scc
                     else:
                         scc_stack.append(v)
-
-if __name__=='__main__':
-    G0=DiGraph(V=['a','b','c'],
-              E=[('a','c'),('c','c'),('a','b')])
-    print(G0)
-
-    G1=DiGraph(V=['a','b','c'],
-             E=[('a','c'),('c','c'),('a','b'),('b','a')])
-
-    print(G1)
-    print(G1.get_reversed_edges_graph())
-    print(G1.compute_strongly_connected_components())

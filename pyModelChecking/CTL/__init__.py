@@ -38,3 +38,4 @@ see [Clarke2000]_).
 
 from .language import *
 from .model_checking import modelcheck
+from pyModelChecking.CTLS import LNot as LNot

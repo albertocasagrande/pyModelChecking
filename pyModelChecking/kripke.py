@@ -24,7 +24,8 @@ Kripke structure
 
 '''
 
-from graph import DiGraph
+from .graph import DiGraph
+from .graph import compute_strongly_connected_components
 
 __author__ = "Alberto Casagrande"
 __copyright__ = "Copyright 2015"
@@ -63,10 +64,10 @@ class Kripke(DiGraph):
         if S0==None:
             self.S0=set()
         else:
-            self.S0=self.nodes()&set(S0)
+            self.S0=set(self.nodes())&set(S0)
 
-        pots=self.nodes()-self.sources()
-        if len(pots)>0:
+        pots=set(self.nodes())-set(self.sources())
+        if pots:
             raise RuntimeError(('R=\'%s\' must be total, while it ' % (R))+
                                 ('does not contains the states %s' % (pots)))
 
@@ -162,8 +163,6 @@ class Kripke(DiGraph):
     def transitions(self):
         ''' Return the edges of a Kripke structure
 
-        :param self: the Kripke object
-        :type self: Kripke
         :returns: the set of edges of the Kripke structure
         :rtype: set
         '''
@@ -172,8 +171,6 @@ class Kripke(DiGraph):
     def copy(self):
         ''' Copy a Kripke structure
 
-        :param self: the Kripke object
-        :type self: Kripke
         :returns: a copy of the Kripke structure
         :rtype: Kripke
         '''
@@ -183,24 +180,81 @@ class Kripke(DiGraph):
 
         return Kripke(self.states(),self.S0,self.transitions(),L)
 
-    def __str__(self):
-        ''' Return a string that represents a Kripke structure
+    def get_substructure(self,V):
+        ''' Return the sub-structure that respects a set of states
 
-        :param self: the Kripke object
-        :type self: Kripke
+        The sub-structure of a Kripke structure :math:`(V',E',L')` that
+        respects a set of states :math:`V` is the Kripke structure
+        :math:`(V,E,L)` where :math:`E=E'\cap(V \times V)` and
+        :math:`L(v)=L'(v)` for all :math:`s in V`.
+
+        :param V: a set of states
+        :type V: set
+        :returns: the sub-structure that respects :param:`V`
+        :rtype: Kripke
+        '''
+
+        S=V&set(self.states())
+        S0=V&self.S0
+        E=[(s,d) for (s,d) in self.transitions() if s in V and d in V]
+        L={s:S for s, S in self._next.items() if s in V }
+
+        return Kripke(S,S0,E,L)
+
+    def get_fair_states(self,F):
+        ''' Return a set of states from which leaves a fair path.
+
+        :param F: a container of fairness constraints
+        :type F: a container
+        :returns: the set of states from which leaves a fair path
+        :rtype: set
+        '''
+
+        def is_a_fair_SCC(self,scc,F):
+            v = next(iter(scc))
+            if len(scc)==1 or v not in self.next(v):
+                return False
+
+            for P in F:
+                if not set(scc)&P:
+                    return False
+
+            return True
+
+        F_set=set()
+        for SCC in compute_strongly_connected_components(self):
+            if is_a_fair_SCC(self,SCC,F):
+                F_set.update(SCC)
+
+        R_graph=self.get_reversed_graph()
+
+        return R_graph.get_reachable_set_from(F_set)
+
+    def label_fair_states(self,F):
+        ''' Label all the fair states by a new atomic proposition.
+
+        This method labels all the states from which a fair path exists by using
+        a new atomic proposition that means "there exists a fair path from
+        here". The new label is returned.
+        :returns: a new label that means "there exists a fair path from here"
+        :rtype: str
+        '''
+        labels=self.labels()
+        i=0
+        f_label='fair'
+        while f_label in labels:
+            f_label='fair%d' % (i)
+            i+=1
+
+        for s in self.get_fair_states(F):
+            self._labels[s].add(f_label)
+
+        return f_label
+
+    def __str__(self):
+        ''' Return a string that represents a Kripke structure.
+
         :returns: a string that represents the Kripke
         :rtype: str
         '''
         return '(S=%s,S0=%s,R=%s,L=%s)' % (self.states(),self.S0,self.transitions(),self._labels)
-
-
-if __name__=='__main__':
-#    K=Kripke(S=['a','b','c'],
-#             R=[('a','c'),('c','c'),('a','b')],
-#             L={'a': set(['p','q'])})
-
-    K=Kripke(S=['a','b','c'],
-             R=[('a','c'),('c','c'),('a','b'),('b','a')],
-             L={'a': set(['p','q'])})
-
-    print(K)

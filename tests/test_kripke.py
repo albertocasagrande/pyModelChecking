@@ -29,7 +29,7 @@ class TestKripke(unittest.TestCase):
             S.add(s)
             S.add(d)
 
-        self.assertEqual(self.K.states(), S)
+        self.assertEqual(set(self.K.states()), S)
 
         with self.assertRaises(RuntimeError):
             Kripke(self.S,self.S0,self.R|set([(2,4)]),self.L)
@@ -37,10 +37,10 @@ class TestKripke(unittest.TestCase):
     def test_nodes(self):
         S=self.S|set([2])
 
-        self.assertEqual(self.K.states(), S)
+        self.assertEqual(set(self.K.states()), S)
 
     def test_edges(self):
-        self.assertEqual(self.K.transitions(), self.R)
+        self.assertEqual(set(self.K.transitions()), self.R)
 
     def test_labels(self):
         AP=set()
@@ -49,7 +49,7 @@ class TestKripke(unittest.TestCase):
 
         self.assertEqual(self.K.labels(), AP)
 
-        for v in self.K.states()-set(self.L.keys()):
+        for v in set(self.K.states())-set(self.L.keys()):
             self.assertEqual(self.K.labels(v), set())
 
         for v in set(self.L.keys()):

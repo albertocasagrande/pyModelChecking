@@ -50,16 +50,16 @@ class TestFormulas(unittest.TestCase):
             self.assertEquals('not %s' % (phi),'%s' % (Not(phi)))
             if (isinstance(phi,Formula)):
                 self.assertEquals(Not(phi).get_equivalent_restricted_formula(),
-                                 (phi.get_equivalent_restricted_formula()).negate_and_simplify())
+                                 LNot(phi.get_equivalent_restricted_formula()))
 
     def test_A(self):
-        self.generic_test_unaryop(A,'A',(lambda phi: Not(E((phi.get_equivalent_restricted_formula()).negate_and_simplify()))))
+        self.generic_test_unaryop(A,'A',(lambda phi: Not(E(LNot(phi.get_equivalent_restricted_formula())))))
 
     def test_E(self):
         self.generic_test_unaryop(E,'E',(lambda phi: E(phi.get_equivalent_restricted_formula())))
 
     def test_G(self):
-        self.generic_test_unaryop(G,'G',(lambda phi: Not(F(phi.negate_and_simplify())).get_equivalent_restricted_formula()))
+        self.generic_test_unaryop(G,'G',(lambda phi: Not(F(LNot(phi)).get_equivalent_restricted_formula())))
 
     def test_F(self):
         self.generic_test_unaryop(F,'F',(lambda phi: U(True,phi.get_equivalent_restricted_formula())))
@@ -82,19 +82,19 @@ class TestFormulas(unittest.TestCase):
                                                             psi.get_equivalent_restricted_formula())))
 
     def test_R(self):
-        self.generic_test_binaryop(R,'R',(lambda phi,psi: Not(U((phi.get_equivalent_restricted_formula()).negate_and_simplify(),
-                                                                (psi.get_equivalent_restricted_formula()).negate_and_simplify()))))
+        self.generic_test_binaryop(R,'R',(lambda phi,psi: Not(U(LNot(phi.get_equivalent_restricted_formula()),
+                                                                LNot(psi.get_equivalent_restricted_formula())))))
 
     def test_or(self):
         self.generic_test_binaryop(Or,'or',(lambda phi,psi: Or(phi.get_equivalent_restricted_formula(),
                                                                psi.get_equivalent_restricted_formula())))
 
     def test_and(self):
-        self.generic_test_binaryop(And,'and',(lambda phi,psi: Not(Or((phi.get_equivalent_restricted_formula()).negate_and_simplify(),
-                                                                     (psi.get_equivalent_restricted_formula()).negate_and_simplify()))))
+        self.generic_test_binaryop(And,'and',(lambda phi,psi: Not(Or(LNot(phi.get_equivalent_restricted_formula()),
+                                                                     LNot(psi.get_equivalent_restricted_formula())))))
 
     def test_imply(self):
-        self.generic_test_binaryop(Imply,'-->',(lambda phi,psi: Or((phi.get_equivalent_restricted_formula()).negate_and_simplify(),
+        self.generic_test_binaryop(Imply,'-->',(lambda phi,psi: Or(LNot(phi.get_equivalent_restricted_formula()),
                                                                    psi.get_equivalent_restricted_formula())))
 
 if __name__ == '__main__':

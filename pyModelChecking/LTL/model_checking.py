@@ -3,6 +3,7 @@
 from language import *
 from pyModelChecking.graph import DiGraph,compute_strongly_connected_components
 from pyModelChecking.kripke import Kripke
+from pyModelChecking.CTLS import LNot as LNot
 
 import sys
 
@@ -30,14 +31,14 @@ def get_closure(formula):
         phi=T.pop()
         if phi not in closure:
             closure.add(phi)
-            T.append(phi.negate_and_simplify())
+            T.append(LNot(phi))
             if isinstance(phi,CTLS.X):
                 T.append(phi.subformula(0))
             else:
                 if (isinstance(phi,CTLS.Not) and
                     isinstance(phi.subformula(0),CTLS.X)):
                     sf=phi.subformula(0).subformula(0)
-                    T.append(Lang.X(sf.negate_and_simplify()))
+                    T.append(Lang.X(LNot(sf)))
                 else:
                     if isinstance(phi,CTLS.Or):
                         T.append(phi.subformula(0))
@@ -122,7 +123,7 @@ def build_atoms(K,closure):
         Lang=sys.modules[phi.__module__]
 
         if phi!=Lang.Not(True) and phi!=Lang.Bool(False):
-            neg_phi=phi.negate_and_simplify()
+            neg_phi=LNot(phi)
 
             A_tail=[]
             if isinstance(phi,CTLS.Bool):
@@ -138,7 +139,7 @@ def build_atoms(K,closure):
 
             if (isinstance(phi,CTLS.Or)):
                 sf=phi.subformulas()
-                neg_sf=[p.negate_and_simplify() for p in sf]
+                neg_sf=[LNot(p) for p in sf]
 
                 for atom in A:
                     if (sf[0] in atom or sf[1] in atom):
@@ -153,15 +154,15 @@ def build_atoms(K,closure):
                 for atom in A:
                     if phi.subformula(0) not in atom:
                         if phi not in atom:
-                            new_atom=atom|set([phi,Lang.X(sf.negate_and_simplify())])
+                            new_atom=atom|set([phi,Lang.X(LNot(sf))])
                             A_tail.append(new_atom)
                             atom.add(phi.subformula(0))
                         else:
-                            atom.add(Lang.X(sf.negate_and_simplify()))
+                            atom.add(Lang.X(LNot(sf)))
 
             if isinstance(phi,CTLS.U):
                 sf=phi.subformulas()
-                neg_sf=[p.negate_and_simplify() for p in sf]
+                neg_sf=[LNot(p) for p in sf]
 
                 for atom in A:
                     if (sf[1] in atom):
@@ -237,7 +238,7 @@ def checkE_path_formula(kripke,p_formula):
 
     return set([T.atoms[i].state for i in R if p_formula in T.atoms[i] ])
 
-def modelcheck(kripke,formula):
+def modelcheck(kripke,formula,F=None):
     if not (isinstance(formula,CTLS.A)):
         raise TypeError('expected a LTL state formula, got %s' % (formula))
 
@@ -245,8 +246,16 @@ def modelcheck(kripke,formula):
         raise TypeError('expected a Kripke structure, got %s' % (kripke))
 
     try:
-        p_formula=(formula.subformula(0)).negate_and_simplify().get_equivalent_restricted_formula()
+        p_formula=LNot(formula.subformula(0)).get_equivalent_restricted_formula()
 
-        return kripke.states()-checkE_path_formula(kripke,p_formula)
+        if F!=None:
+            kripke=kripke.copy()
+
+            fair_label=kripke.label_fair_states(F)
+
+            p_formula=p_formula.get_equivalent_non_fair_formula(fair_label)
+            p_formula=And(fair_label,p_formula)
+
+        return set(kripke.states())-checkE_path_formula(kripke,p_formula)
     except TypeError:
         raise TypeError('expected a LTL formula, got %s' % (formula))
