@@ -242,9 +242,11 @@ class A(PathQuantifier,AlphabeticSymbol):
         return Lang.Not(Lang.E(LNot(subformula)))
 
     def get_equivalent_non_fair_formula(self,fairAP):
-        formula=Lang.E(LNot(self.subformula(0)))
+        Lang=sys.modules[self.__module__]
 
-        return Lang.Not(formula.get_equivalent_non_fair_formula(fairAP))
+        sf=self.subformula(0).get_equivalent_non_fair_formula(fairAP)
+
+        return self.__class__(LNot(Lang.And(LNot(sf),fairAP)))
 
     def is_a_state_formula(self):
         return True

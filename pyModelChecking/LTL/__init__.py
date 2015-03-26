@@ -25,5 +25,4 @@ formulas having the form "p", "not phi", "phi or psi", "X phi", or
 
 from .language import *
 from .model_checking import modelcheck
-from .model_checking import checkE_path_formula
 from pyModelChecking.CTLS import LNot as LNot

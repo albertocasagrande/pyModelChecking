@@ -72,17 +72,15 @@ def checkQuantifiedFormula(kripke,formula,fair_label=None):
         if fair_label!=None:
             formula=formula.get_equivalent_non_fair_formula(fair_label)
 
-        restricted_formula=formula.get_equivalent_restricted_formula()
+        if (not isinstance(formula,A)):
+            if (isinstance(formula,E)):
+                formula=LNot(A(LNot(formula.subformula(0))))
 
-        if isinstance(restricted_formula,Not):
-            LTL_path_formula= restricted_formula.subformula(0).subformula(0)
+            formula=remove_state_subformulas(kripke,formula)
 
-            return set(kripke.states())-LTL.checkE_path_formula(kripke,LTL_path_formula)
+            return CTL.modelcheck(kripke,formula)
 
-        LTL_path_formula= restricted_formula.subformula(0)
-
-        return LTL.checkE_path_formula(kripke,LTL_path_formula)
-
+        return LTL.modelcheck(kripke,formula)
 
 def modelcheck(kripke,formula,F=None):
 

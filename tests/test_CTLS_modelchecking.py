@@ -37,7 +37,10 @@ class TestCTLSModelChecking(unittest.TestCase):
                                   6:set(['Start','Close','Heat'])}),
                            [(A(G(Imply(And(Not('Close'),'Start'),
                                   A(Or(G(Not('Heat')),F(Not('Error'))))))),
-                             set([0,1,2,3,4,5,6]),None)])]
+                             set([0,1,2,3,4,5,6]),None),
+                            (A(G(Imply(And(Not('Close'),'Start'),
+                                   A(Or(G(Not('Heat')),F(Not('Error'))))))),
+                              set([]),set([6]))])]
 
     def test_modelchecking(self):
         for kripke,instances in self.problems:
