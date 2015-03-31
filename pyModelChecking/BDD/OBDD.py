@@ -240,6 +240,14 @@ class OBDD(object):
             else:
                 raise TypeError('expected a BDD or a str, got %s' % (bfunct))
 
+    def variables(self):
+        ''' Return the variables in an OBDD.
+
+        :returns: the set of the variables represented in the OBDD
+        :rtype: set
+        '''
+        return self.bdd.variables()
+
     def __eq__(self,A):
         ''' Check whether two OBDD are the same.
 

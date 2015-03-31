@@ -11,34 +11,6 @@ __status__ = "Development"
 
 from .ordering import Ordering
 
-def BDD_respect_ordering(bdd,O,last_var=None):
-    ''' Test whether a BDD respects an Ordering.
-
-    :param bdd: a BDD
-    :type bdd: BDD
-    :param O: the ordering to be tested
-    :type O: Ordering
-    :param last_var: the last variable whose order has been checked
-    :type last_var: str
-    :returns: the first non parsed index
-    :rtype: int
-    '''
-
-    if last_var!=None and last_var not in O:
-        raise RuntimeError('%s in not in %s' % (last_var,O))
-
-    if isinstance(bdd, BDD_terminal):
-        return True
-
-    if isinstance(bdd, BDD_non_terminal):
-        if last_var!=None and O.in_order(bdd.var,last_var):
-            return False
-
-        return (BDD_respect_ordering(bdd.high,O,bdd.var) and
-                BDD_respect_ordering(bdd.low,O,bdd.var))
-
-    TypeError('expected a BDD, got %s'%(bdd))
-
 def BDDsons_and_BDD(A,B,operator,ordering,result_cache):
     low=boolean_function(A.low,B,operator,ordering,result_cache)
     high=boolean_function(A.high,B,operator,ordering,result_cache)
@@ -106,18 +78,21 @@ class BDD(object):
         return id(self)
 
     def reset(self):
-        self.p_low=set([])
-        self.p_high=set([])
+        self.f_low=set([])
+        self.f_high=set([])
+
+    def variables(self):
+        return set([node.var for node in self.nodes() if isinstance(node,BDD_non_terminal)])
 
     def __repr__(self):
         return self.__str__()
 
 def find_isomorph(var,low,high):
-    if len(low.p_low)<len(high.p_high):
-        node_set=low.p_low
+    if len(low.f_low)<len(high.f_high):
+        node_set=low.f_low
         lh_test=(lambda low,high: high is node.high)
     else:
-        node_set=high.p_high
+        node_set=high.f_high
         lh_test=(lambda low,high: low is node.low)
 
     for node in node_set:
@@ -126,6 +101,7 @@ def find_isomorph(var,low,high):
             return node
 
     return None
+
 
 class BDD_non_terminal(BDD):
     def __new__(cls,var,low,high):
@@ -145,11 +121,42 @@ class BDD_non_terminal(BDD):
 
         return node
 
-    def respect_ordering(self,O):
+    def respect_ordering(self,O,checked=None):
+        ''' Test whether a BDD respects an Ordering.
+
+        :param O: the ordering to be tested
+        :type O: Ordering
+        :param checked: already checked nodes
+        :type checked: set
+        :returns: True if the variable of node is smaller that those of
+                  node.low and node.high for any node in the subgraph rooted
+                  in self, False otherwise
+        :rtype: bool
+        '''
         if not isinstance(O,Ordering):
             TypeError('expected an Ordering, got %s'%(O))
 
-        return BDD_respect_ordering(self,O)
+        if checked==None:
+            checked=set()
+
+        if self in checked:
+            return True
+
+        if self.var not in O:
+            raise RuntimeError('%s in not in %s' % (self.var,O))
+
+        for fathers in [self.f_low,self.f_high]:
+            for father in fathers:
+                if O.in_order(self.var,father.var):
+                    return False
+
+        if (self.high.respect_ordering(O,checked) and
+                self.low.respect_ordering(O,checked)):
+            checked.add(self)
+
+            return True
+            
+        return False
 
     def reset(self,var,low,high):
         super(BDD_non_terminal,self).reset()
@@ -158,14 +165,31 @@ class BDD_non_terminal(BDD):
         self.low=low
         self.high=high
 
-        self.low.p_low.add(self)
-        self.high.p_high.add(self)
+        self.low.f_low.add(self)
+        self.high.f_high.add(self)
 
-    def nodes(self):
-        return [self]+self.high.nodes()+self.low.nodes()
+    def nodes(self,visited=None):
+        if visited==None:
+            visited=set()
 
-    def __invert__(self):
-        return BDD_non_terminal(self.var,~self.low,~self.high)
+        if self in visited:
+            return []
+
+        visited.add(self)
+
+        return ([self]+self.low.nodes(visited)+self.high.nodes(visited))
+
+    def __invert__(self,result_cache=None):
+        if result_cache==None:
+            result_cache=dict()
+
+        if self in result_cache:
+            return result_cache[self]
+
+        result_cache[self]=BDD_non_terminal(self.var,
+                                            self.low.__invert__(result_cache),
+                                            self.high.__invert__(result_cache))
+        return result_cache[self]
 
     def __eq__(self,O):
         return (isinstance(O,BDD_non_terminal) and
@@ -201,17 +225,42 @@ class BDD_terminal(BDD):
 
         return BDD_terminal.Tnodes[value]
 
-    def respect_ordering(self,O):
+    def respect_ordering(self,O,checked=None):
+        ''' Test whether a BDD respects an Ordering.
+
+        :param O: the ordering to be tested
+        :type O: Ordering
+        :param checked: already checked nodes
+        :type checked: set
+        :returns: True
+        :rtype: bool
+        '''
         return True
 
     def reset(self,value):
         super(BDD_terminal,self).reset()
         self.value=value
 
-    def __invert__(self):
-        return BDD_terminal(not self.value)
+    def __invert__(self,result_cache=None):
+        if result_cache==None:
+            result_cache=dict()
 
-    def nodes(self):
+        if self in result_cache:
+            return result_cache[self]
+
+        result_cache[self]=BDD_terminal(not self.value)
+
+        return result_cache[self]
+
+    def nodes(self,visited=None):
+        if visited==None:
+            visited=set()
+
+        if self in visited:
+            return []
+
+        visited.add(self)
+
         return [self]
 
     def __eq__(self,O):

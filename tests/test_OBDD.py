@@ -27,6 +27,10 @@ class TestOBDD(unittest.TestCase):
         self.assertEquals('%s' % (self.b),'~a')
         self.assertEquals('%s' % (self.c),'~c & ~a')
         self.assertEquals('%s' % (self.d),'~b')
+        self.assertEquals(self.a.variables(),set(['a']))
+        self.assertEquals(self.b.variables(),set(['a']))
+        self.assertEquals(self.c.variables(),set(['a','c']))
+        self.assertEquals(self.d.variables(),set(['b']))
 
     def test_OBDD(self):
         oa=OBDD(self.ordering,self.a)
@@ -38,6 +42,9 @@ class TestOBDD(unittest.TestCase):
         self.assertEquals('%s' % (oa&ob),'False')
         self.assertEquals('%s' % (oa|ob),'(~c) | (c & a)')
         self.assertEquals('%s' % (~(oa&ob)|(oa|ob)),'True')
+
+        self.assertEquals(oa.variables(),set(['a']))
+        self.assertEquals(ob.variables(),set(['a','c']))
 
         with self.assertRaises(RuntimeError):
             OBDD(self.ordering,self.d)
