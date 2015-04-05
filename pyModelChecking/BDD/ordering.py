@@ -19,8 +19,8 @@ class Ordering(object):
         if isinstance(ordering,list):
             return ListOrdering(ordering)
 
-        if isinstance(ordering,function):
-            return FunctionOrdering(ordering)
+        #if isinstance(ordering,function):
+        #    return FunctionOrdering(ordering)
 
         TypeError('unsupported ordering %s' % (ordering))
 
