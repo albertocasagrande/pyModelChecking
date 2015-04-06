@@ -98,7 +98,7 @@ Kripke Structures
 A **Kripke structure** is a :ref:`directed graph<digraph>`,
 equipped with a set of initial nodes,
 such that every node is source of some edge and it is labeled by a
-set of *atomic propositions*.
+set of *atomic propositions* [CGP00]_.
 The nodes of Kripke structure are called *states*.
 
 Kripke structure
@@ -117,3 +117,9 @@ Sometime, the set of initial states is omitted. In such cases, :math:`S` and
 
 A **computation** of a Kripke structure :math:`(S,S_0,R,L)` is an infinite
 path of :math:`(S,R)` that starts from some :math:`s \in S_0`.
+
+References
+==========
+
+.. [CGP00] E. M. Clarke, O. Grumberg, D. A. Peled. "Model Checking" MIT Press,
+           Cambridge, MA, USA. 2000.
