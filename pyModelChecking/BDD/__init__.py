@@ -44,7 +44,7 @@ the same variable ordering, it is possible to:
   * the bitwise binary combinations of the functions `f_1` and `f_2` in time O(|f_1|+|f_2|).
 
 .. [Bryant86] Randal E. Bryant. "Graph-Based Algorithms for Boolean Function Manipulation".
-              IEEE Transactions on Computers, C-35(8):677–691, 1986.
+              IEEE Transactions on Computers, C-35(8):677-691, 1986.
 
 [digraph]: https://en.wikipedia.org/wiki/Directed_graph
 '''

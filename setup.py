@@ -2,9 +2,14 @@
 
 from setuptools import setup, find_packages
 
+with open('README.md') as f:
+    long_desc = f.read()
+
 setup(name='pyModelChecking',
-      version='0.1.1',
+      version='0.1.5',
       description='A simple Python model checking package',
+      long_description=long_desc,
+      long_description_content_type='text/markdown', 
       keywords = "model checking temporal logics kripke structure",
       author='Alberto Casagrande',
       author_email='acasagrande@units.it',

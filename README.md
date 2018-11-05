@@ -10,26 +10,22 @@ In future, it will hopefully support symbolic model checking.
 [LTL]: https://en.wikipedia.org/wiki/Linear_temporal_logic
 [CTLS]: https://en.wikipedia.org/wiki/CTL*
 
-### Setup
+### Usage 
 
-Simply clone the project and execute the following command as superuser:
-
-```
-python setup.py install
-```
-
-### A simple example
-First of all, we built a Kripke structure.
+First of all, import all the functions and all the classes in the package.
 
 ```python
 >>> from pyModelChecking import *
+```
 
+In order to represent a Kripke structure use the `Kripke` class. 
+
+```
 >>> K=Kripke(R=[(0,0),(0,1),(1,2),(2,2),(3,3)],
 ...          L={0: set(['p']), 1:set(['p','q']),3:set(['p'])})
 ```
 
-Then, we imported the CTL temporal language and we tried to build
-the two CTL formulas
+CTL can be represented by importing the `CTL` module.
 
 ```python
 >>> from pyModelChecking.CTL import *
@@ -39,21 +35,22 @@ the two CTL formulas
 >>> print(phi)
 
 A(True U (q or not (EX p)))
+```
 
+Whenever a non-CTL formula is built, an exception is thrown. 
+
+```python
 >>> psi=A(F(G('p')))
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
-  File "pyModelChecking/CTL/language.py", line 41, in __init__
+  File "pyModelChecking/CTL/language.py", line 42, in __init__
     self.wrap_subformulas(phi,StateFormula)
-  File "pyModelChecking/CTLS/language.py", line 49, in wrap_subformulas
-    raise TypeError('%s must be a %s' % (phi,FormulaClass.__name__))
-TypeError: G p must be a StateFormula
+  File "pyModelChecking/CTLS/language.py", line 59, in wrap_subformulas
+    phi.__desc__,phi))
+TypeError: expected a CTL state formula, got the CTL path formula G p
 ```
 
-Apparently, `AFG p` is not a CTL formula (`F()` takes only state formulas as
-parameters).
-
-We found the states of `K` that model the formula `phi`.
+The function `modelcheck` in module `CTL` found the states of Kripke structure that model a given CTL formula.
 
 ```python
 >>>  modelcheck(K,phi)
@@ -61,8 +58,9 @@ We found the states of `K` that model the formula `phi`.
 set([1, 2])
 ```
 
-Since `AFG p` is a LTL formula, we imported the LTL temporal language and
-we used LTL model checking to establish which states of `K` satisfy it.
+The formula `AFG p`, which we tried to build above, is a LTL formula. 
+The `LTL` module can be used to represent and 
+model check it over any Kripke structure.
 
 ```python
 >>> from pyModelChecking.LTL import *
@@ -78,7 +76,7 @@ A(G(F(p))
 set([3])
 ```
 
-We built two CTL* formulas.
+The module `CTLS` is meant to deal with CTL* formulas. It can combine and model checks also CTL and LTL formulas.
 
 ```python
 >>> from pyModelChecking.CTLS import *
@@ -94,9 +92,29 @@ We built two CTL* formulas.
 >>> print(rho,rho.__class__)
 
 (A(G((X(p) and p))), <class 'pyModelChecking.CTLS.language.A'>)
+
+>>> gamma=And(phi, psi)
+
+>>> print(gamma,gamma.__class__)
+
+(A(True U (q or not (EX p))) and A(G(F(p)))), <class 'pyModelChecking.CTLS.language.And'>)
+
+>>> modelcheck(K,eta)
+
+set([0, 1, 2, 3])
+
+>>> modelcheck(K, psi)
+
+set([3])
+
+>>> modelcheck(K, gamma)
+
+set([3])
+
 ```
 
-Finally, we tried to model checking them.
+Whenever a CTL* formula is a CTL formula (LTL formula), CTL (LTL) model checking can 
+be applied to it. 
 
 ```python
 >>> import pyModelChecking.CTL as CTL
