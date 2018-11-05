@@ -10,6 +10,14 @@ In future, it will hopefully support symbolic model checking.
 [LTL]: https://en.wikipedia.org/wiki/Linear_temporal_logic
 [CTLS]: https://en.wikipedia.org/wiki/CTL*
 
+### Setup
+
+Simply clone the project and execute the following command as superuser:
+
+```
+python setup.py install
+```
+
 ### A simple example
 First of all, we built a Kripke structure.
 
