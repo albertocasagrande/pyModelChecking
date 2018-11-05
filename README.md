@@ -1,5 +1,5 @@
 # pyModelChecking
-pyModelChecking is a simple Python model checking package. Currently, it is able to represent
+*pyModelChecking* is a small Python model checking package. Currently, it is able to represent
 [Kripke structures][Kripke], [CTL][CTL], [LTL][LTL], and [CTL*][CTLS] formulas and
 it provides [model checking][modelchecking] methods for LTL, CTL, and CTL*.
 In future, it will hopefully support symbolic model checking.
@@ -42,10 +42,10 @@ Traceback (most recent call last):
 TypeError: G p must be a StateFormula
 ```
 
-Apparently, $AFG p$ is not a CTL formula (F() takes only state formulas as
+Apparently, `AFG p` is not a CTL formula (`F()` takes only state formulas as
 parameters).
 
-We found the states of $K$ that model the formula $\phi$.
+We found the states of `K` that model the formula `phi`.
 
 ```python
 >>>  modelcheck(K,phi)
@@ -53,8 +53,8 @@ We found the states of $K$ that model the formula $\phi$.
 set([1, 2])
 ```
 
-Since $AFG p$ is a LTL formula, we imported the LTL temporal language and
-we used LTL model checking to establish which states of $K$ satisfy it.
+Since `AFG p` is a LTL formula, we imported the LTL temporal language and
+we used LTL model checking to establish which states of `K` satisfy it.
 
 ```python
 >>> from pyModelChecking.LTL import *
@@ -75,7 +75,7 @@ We built two CTL* formulas.
 ```python
 >>> from pyModelChecking.CTLS import *
 
->>> eta=A(F(E(U(True,Imply('p',Not('q'))))
+>>> eta=A(F(E(U(True,Imply('p',Not('q'))))))
 
 >>> print(eta,eta.__class__)
 
@@ -114,7 +114,7 @@ set([3])
 ### Copyright and license
 
 pyModelChecking
-Copyright (C) 2015  Alberto Casagrande <acasagrande@units.it>
+Copyright (C) 2015-2018  Alberto Casagrande <acasagrande@units.it>
 
 pyModelChecking is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
