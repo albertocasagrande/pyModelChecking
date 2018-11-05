@@ -99,7 +99,7 @@ class Formula(object):
         if symbol_name not in Lang.alphabet:
             raise TypeError(('%s is not in the alphabet ' % (symbol_name))+
                             ('of %s, thus %s is ' % (Lang.__name__,self))+
-                            ('not a %s formula' % (self,Lang.__name__)))
+                            ('not a %s formula' % (Lang.__name__)))
 
         subformulas=[]
         for subformula in self.subformulas():

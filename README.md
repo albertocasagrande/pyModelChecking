@@ -50,7 +50,7 @@ Traceback (most recent call last):
 TypeError: expected a CTL state formula, got the CTL path formula G p
 ```
 
-The function `modelcheck` in module `CTL` found the states of Kripke structure that model a given CTL formula.
+The function `modelcheck` in module `CTL` finds the states of Kripke structure that model a given CTL formula.
 
 ```python
 >>>  modelcheck(K,phi)
@@ -67,16 +67,16 @@ model check it over any Kripke structure.
 
 >>> psi=A(F(G('p')))
 
->>> print(phi)
+>>> print(psi)
 
 A(G(F(p))
 
->>> modelcheck(K,phi)
+>>> modelcheck(K,psi)
 
 set([3])
 ```
 
-The module `CTLS` is meant to deal with CTL* formulas. It can combine and model checks also CTL and LTL formulas.
+The module `CTLS` is meant to deal with CTL* formulas. It can also combine and model checks CTL and LTL formulas.
 
 ```python
 >>> from pyModelChecking.CTLS import *
@@ -109,7 +109,7 @@ set([3])
 
 >>> modelcheck(K, gamma)
 
-set([3])
+set([])
 
 ```
 
