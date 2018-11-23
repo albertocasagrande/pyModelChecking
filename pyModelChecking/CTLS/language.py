@@ -1,513 +1,494 @@
-#!/usr/bin/env python
+"""
+.. module:: CTLS.language
+   :synopsis: Represents the CTL* language.
+
+.. moduleauthor:: Alberto Casagrande <acasagrande@units.it>
+"""
 
 import sys
 import inspect
 
+from .. import language as PL
+
+from ..language import LNot
+from ..language import AlphabeticSymbol
+from ..language import get_alphabet
+
 __author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015"
+__copyright__ = "Copyright 2015-2018"
 __credits__ = ["Alberto Casagrande"]
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "0.2"
 __maintainer__ = "Alberto Casagrande"
 __email__ = "acasagrande@units.it"
 __status__ = "Development"
 
 
-class Formula(object):
+class Formula(PL.Formula):
+    ''' A class to represent CTL* formulas.
+
+    Formulas are represented as nodes in labelled trees: leaves are
+    terminal symbols (e.g., atomic propositions and Boolean values),
+    while internal nodes correspond to operators and quantifiers.
+    The ariety of internal nodes depends on the kind of operator or
+    quantifier must be represented. For instance, the arity of a node
+    representing the formula :math:`not (A(p U q) \lor True)` is one because
+    the formula has exclusively one sub-formula, i.e.,
+    :math:`A(p U q) \lor True`. On the contrary, this last formula has
+    two sub-formulas, i.e., :math:`A(p U q)` and  :math:`True`, thus, the node
+    representing it has two sons.
     '''
-    A class representing CTL* formulas.
 
-    '''
+    __desc__ = 'CTL* formula'
 
-    __desc__='CTL* formula'
+    def __init__(self, *phi):
+        self.wrap_subformulas(phi, sys.modules[self.__module__].Formula)
 
-    def __init__(self,*phi):
-        self.wrap_subformulas(phi,sys.modules[self.__module__].Formula)
-
-    def wrap_subformulas(self,subformulas,FormulaClass):
-
-        Lang=sys.modules[self.__module__]
-
-        self._subformula=[]
-        self.height=0
-
-        for phi in subformulas:
-            if isinstance(phi,bool):
-                self._subformula.append(Lang.Bool(phi))
-            else:
-                if isinstance(phi,str):
-                    self._subformula.append(Lang.AtomicProposition(phi))
-                else:
-                    if isinstance(phi,FormulaClass):
-                        self._subformula.append(phi)
-                        self.height=max(self.height,phi.height+1)
-                    else:
-                        if ((not isinstance(phi,Lang.Formula)) and
-                                isinstance(phi,Formula)):
-                            psi=phi.cast_to(Lang)
-
-                            if isinstance(psi,FormulaClass):
-                                self._subformula.append(psi)
-                                self.height=max(self.height,psi.height+1)
-                            else:
-                                raise TypeError('expected a %s, got the %s %s' %
-                                                (FormulaClass.__desc__,
-                                                 phi.__desc__,phi))
-                        else:
-                            raise TypeError('expected a %s, got the %s %s' %
-                                                (FormulaClass.__desc__,
-                                                 phi.__desc__,phi))
-
-    def copy(self):
-        return self.__class__(*[sf.copy() for sf in self._subformula])
-
-    def __hash__(self):
-        return str(self).__hash__()
-
-    def __cmp__(self,other):
-        self_str=str(self)
-        other_str=str(other)
-        if (self_str<other_str):
-            return -1
-
-        if (self_str>other_str):
-            return 1
-
-        return 0
-
-    def subformula(self,idx):
-        return self._subformula[idx]
-
-    def subformulas(self):
-        return self._subformula
-
-    def get_equivalent_non_fair_formula(self,fairAP):
-        fair_sfs=[sf.get_equivalent_non_fair_formula(fairAP) for sf in self._subformula]
+    def get_equivalent_non_fair_formula(self, fairAP):
+        fair_sfs = [sf.get_equivalent_non_fair_formula(fairAP)
+                    for sf in self._subformula]
 
         return self.__class__(*fair_sfs)
 
     def is_a_state_formula(self):
-        raise RuntimeError('%s.is_a_state_formula() not implemented yet' % (self.__class__))
+        ''' Returns True if and only if the object represents a state formula.
 
-    def cast_to(self,Lang):
-        if isinstance(self,Bool):
-            return Lang.Bool(bool(self._value))
-        if isinstance(self,AtomicProposition):
-            return Lang.AtomicProposition(str(self.name))
+        This method should return True if and only if the current object
+        represents a state formula. Since this is a general class meant to
+        represent both state and path formulas, an implementation for this
+        method cannot be provided. Thus, any call to it raise a
+        :class:`RuntimeError`.
 
-        symbol_name=self.__class__.__name__
-        if symbol_name not in Lang.alphabet:
-            raise TypeError(('%s is not in the alphabet ' % (symbol_name))+
-                            ('of %s, thus %s is ' % (Lang.__name__,self))+
-                            ('not a %s formula' % (Lang.__name__)))
+        :param self: this formula
+        :type self: CTLS.Formula
+        :raise RuntimeError: this method cannot be implemented by this general
+            class
+        '''
+        raise RuntimeError('{}.is_a_state_formula() '.format(self.__class__) +
+                           'not implemented yet')
 
-        subformulas=[]
-        for subformula in self.subformulas():
-            subformulas.append(Formula.cast_to(subformula,Lang))
 
-        return Lang.alphabet[symbol_name](*subformulas)
+class PathFormula(Formula):
+    '''
+    A class representing CTL* path formulas.
 
-    def __repr__(self):
-        return str(self)
+    '''
 
-class AlphabeticSymbol(object):
-    pass
+    __desc__ = 'CTL* path formula'
 
-class TemporalOperator(Formula):
-    pass
+    def is_a_state_formula(self):
+        ''' Returns True if and only if the object has type :class:`StateFormula`.
 
-class PathQuantifier(Formula):
-    pass
+        This method returns True if and only if the current object has
+        type :class:`CTLS.StateFormula`. Since this is a method of the
+        class :class:`CTLS.PathFormula`, it always returns False.
 
-class LogicaOperator(Formula):
-    pass
+        :param self: this formula
+        :type self: CTLS.PathFormula
+        :returns: False
+        :rtype: bool
+        '''
+        return False
 
-class AtomicProposition(Formula,AlphabeticSymbol):
+    def __init__(self, *phi):
+        self.wrap_subformulas(phi, sys.modules[self.__module__].Formula)
+
+
+class StateFormula(PathFormula):
+    '''
+    A class representing CTL* state formulas.
+
+    '''
+
+    __desc__ = 'CTL* state formula'
+
+    def is_a_state_formula(self):
+        ''' Returns True if and only if the object has type :class:`StateFormula`.
+
+        This method returns True if and only if the current object has
+        type :class:`CTLS.StateFormula`. Since this is a method of the
+        class :class:`CTLS.StateFormula`, it always returns True.
+
+        :param self: this formula
+        :type self: CTLS.StateFormula
+        :returns: True
+        :rtype: bool
+        '''
+        return True
+
+    def __init__(self, *phi):
+        self.wrap_subformulas(phi, sys.modules[self.__module__].Formula)
+
+
+class AtomicProposition(PL.AtomicProposition, StateFormula):
     '''
     The class representing atomic propositionic propositions.
 
     '''
-    def __init__(self,name):
+    def __init__(self, name):
         ''' Initialize a CTL* atomic proposition.
 
         This method builds a CTL* atomic propositionic proposition.
 
-        :param name: the name of the atomic proposition that should be represented.
+        :param name: the name of the atomic proposition.
         :type name: str
         '''
-        if not isinstance(name,str):
-            raise TypeError('name=\'%s\' must be a string' % (name))
-        self.name=str(name)
-        self.height=0
-
-    def copy(self):
-        return self.__class__(str(self.name))
+        super(AtomicProposition, self).__init__(name)
 
     def get_equivalent_restricted_formula(self):
-        return self.copy()
+        ''' Return an equivalent formula in the restricted syntax.
 
-    def get_equivalent_non_fair_formula(self,fairAP):
-        Lang=sys.modules[self.__module__]
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula. Since this is a method of the class
+        :class:`CTLS.AtomicProposition`, a clone of the current object is
+        always returned.
 
-        return Lang.And(self,fairAP)
+        :returns: a clone of the current atomic proposition.
+        :rtype: CTLS.AtomicProposition
+        '''
+        return self.clone()
 
-    def subformula(self,idx):
-        raise TypeError('AtomicPropositions have not subformulas.')
+    def get_equivalent_non_fair_formula(self, fairAP):
+        Lang = sys.modules[self.__module__]
 
-    def subformulas(self):
-        return []
+        return Lang.And(self, fairAP)
 
-    def is_a_state_formula(self):
-        return True
 
-    def __str__(self):
-        return '%s' % (self.name)
-
-class Bool(AtomicProposition):
+class Bool(PL.Bool, AtomicProposition):
     '''
     The class of Boolean atomic propositions.
 
     '''
 
-    def __init__(self,value):
+    def __init__(self, value):
         ''' Initialize a Boolean atomic proposition.
 
         This method builds either a True or a False atomic proposition.
 
-        :param value: the boolean atomic proposition that should be represented.
+        :param value: the boolean atomic proposition.
         :type value: bool
 
         '''
-        if not isinstance(value,bool):
-            raise TypeError('\'%s\' must be boolean value' % (value))
-        self._value=value
-        self.height=0
+        super(Bool, self).__init__(value)
 
-    def copy(self):
-        ''' Copy the current object.
 
-        :returns: a copy of the current object.
-        :rtype: pyModelChecking.CTLS.Bool
+class TemporalOperator(PathFormula):
+    '''
+    A class to represent temporal operators such as :math:`R` or :math:`X`.
 
+    '''
+    pass
+
+
+class PathQuantifier(StateFormula):
+    '''
+    A class to represent the path quantifiers :math:`A` or :math:`E`.
+
+    '''
+
+    def __init__(self, phi):
+        self.wrap_subformulas([phi], Formula)
+
+
+class LogicOperator(Formula, PL.LogicOperator):
+    '''
+    A class to represent logic operator such as :math:`\land` or :math:`\lor`.
+
+    '''
+
+    def is_a_state_formula(self):
+        ''' Returns True if and only if the object represents a state formula.
+
+        This method returns True if and only if the current object represents
+        a state formula.
+
+        :param self: this formula
+        :type self: CTLS.LogicOperator
+        :returns: True if and only if the object represents a state formula.
+        :rtype: bool
         '''
-        return self.__class__(bool(self._value))
+        for sf in self.subformulas():
+            if not sf.is_a_state_formula():
+                return False
 
-    def subformula(self,idx):
-        raise TypeError('Bools have not subformulas.')
+        return True
 
-    def __str__(self):
-        ''' Return a string depicting the Boolean atomic proposition.
 
-        :returns: a string depicting the current Boolean atomic proposition.
-        :rtype: str
-        '''
-        return '%s' % (self._value)
-
-class Not(LogicaOperator,AlphabeticSymbol):
+class Not(LogicOperator, PL.Not):
 
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.Not
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and is equivalent to
+                  this formula
+        :rtype: CTLS.Not
         '''
-        subformula=self.subformula(0).get_equivalent_restricted_formula()
+        subformula = self.subformula(0).get_equivalent_restricted_formula()
 
         return LNot(subformula)
 
     def is_a_state_formula(self):
+        ''' Returns True if and only if the object represents a state formula.
+
+        This method returns True if and only if the current object represents
+        a state formula.
+
+        :param self: this formula
+        :type self: CTLS.Not
+        :returns: True if and only if this formula is a state formula.
+        :rtype: bool
+        '''
         return self.subformula(0).is_a_state_formula()
 
-    def __str__(self):
-        return 'not %s' % (self._subformula[0])
 
-class A(PathQuantifier,AlphabeticSymbol):
+class A(PathQuantifier, AlphabeticSymbol):
+    '''
+    A class representing CTL* A-formulas.
+
+    '''
+
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.Not
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and is equivalent to
+                  this formula
+        :rtype: CTLS.Not
         '''
-        subformula=self.subformula(0).get_equivalent_restricted_formula()
+        subformula = self.subformula(0).get_equivalent_restricted_formula()
 
-        Lang=sys.modules[self.__module__]
+        Lang = sys.modules[self.__module__]
         return Lang.Not(Lang.E(LNot(subformula)))
 
-    def get_equivalent_non_fair_formula(self,fairAP):
-        Lang=sys.modules[self.__module__]
+    def get_equivalent_non_fair_formula(self, fairAP):
+        Lang = sys.modules[self.__module__]
 
-        sf=self.subformula(0).get_equivalent_non_fair_formula(fairAP)
+        sf = self.subformula(0).get_equivalent_non_fair_formula(fairAP)
 
-        return self.__class__(LNot(Lang.And(LNot(sf),fairAP)))
-
-    def is_a_state_formula(self):
-        return True
+        return self.__class__(LNot(Lang.And(LNot(sf), fairAP)))
 
     def __str__(self):
         return 'A(%s)' % (self._subformula[0])
 
-class E(PathQuantifier,AlphabeticSymbol):
+
+class E(PathQuantifier, AlphabeticSymbol):
+    '''
+    A class representing CTL* A-formulas.
+
+    '''
+
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.E
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and is equivalent to
+                  this formula
+        :rtype: CTLS.E
         '''
-        subformula=self.subformula(0).get_equivalent_restricted_formula()
+        subformula = self.subformula(0).get_equivalent_restricted_formula()
 
-        Lang=sys.modules[self.__module__]
+        Lang = sys.modules[self.__module__]
         return Lang.E(subformula)
 
-    def get_equivalent_non_fair_formula(self,fairAP):
-        fair_sf=self.subformula(0).get_equivalent_non_fair_formula(fairAP)
+    def get_equivalent_non_fair_formula(self, fairAP):
+        fair_sf = self.subformula(0).get_equivalent_non_fair_formula(fairAP)
 
-        Lang=sys.modules[self.__module__]
-        return Lang.E(Lang.And(fairAP,fair_sf))
-
-    def is_a_state_formula(self):
-        return True
+        Lang = sys.modules[self.__module__]
+        return Lang.E(Lang.And(fairAP, fair_sf))
 
     def __str__(self):
-        return 'E(%s)' % (self._subformula[0])
+        return 'E({})'.format(self._subformula[0])
 
-class X(TemporalOperator,AlphabeticSymbol):
+
+class X(TemporalOperator, AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.X
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and
+                  is equivalent this formula
+        :rtype: CTLS.X
         '''
-        subformula=self.subformula(0).get_equivalent_restricted_formula()
+        subformula = self.subformula(0).get_equivalent_restricted_formula()
 
-        Lang=sys.modules[self.__module__]
+        Lang = sys.modules[self.__module__]
         return Lang.X(subformula)
 
-    def is_a_state_formula(self):
-        return False
-
     def __str__(self):
-        return 'X(%s)' % (self._subformula[0])
+        return 'X({})'.format(self._subformula[0])
 
-class F(TemporalOperator,AlphabeticSymbol):
+
+class F(TemporalOperator, AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.U
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and is equivalent to
+                  this formula
+        :rtype: CTLS.U
         '''
-        subformula=self.subformula(0).get_equivalent_restricted_formula()
+        subformula = self.subformula(0).get_equivalent_restricted_formula()
 
-        Lang=sys.modules[self.__module__]
-        return Lang.U(True,subformula)
-
-
-    def is_a_state_formula(self):
-        return False
+        Lang = sys.modules[self.__module__]
+        return Lang.U(True, subformula)
 
     def __str__(self):
-        return 'F(%s)' % (self._subformula[0])
+        return 'F({})'.format(self._subformula[0])
 
-class G(TemporalOperator,AlphabeticSymbol):
+
+class G(TemporalOperator, AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.Not
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and is equivalent to
+                  this formula
+        :rtype: CTLS.Not
         '''
-        subformula=self.subformula(0).get_equivalent_restricted_formula()
+        subformula = self.subformula(0).get_equivalent_restricted_formula()
 
-        Lang=sys.modules[self.__module__]
-        return Lang.Not(Lang.U(True,LNot(subformula)))
-
-    def is_a_state_formula(self):
-        return False
+        Lang = sys.modules[self.__module__]
+        return Lang.Not(Lang.U(True, LNot(subformula)))
 
     def __str__(self):
-        return 'G(%s)' % (self._subformula[0])
+        return 'G({})'.format(self._subformula[0])
 
-class Or(LogicaOperator,AlphabeticSymbol):
+
+class Or(LogicOperator, PL.Or):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.Or
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and is equivalent to
+                  this formula
+        :rtype: CTLS.Or
         '''
-        subformulas=[p.get_equivalent_restricted_formula() for p in self._subformula]
+        subformulas = [p.get_equivalent_restricted_formula()
+                       for p in self._subformula]
 
-        Lang=sys.modules[self.__module__]
+        Lang = sys.modules[self.__module__]
         return Lang.Or(*subformulas)
 
-    def is_a_state_formula(self):
-        for sf in self.subformulas():
-            if not sf.is_a_state_formula():
-                return False
 
-        return True
-
-    def __str__(self):
-        return '(%s or %s)' % (self._subformula[0],self._subformula[1])
-
-class And(LogicaOperator,AlphabeticSymbol):
+class And(LogicOperator, PL.And):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.Not
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and is equivalent to
+                  this formula
+        :rtype: CTLS.Not
         '''
-        subformulas=[]
+        subformulas = []
         for p in self._subformula:
-            equi_p=p.get_equivalent_restricted_formula()
+            equi_p = p.get_equivalent_restricted_formula()
             subformulas.append(LNot(equi_p))
 
-        Lang=sys.modules[self.__module__]
+        Lang = sys.modules[self.__module__]
         return Lang.Not(Lang.Or(*subformulas))
 
-    def is_a_state_formula(self):
-        for sf in self.subformulas():
-            if not sf.is_a_state_formula():
-                return False
 
-        return True
-
-    def __str__(self):
-        return '(%s and %s)' % (self._subformula[0],self._subformula[1])
-
-class Imply(LogicaOperator,AlphabeticSymbol):
+class Imply(LogicOperator, PL.Imply):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.Not
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and is equivalent to
+                  this formula
+        :rtype: CTLS.Not
         '''
-        equiv_sf0=self.subformula(0).get_equivalent_restricted_formula()
+        equiv_sf0 = self.subformula(0).get_equivalent_restricted_formula()
 
-        Lang=sys.modules[self.__module__]
+        Lang = sys.modules[self.__module__]
         return Lang.Or(LNot(equiv_sf0),
-                    self.subformula(1).get_equivalent_restricted_formula())
+                       self.subformula(1).get_equivalent_restricted_formula())
 
-    def is_a_state_formula(self):
-        for sf in self.subformulas():
-            if not sf.is_a_state_formula():
-                return False
 
-        return True
-
-    def __str__(self):
-        return '(%s --> %s)' % (self._subformula[0],self._subformula[1])
-
-class U(TemporalOperator,AlphabeticSymbol):
+class U(TemporalOperator, AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.U
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and is equivalent to
+                  this formula
+        :rtype: CTLS.U
         '''
-        subformulas=[]
+        subformulas = []
         for p in self._subformula:
             subformulas.append(p.get_equivalent_restricted_formula())
 
-        Lang=sys.modules[self.__module__]
+        Lang = sys.modules[self.__module__]
         return Lang.U(*subformulas)
 
-    def is_a_state_formula(self):
-        return False
-
     def __str__(self):
-        return '(%s U %s)' % (self._subformula[0],self._subformula[1])
+        return '({} U {})'.format(self._subformula[0], self._subformula[1])
 
-class R(TemporalOperator,AlphabeticSymbol):
+
+class R(TemporalOperator, AlphabeticSymbol):
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
-        This method returns a formula that avoids "and", "implies", "A", "F",
-        and "R" and that is equivalent to this formula.
+        This method returns a formula that avoids :math:`A`, :math:`F`,
+        :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
+        this formula.
 
-        :returns: a formula that avoids "and", "implies", "A", "F", and "R" and
-                  that is equivalent to this formula
-        :rtype: pyModelChecking.CTLS.Not
+        :returns: a formula that avoids :math:`A`, :math:`F`, :math:`R`,
+                  :math:`\land` and :math:`\\rightarrow` and is equivalent to
+                  this formula
+        :rtype: CTLS.Not
         '''
-        subformulas=[]
+        subformulas = []
         for p in self._subformula:
-            equi_p=p.get_equivalent_restricted_formula()
+            equi_p = p.get_equivalent_restricted_formula()
             subformulas.append(LNot(equi_p))
 
-        Lang=sys.modules[self.__module__]
+        Lang = sys.modules[self.__module__]
         return Lang.Not(Lang.U(*subformulas))
 
-    def is_a_state_formula(self):
-        return False
-
     def __str__(self):
-        return '(%s R %s)' % (self._subformula[0],self._subformula[1])
-
-def get_alphabet(name):
-    alphabet={}
-    for name, obj in inspect.getmembers(sys.modules[name], inspect.isclass):
-        if obj!=AlphabeticSymbol and issubclass(obj,AlphabeticSymbol):
-            alphabet[name]=obj
-
-    return alphabet
+        return '({} R {})'.format(self._subformula[0], self._subformula[1])
 
 
-def LNot(formula):
-    ''' Logical Not - Return an equivalent formula that does not begin with two
-    negations.
-
-    This method negates the parameter and removes all the pairs of negations at
-    the begin of the obtained formula.
-
-    :param formula: a formula
-    :type formula: Formula
-    :returns: a formula equivalent to the parameter that does not begin with
-        two negations
-    :rtype: Formula
-    '''
-
-    if isinstance(formula,Not):
-        if isinstance(formula.subformula(0),Not):
-            return LNot(formula.subformula(0))
-        return formula.subformula(0)
-
-    return sys.modules[formula.__module__].Not(formula)
-
-alphabet=get_alphabet(__name__)
+alphabet = get_alphabet(__name__)

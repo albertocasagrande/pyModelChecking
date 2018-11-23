@@ -1,105 +1,129 @@
-#!/usr/bin/env python
+"""
+.. module:: CTLS.model_checking
+   :synopsis: Provides model checking methods for the CTL* language.
+
+.. moduleauthor:: Alberto Casagrande <acasagrande@units.it>
+"""
 
 from .language import *
 from pyModelChecking.kripke import Kripke
 
 import sys
 
-if 'pyModelChecking.CTL' not in sys.modules:
-    import pyModelChecking.CTL
+import pyModelChecking.CTL
+import pyModelChecking.LTL
 
-CTL=sys.modules['pyModelChecking.CTL']
-
-if 'pyModelChecking.LTL' not in sys.modules:
-    import pyModelChecking.LTL
-
-LTL=sys.modules['pyModelChecking.LTL']
+CTL = sys.modules['pyModelChecking.CTL']
+LTL = sys.modules['pyModelChecking.LTL']
 
 __author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015"
+__copyright__ = "Copyright 2015-2018"
 __credits__ = ["Alberto Casagrande"]
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "0.2"
 __maintainer__ = "Alberto Casagrande"
 __email__ = "acasagrande@units.it"
 __status__ = "Development"
 
-def get_a_new_atomic_proposition_for(kripke,formula):
-    f_str='[%s]' % (formula)
-    f_atom=f_str
-    atoms=kripke.labels()
 
-    i=0
+def _get_a_new_atomic_proposition_for(kripke, formula):
+    f_str = '[{}]'.format(formula)
+    f_atom = f_str
+    atoms = kripke.labels()
+
+    i = 0
     while f_atom in atoms:
-        f_atom='[%s(%d)]' % (f_str,i)
-        i+=1
+        f_atom = '[{}({})]'.format(f_str, i)
+        i += 1
 
     return f_atom
 
-def remove_state_subformulas(kripke,formula,fair_label=None):
-    Lang=sys.modules[formula.__module__]
 
-    if isinstance(formula,AtomicProposition):
+def _remove_state_subformulas(kripke, formula, fair_label=None):
+    Lang = sys.modules[formula.__module__]
+
+    if isinstance(formula, AtomicProposition):
         return formula
 
-    if isinstance(formula,PathQuantifier):
-        f_atom=get_a_new_atomic_proposition_for(kripke,formula)
-        for s in checkQuantifiedFormula(kripke,formula,fair_label):
+    if isinstance(formula, PathQuantifier):
+        f_atom = _get_a_new_atomic_proposition_for(kripke, formula)
+        for s in _checkQuantifiedFormula(kripke, formula, fair_label):
             kripke.labels(s).add(f_atom)
 
         return Lang.AtomicProposition(f_atom)
 
-    if isinstance(formula,Formula):
-        sfs=[]
+    if isinstance(formula, Formula):
+        sfs = []
         for sf in formula.subformulas():
-            sfs.append(remove_state_subformulas(kripke,sf,fair_label))
+            sfs.append(_remove_state_subformulas(kripke, sf, fair_label))
 
         return formula.__class__(*sfs)
 
-    raise TypeError('expected a CTL* state formula, got %s' % (formula))
+    raise TypeError('expected a CTL* state formula, got {}' % (formula))
 
-def checkQuantifiedFormula(kripke,formula,fair_label=None):
 
-    subformula=remove_state_subformulas(kripke,formula.subformula(0),fair_label)
+def _checkQuantifiedFormula(kripke, formula, fair_label=None):
 
-    formula=formula.__class__(subformula)
+    subformula = _remove_state_subformulas(kripke, formula.subformula(0),
+                                           fair_label)
+
+    formula = formula.__class__(subformula)
     try:
-        if fair_label!=None:
-            formula=(formula.cast_to(CTL)).get_equivalent_non_fair_formula(fair_label)
+        if fair_label is not None:
+            formula = formula.cast_to(CTL)
+            formula = (formula).get_equivalent_non_fair_formula(fair_label)
 
-        return CTL.modelcheck(kripke,formula)
+        return CTL.modelcheck(kripke, formula)
     except TypeError:
-        if fair_label!=None:
-            formula=formula.get_equivalent_non_fair_formula(fair_label)
+        if fair_label is not None:
+            formula = formula.get_equivalent_non_fair_formula(fair_label)
 
-        if (not isinstance(formula,A)):
-            if (isinstance(formula,E)):
-                formula=LNot(A(LNot(formula.subformula(0))))
+        if (not isinstance(formula, A)):
+            if (isinstance(formula, E)):
+                formula = LNot(A(LNot(formula.subformula(0))))
 
-            formula=remove_state_subformulas(kripke,formula)
+            formula = _remove_state_subformulas(kripke, formula)
 
-            return CTL.modelcheck(kripke,formula)
+            return CTL.modelcheck(kripke, formula)
 
-        return LTL.modelcheck(kripke,formula)
+        return LTL.modelcheck(kripke, formula)
 
-def modelcheck(kripke,formula,F=None):
 
-    if not isinstance(kripke,Kripke):
-        raise TypeError('expected a Kripke structure, got %s' % (kripke))
+def modelcheck(kripke, formula, F=None):
+    ''' Model checks any CTL* formula on a Kripke structure.
+
+    This method performs CTL* model checking of a formula on a given
+    Kripke structure.
+
+    :param kripke: a Kripke structure.
+    :type kripke: Kripke
+    :param formula: the formula to model check.
+    :type formula: a type castable in a CTLS.Formula
+    :param F: a list of fair states
+    :type F: Container
+    :returns: a list of the Kripke structure states that satisfy the formula.
+    '''
+
+    if not isinstance(kripke, Kripke):
+        raise TypeError('expected a Kripke structure, got {}'.format(kripke))
 
     try:
-        kripkeC=kripke.copy()
+        kripkeC = kripke.clone()
 
-        if F!=None:
-            fair_label=kripkeC.label_fair_states(F)
+        if F is not None:
+            fair_label = kripkeC.label_fair_states(F)
 
-            CTL_formula=remove_state_subformulas(kripkeC,formula,fair_label)
+            CTL_frml = _remove_state_subformulas(kripkeC, formula,
+                                                 fair_label)
 
-            CTL_formula=CTL_formula.get_equivalent_non_fair_formula(fair_label)
+            CTL_frml = CTL_frml.get_equivalent_non_fair_formula(fair_label)
         else:
-            CTL_formula=remove_state_subformulas(kripkeC,formula)
+            CTL_frml = _remove_state_subformulas(kripkeC, formula)
 
-        return CTL.modelcheck(kripkeC,CTL_formula)
+        return CTL.modelcheck(kripkeC, CTL_frml)
 
-    except TypeError:
-        raise TypeError('expected a CTL* state formula, got %s' % (formula))
+    except TypeError, e:
+        print(e)
+
+        raise TypeError('expected a CTL* state formula, ' +
+                        'got {}'.format(formula))

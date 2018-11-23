@@ -1,41 +1,40 @@
-#!/usr/bin/env python
-
 from pyModelChecking.kripke import *
 import unittest
 
 __author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015"
+__copyright__ = "Copyright 2015-2018"
 __credits__ = ["Alberto Casagrande"]
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "0.2"
 __maintainer__ = "Alberto Casagrande"
 __email__ = "acasagrande@units.it"
 __status__ = "Development"
 
+
 class TestKripke(unittest.TestCase):
 
     def setUp(self):
-        self.S = set([0,1,3])
-        self.S0 = set([0,1,6])
-        self.R = set([(0,2),(2,2),(0,1),(1,0),(3,2)])
+        self.S = set([0, 1, 3])
+        self.S0 = set([0, 1, 6])
+        self.R = set([(0, 2), (2, 2), (0, 1), (1, 0), (3, 2)])
 
-        self.L = {1:set(['p','q']), 2:set(['p','q']), 3:set(['q'])}
+        self.L = {1: set(['p', 'q']), 2: set(['p', 'q']), 3: set(['q'])}
 
-        self.K = Kripke(self.S,self.S0,self.R,self.L)
+        self.K = Kripke(self.S, self.S0, self.R, self.L)
 
     def test_init(self):
-        S=set(self.S)
-        for (s,d) in self.R:
+        S = set(self.S)
+        for (s, d) in self.R:
             S.add(s)
             S.add(d)
 
         self.assertEqual(set(self.K.states()), S)
 
         with self.assertRaises(RuntimeError):
-            Kripke(self.S,self.S0,self.R|set([(2,4)]),self.L)
+            Kripke(self.S, self.S0, self.R | set([(2, 4)]), self.L)
 
     def test_nodes(self):
-        S=self.S|set([2])
+        S = self.S | set([2])
 
         self.assertEqual(set(self.K.states()), S)
 
@@ -43,7 +42,7 @@ class TestKripke(unittest.TestCase):
         self.assertEqual(set(self.K.transitions()), self.R)
 
     def test_labels(self):
-        AP=set()
+        AP = set()
         for ap in self.L.values():
             AP.update(ap)
 
@@ -61,15 +60,16 @@ class TestKripke(unittest.TestCase):
     def test_next(self):
 
         for s in self.K.nodes():
-            N=set()
-            for (p,q) in self.K.edges():
-                if s==p:
+            N = set()
+            for (p, q) in self.K.edges_iter():
+                if s == p:
                     N.add(q)
 
             self.assertEqual(self.K.next(s), N)
 
         with self.assertRaises(RuntimeError):
             self.K.next('a')
+
 
 if __name__ == '__main__':
     unittest.main()

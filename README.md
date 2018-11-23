@@ -10,7 +10,16 @@ In future, it will hopefully support symbolic model checking.
 [LTL]: https://en.wikipedia.org/wiki/Linear_temporal_logic
 [CTLS]: https://en.wikipedia.org/wiki/CTL*
 
-### Usage 
+### Documentation
+
+[Here][last_doc] you can find the *pyModelChecking* documenation. It contains:
+* a brief introduction to Kripke structures, temporal logics and model checking
+* the user manual and some examples
+* the API manual  
+
+[last_doc]: https://pymodelchecking.readthedocs.io/en/latest/
+
+### Examples
 
 First of all, import all the functions and all the classes in the package.
 
@@ -18,7 +27,7 @@ First of all, import all the functions and all the classes in the package.
 >>> from pyModelChecking import *
 ```
 
-In order to represent a Kripke structure use the `Kripke` class. 
+In order to represent a Kripke structure use the `Kripke` class.
 
 ```
 >>> K=Kripke(R=[(0,0),(0,1),(1,2),(2,2),(3,3)],
@@ -37,7 +46,7 @@ CTL can be represented by importing the `CTL` module.
 A(True U (q or not (EX p)))
 ```
 
-Whenever a non-CTL formula is built, an exception is thrown. 
+Whenever a non-CTL formula is built, an exception is thrown.
 
 ```python
 >>> psi=A(F(G('p')))
@@ -58,8 +67,8 @@ The function `modelcheck` in module `CTL` finds the states of Kripke structure t
 set([1, 2])
 ```
 
-The formula `AFG p`, which we tried to build above, is a LTL formula. 
-The `LTL` module can be used to represent and 
+The formula `AFG p`, which we tried to build above, is a LTL formula.
+The `LTL` module can be used to represent and
 model check it over any Kripke structure.
 
 ```python
@@ -113,8 +122,8 @@ set([])
 
 ```
 
-Whenever a CTL* formula is a CTL formula (LTL formula), CTL (LTL) model checking can 
-be applied to it. 
+Whenever a CTL* formula is a CTL formula (LTL formula), CTL (LTL) model checking can
+be applied to it.
 
 ```python
 >>> import pyModelChecking.CTL as CTL

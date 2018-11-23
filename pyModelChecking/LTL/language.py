@@ -1,17 +1,24 @@
-#!/usr/bin/env python
+"""
+.. module:: LTL.language
+   :synopsis: Represents the LTL language.
+
+.. moduleauthor:: Alberto Casagrande <acasagrande@units.it>
+"""
+
+import pyModelChecking.CTLS
+
+from ..language import LNot
+from ..language import get_alphabet
 
 import sys
 
-if 'pyModelChecking.CTLS' not in sys.modules:
-    import pyModelChecking.CTLS
-
-CTLS=sys.modules['pyModelChecking.CTLS']
+CTLS = sys.modules['pyModelChecking.CTLS']
 
 __author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015"
+__copyright__ = "Copyright 2015-2018"
 __credits__ = ["Alberto Casagrande"]
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "0.2"
 __maintainer__ = "Alberto Casagrande"
 __email__ = "acasagrande@units.it"
 __status__ = "Development"
@@ -23,23 +30,22 @@ class Formula(CTLS.Formula):
 
     '''
 
-    __desc__='LTL formula'
+    __desc__ = 'LTL formula'
 
-class PathFormula(CTLS.Formula):
+
+class PathFormula(Formula, CTLS.PathFormula):
     '''
     A class representing LTL path formulas.
 
     '''
 
-    __desc__='LTL path formula'
+    __desc__ = 'LTL path formula'
 
-    def is_a_state_formula(self):
-        return True
+    def __init__(self, *phi):
+        self.wrap_subformulas(phi, PathFormula)
 
-    def __init__(self,*phi):
-        self.wrap_subformulas(phi,PathFormula)
 
-class X(PathFormula,CTLS.X):
+class X(PathFormula, CTLS.X):
     '''
     A class representing LTL X-formulas.
 
@@ -47,7 +53,8 @@ class X(PathFormula,CTLS.X):
 
     pass
 
-class F(PathFormula,CTLS.F):
+
+class F(PathFormula, CTLS.F):
     '''
     A class representing LTL F-formulas.
 
@@ -55,7 +62,8 @@ class F(PathFormula,CTLS.F):
 
     pass
 
-class G(PathFormula,CTLS.G):
+
+class G(PathFormula, CTLS.G):
     '''
     A class representing LTL G-formulas.
 
@@ -63,7 +71,8 @@ class G(PathFormula,CTLS.G):
 
     pass
 
-class U(PathFormula,CTLS.U):
+
+class U(PathFormula, CTLS.U):
     '''
     A class representing LTL U-formulas.
 
@@ -71,7 +80,8 @@ class U(PathFormula,CTLS.U):
 
     pass
 
-class R(PathFormula,CTLS.R):
+
+class R(PathFormula, CTLS.R):
     '''
     A class representing LTL R-formulas.
 
@@ -79,7 +89,8 @@ class R(PathFormula,CTLS.R):
 
     pass
 
-class AtomicProposition(CTLS.AtomicProposition,PathFormula):
+
+class AtomicProposition(CTLS.AtomicProposition, PathFormula):
     '''
     A class representing LTL atomic propositions.
 
@@ -87,7 +98,8 @@ class AtomicProposition(CTLS.AtomicProposition,PathFormula):
 
     pass
 
-class Bool(CTLS.Bool,PathFormula):
+
+class Bool(CTLS.Bool, PathFormula):
     '''
     A class representing LTL Boolean atomic propositions.
 
@@ -95,7 +107,8 @@ class Bool(CTLS.Bool,PathFormula):
 
     pass
 
-class Not(PathFormula,CTLS.Not):
+
+class Not(PathFormula, CTLS.Not):
     '''
     A class representing LTL negations.
 
@@ -103,7 +116,8 @@ class Not(PathFormula,CTLS.Not):
 
     pass
 
-class Or(PathFormula,CTLS.Or):
+
+class Or(PathFormula, CTLS.Or):
     '''
     A class representing LTL disjunctions.
 
@@ -111,7 +125,8 @@ class Or(PathFormula,CTLS.Or):
 
     pass
 
-class And(PathFormula,CTLS.And):
+
+class And(PathFormula, CTLS.And):
     '''
     A class representing LTL conjunctions.
 
@@ -119,7 +134,8 @@ class And(PathFormula,CTLS.And):
 
     pass
 
-class Imply(PathFormula,CTLS.Imply):
+
+class Imply(PathFormula, CTLS.Imply):
     '''
     A class representing LTL implications.
 
@@ -127,25 +143,25 @@ class Imply(PathFormula,CTLS.Imply):
 
     pass
 
-class StateFormula(Formula):
+
+class StateFormula(Formula, CTLS.StateFormula):
     '''
     A class representing LTL state formulas.
 
     '''
 
-    __desc__='LTL state formula'
+    __desc__ = 'LTL state formula'
 
-    def is_a_state_formula(self):
-        return True
+    def __init__(self, *phi):
+        self.wrap_subformulas(phi, PathFormula)
 
-    def __init__(self,*phi):
-        self.wrap_subformulas(phi,PathFormula)
 
-class A(StateFormula,CTLS.A):
+class A(StateFormula, CTLS.A):
     '''
     A class representing LTL A-formulas.
 
     '''
     pass
 
-alphabet=CTLS.get_alphabet(__name__)
+
+alphabet = get_alphabet(__name__)

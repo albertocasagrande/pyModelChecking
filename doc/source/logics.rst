@@ -1,3 +1,4 @@
+***************
 Temporal Logics
 ***************
 
@@ -51,7 +52,7 @@ A CTL* path formula is either:
 Semantics
 ---------
 The semantics of CTL* formulas are given with respect to a
-:ref:`Kripke structure<kripke>`. If :math:`K` is a Kripke structure,
+:ref:`Kripke structure<kripke_structure>`. If :math:`K` is a Kripke structure,
 :math:`s` one of its states, and :math:`\varphi` a state formula,
 we write :math:`K,s \models \varphi` (to be read ":math:`K` and :math:`s`
 satisfy :math:`\varphi`") meaning that :math:`\varphi` holds at state
@@ -193,9 +194,7 @@ As a matter of the facts, it is easy to prove that:
 - :math:`\mathbf{A}(\varphi_1 \mathbf{R} \varphi_2) \equiv \neg \mathbf{E} ((\neg \varphi_1) \mathbf{U} (\neg \varphi_2))`
 - :math:`\mathbf{E}(\varphi_1 \mathbf{R} \varphi_2) \equiv (\mathbf{E} (\varphi_2 \mathbf{U} (\neg \varphi_1 \lor \neg \varphi_2) ) \lor \mathbf{E}\mathbf{G}(\varphi_2))`
 
-
 .. _LTL:
-
 
 Linear Time Logic
 =================
@@ -242,24 +241,23 @@ exclusively the path formulas whose operators are
 :math:`\neg`, :math:`\lor`, :math:`\mathbf{X}`, or :math:`\mathbf{U}`
 is equivalent to the full LTL language (e.g., see [CGP00]_).
 
-
 References
 ==========
 
-.. [P77]   A. Pnueli. "The temporal logic of programs." In Proceedings of the
-           18th Annual Symposium of Foundations of Computer Science (FOCS),
-           1977, 46-57
+.. [P77] A. Pnueli. "The temporal logic of programs." In Proceedings of the
+   18th Annual Symposium of Foundations of Computer Science (FOCS),
+   1977, 46-57
 .. [BMP83] M. Ben-Ari, Z. Manna, A. Pnueli. The temporal logic of branching
-           time. Acta Informatica 20(1983): 207-226
-.. [CE81]  E. M. Clarke, E. A. Emerson. "Design and synthesis of
-           synchronization skeletons using branching time temporal logic." In
-           Logic of Programs: Workshop. LNCS 131. Springer, 1981.
-.. [CE80]  E. M. Clarke, E. A. Emerson. "Characterizing correcteness properties
-           of parallel programs using fixpoints." In Automata, Languages, and
-           Programming. LNCS 85:169-181. Springer 1980.
+   time. Acta Informatica 20(1983): 207-226
+.. [CE81] E. M. Clarke, E. A. Emerson. "Design and synthesis of
+   synchronization skeletons using branching time temporal logic." In
+   Logic of Programs: Workshop. LNCS 131. Springer, 1981.
+.. [CE80] E. M. Clarke, E. A. Emerson. "Characterizing correcteness properties
+   of parallel programs using fixpoints." In Automata, Languages, and
+   Programming. LNCS 85:169-181. Springer 1980.
 .. [CES86] E. M. Clarke, E. A. Emerson, A. P. Sistla. "Automatic verification
-           of finite-state concurrent systems using temporal logic
-           specifications." ACM Transactions on Programming Languages and
-           Systems 8(2): 244-263. 1986.
+   of finite-state concurrent systems using temporal logic specifications."
+   ACM Transactions on Programming Languages and
+   Systems 8(2): 244-263. 1986.
 .. [CGP00] E. M. Clarke, O. Grumberg, D. A. Peled. "Model Checking" MIT Press,
-           Cambridge, MA, USA. 2000.
+   Cambridge, MA, USA. 2000.

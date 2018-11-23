@@ -1,5 +1,5 @@
-Modeling Reactive Systems
-*************************
+Reactive Systems
+****************
 
 **Reactive systems** are systems that interact with their environment and
 evolve over an infinite time horizon. This chapter presents a natural model
@@ -90,7 +90,7 @@ A graph :math:`(V,E)` is **disconnected** if there exists a
 A **directed tree** is a connected DAG :math:`(V,E)` whose subgraphs of the form
 :math:`(V,E')`, where :math:`E' \subsetneq E`, are disconnected.
 
-.. _kripke:
+.. _kripke_structure:
 
 Kripke Structures
 =================
@@ -101,25 +101,18 @@ such that every node is source of some edge and it is labeled by a
 set of *atomic propositions* [CGP00]_.
 The nodes of Kripke structure are called *states*.
 
-Kripke structure
-    A Kripke structure is a tuple :math:`(S,S_0,R,L)` such that:
+A Kripke structure is a tuple :math:`(S,S_0,R,L)` such that:
 
-    - :math:`S` is a finite set of states
-    - :math:`S_0\subseteq S` is a set of *initial states*
-    - :math:`R\subseteq S\times S` is a set of *transitions* such that
-      for all :math:`s \in S` there exists a :math:`(s,s') \in R` for some
-      :math:`s' \in S`
-    - :math:`L:S \rightarrow AP` maps each state into a set of
-      atomic propositions
+- :math:`S` is a finite set of states
+- :math:`S_0\subseteq S` is a set of *initial states*
+- :math:`R\subseteq S\times S` is a set of *transitions* such that
+  for all :math:`s \in S` there exists a :math:`(s,s') \in R` for some
+  :math:`s' \in S`
+- :math:`L:S \rightarrow AP` maps each state into a set of
+  atomic propositions
 
 Sometime, the set of initial states is omitted. In such cases, :math:`S` and
 :math:`S_0` coincide.
 
 A **computation** of a Kripke structure :math:`(S,S_0,R,L)` is an infinite
 path of :math:`(S,R)` that starts from some :math:`s \in S_0`.
-
-References
-==========
-
-.. [CGP00] E. M. Clarke, O. Grumberg, D. A. Peled. "Model Checking" MIT Press,
-           Cambridge, MA, USA. 2000.

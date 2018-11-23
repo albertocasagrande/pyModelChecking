@@ -1,13 +1,19 @@
-#!/usr/bin/env python
+"""
+.. module:: graph
+   :synopsis: A module to represent directed graphs
+
+.. moduleauthor:: Alberto Casagrande <acasagrande@units.it>
+"""
 
 __author__ = "Alberto Casagrande"
 __copyright__ = "Copyright 2015"
 __credits__ = ["Alberto Casagrande"]
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "0.2"
 __maintainer__ = "Alberto Casagrande"
 __email__ = "acasagrande@units.it"
 __status__ = "Development"
+
 
 class DiGraph(object):
     '''
@@ -18,7 +24,7 @@ class DiGraph(object):
     are said *source* and *destination* of (s,d).
     '''
 
-    def __init__(self,V=None,E=None):
+    def __init__(self, V=None, E=None):
         ''' Initialize a new DiGraph
 
         :param V: a collection of nodes
@@ -27,26 +33,26 @@ class DiGraph(object):
         :type E: a collection
         '''
 
-        self._next=dict()
-        if V!=None:
+        self._next = dict()
+        if V is not None:
             for v in V:
-                self._next[v]=set()
+                self._next[v] = set()
 
-        if E!=None:
+        if E is not None:
             try:
-                for src,dst in E:
+                for src, dst in E:
                     if src in self._next:
                         self._next[src].add(dst)
                     else:
-                        self._next[src]=set([dst])
+                        self._next[src] = set([dst])
 
                     if dst not in self._next:
-                        self._next[dst]=set()
-            except:
-                raise RuntimeError(('E=\'%s\' must be a container ' % (E))+
-                                   'of pairs.')
+                        self._next[dst] = set()
+            except Exception:
+                raise RuntimeError(('E = \'{}\' '.format(E)) +
+                                   'must be a container of pairs.')
 
-    def add_node(self,v):
+    def add_node(self, v):
         ''' Add a new node to a DiGraph
 
         :param self: the DiGraph object
@@ -54,22 +60,22 @@ class DiGraph(object):
         :param v: a node
         '''
         if v in self._next:
-            raise RuntimeError(('v=\'%s\' is already a node ' % (v))+
-                                'of this DiGraph' )
-        self._next[v]=set()
+            raise RuntimeError('v = \'{}\' '.format(v) +
+                               'is already a node of this DiGraph')
+        self._next[v] = set()
 
-    def add_edge(self,src,dst):
+    def add_edge(self, src, dst):
         ''' Add a new edge to a DiGraph
 
         :param src: the source node of the edge
         :param dst: the destination node of the edge
         '''
         if src not in self._next:
-            self._next[src]=set()
+            self._next[src] = set()
         else:
             if dst in self._next[src]:
-                raise RuntimeError(('(%s,%s) is already an edge ' % (src,dst))+
-                                    'of this DiGraph' )
+                raise RuntimeError('({},{}) '.format(src, dst) +
+                                   'is already an edge of this DiGraph')
 
         if dst not in self._next:
             self.add_node(dst)
@@ -86,7 +92,7 @@ class DiGraph(object):
         :rtype: generator
         '''
         for src, dsts in self._next.items():
-            if len(dsts)>0:
+            if len(dsts) > 0:
                 yield src
 
     def nodes(self):
@@ -97,7 +103,7 @@ class DiGraph(object):
         '''
         return self._next.keys()
 
-    def next(self,src):
+    def next(self, src):
         ''' Return the next of a node
 
         Given a DiGraph :math:`(V,E)` and one of its node v, the
@@ -108,12 +114,21 @@ class DiGraph(object):
         :rtype: set
         '''
         if src not in self._next:
-            raise RuntimeError(('src=\'%s\' is not a node ' % (src))+
-                                'of this DiGraph' )
+            raise RuntimeError('src = \'{}\' is not a node '.format(src) +
+                               'of this DiGraph')
 
         return self._next[src]
 
     def edges(self):
+        ''' Return the edges of a DiGraph
+
+        :returns: a list of edges of the DiGraph
+        :rtype: list
+        '''
+
+        return list(self.edges_iter())
+
+    def edges_iter(self):
         ''' Return the edges of a DiGraph
 
         :returns: the generator of edges of the DiGraph
@@ -121,20 +136,19 @@ class DiGraph(object):
         '''
         for src, dsts in self._next.items():
             for dst in dsts:
-                yield (src,dst)
+                yield (src, dst)
 
+    def clone(self):
+        ''' Clone a DiGraph
 
-    def copy(self):
-        ''' Copy a DiGraph
-
-        :returns: a copy of the DiGraph
+        :returns: a clone of the DiGraph
         :rtype: DiGraph
         '''
-        nDG=DiGraph()
+        nDG = DiGraph()
 
-        nDG._next=dict()
+        nDG._next = dict()
         for src, dsts in self._next.items():
-            nDG._next[src]=set(dsts)
+            nDG._next[src] = set(dsts)
 
         return nDG
 
@@ -144,21 +158,21 @@ class DiGraph(object):
         :returns: a string that represents the DiGraph
         :rtype: str
         '''
-        return '(V=%s,E=%s)' % (self.nodes(),self.edges())
+        return '(V={}, E={})'.format(self.nodes(), self.edges())
 
-    def get_subgraph(self,nodes):
+    def get_subgraph(self, nodes):
         ''' Build the subgraph that respects a set of nodes
 
         :returns: the subgraph that respects :param nodes:
         :rtype: DiGraph
         '''
-        E=[]
 
-        for (s,d) in self.edges():
-            if s in nodes and d in nodes:
-                E.append((s,d))
+        V = set(nodes) & set(self.nodes())
 
-        return DiGraph(E=E)
+        E = [(s, d) for (s, d) in self.edges_iter()
+             if s in V and d in V]
+
+        return DiGraph(V=V, E=E)
 
     def get_reversed_graph(self):
         ''' Build the reversed graph
@@ -166,27 +180,24 @@ class DiGraph(object):
         :returns: the reversed graph
         :rtype: DiGraph
         '''
-        rE=[]
+        rE = [(d, s) for (s, d) in self.edges_iter()]
 
-        for (s,d) in self.edges():
-            rE.append((d,s))
+        return DiGraph(V=self.nodes(), E=rE)
 
-        return DiGraph(V=self.nodes(),E=rE)
-
-    def get_reachable_set_from(self,nodes):
+    def get_reachable_set_from(self, nodes):
         ''' Compute the reachable set
 
         :param nodes: the set of nodes from which the reachability
-        should be evaluated
+                      should be evaluated
         :type nodes: a container of nodes
         :returns: the set of the reachable nodes
         :rtype: set
         '''
-        queue=list(nodes)
-        R=set(nodes)
+        queue = list(nodes)
+        R = set(nodes)
 
         while queue:
-            s=queue.pop()
+            s = queue.pop()
             for d in self.next(s):
                 if d not in R:
                     R.add(d)
@@ -194,7 +205,8 @@ class DiGraph(object):
 
         return R
 
-def compute_strongly_connected_components(G):
+
+def compute_SCCs(G):
     ''' Compute the strongly connected components of a DiGraph
 
     This method implements a non-recursive version of the
@@ -202,8 +214,8 @@ def compute_strongly_connected_components(G):
     strongly connected components of a DiGraph.
 
     ..[ns94] E. Nuutila and E. Soisalon-Soinen. "On finding the strongly
-             connected components in a directed graph.",Information Processing
-             Letters 49(1): 9-14, (1994)
+      connected components in a directed graph.", Information Processing
+      Letters 49(1): 9-14, (1994)
 
     :param G: the DiGraph object
     :type G: DiGraph
@@ -212,47 +224,47 @@ def compute_strongly_connected_components(G):
     :rtype: generator
     '''
 
-    if not isinstance(G,DiGraph):
-        raise TypeError('%s is not a DiGraph'  % (G))
+    if not isinstance(G, DiGraph):
+        raise TypeError('{} is not a DiGraph'.format(G))
 
-    disc=dict()
-    lowlink=dict()
-    in_a_scc=set()
-    scc_stack=[]
-    time=0
+    disc = dict()
+    lowlink = dict()
+    in_a_scc = set()
+    scc_stack = []
+    time = 0
 
     for s in G.nodes():
         if s not in disc:
-            disc[s]=time
-            lowlink[s]=time
+            disc[s] = time
+            lowlink[s] = time
 
-            stack=[[s,iter(G.next(s))]]
+            stack = [[s, iter(G.next(s))]]
             while stack:
                 try:
-                    w=next(stack[-1][1])
+                    w = next(stack[-1][1])
 
                     if w not in disc:
-                        time=time+1
-                        disc[w]=time
-                        lowlink[w]=time
+                        time = time+1
+                        disc[w] = time
+                        lowlink[w] = time
 
-                        stack.append([w,iter(G.next(w))])
+                        stack.append([w, iter(G.next(w))])
 
                 except StopIteration:
-                    [v,v_next_it]=stack.pop()
+                    [v, v_next_it] = stack.pop()
 
                     for w in G.next(v):
                         if w not in in_a_scc:
-                            if disc[w]>disc[v]:
-                                lowlink[v]=min([lowlink[v],lowlink[w]])
+                            if disc[w] > disc[v]:
+                                lowlink[v] = min([lowlink[v], lowlink[w]])
                             else:
-                                lowlink[v]=min([lowlink[v],disc[w]])
+                                lowlink[v] = min([lowlink[v], disc[w]])
 
-                    if lowlink[v]==disc[v]:
+                    if lowlink[v] == disc[v]:
                         in_a_scc.add(v)
-                        scc=[v]
-                        while scc_stack and disc[scc_stack[-1]]>disc[v]:
-                            k=scc_stack.pop()
+                        scc = [v]
+                        while scc_stack and disc[scc_stack[-1]] > disc[v]:
+                            k = scc_stack.pop()
                             in_a_scc.add(k)
                             scc.append(k)
                         yield scc
