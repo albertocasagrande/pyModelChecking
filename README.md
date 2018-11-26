@@ -17,7 +17,7 @@ In future, it will hopefully support symbolic model checking.
 * the user manual and some examples
 * the API manual  
 
-[last_doc]: https://pymodelchecking.readthedocs.io/en/latest/
+[last_doc]: https://pymodelchecking.readthedocs.io/
 
 ### Examples
 

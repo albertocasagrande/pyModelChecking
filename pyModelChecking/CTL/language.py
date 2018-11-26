@@ -39,7 +39,7 @@ class StateFormula(Formula, CTLS.StateFormula):
 
     '''
 
-    __desc__ = 'CTL* state formula'
+    __desc__ = 'CTL state formula'
 
     def __init__(self, *phi):
         self.wrap_subformulas(phi, StateFormula)
@@ -51,7 +51,7 @@ class PathFormula(Formula, CTLS.PathFormula):
 
     '''
 
-    __desc__ = 'CTL* path formula'
+    __desc__ = 'CTL path formula'
 
     def __init__(self, *phi):
         self.wrap_subformulas(phi, StateFormula)

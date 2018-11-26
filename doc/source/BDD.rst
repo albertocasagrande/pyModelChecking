@@ -53,8 +53,5 @@ the same variable ordering, it is possible to:
   - the bitwise binary combinations of the functions :math:`f_1` and :math:`f_2` in time
     :math:`O(|f_1|+|f_2|)`.
 
-References
-==========
-
 .. [Bryant86] Randal E. Bryant. "Graph-Based Algorithms for Boolean Function
    Manipulation". IEEE Transactions on Computers, C-35(8):677–691, 1986.

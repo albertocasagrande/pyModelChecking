@@ -241,9 +241,6 @@ exclusively the path formulas whose operators are
 :math:`\neg`, :math:`\lor`, :math:`\mathbf{X}`, or :math:`\mathbf{U}`
 is equivalent to the full LTL language (e.g., see [CGP00]_).
 
-References
-==========
-
 .. [P77] A. Pnueli. "The temporal logic of programs." In Proceedings of the
    18th Annual Symposium of Foundations of Computer Science (FOCS),
    1977, 46-57
