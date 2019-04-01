@@ -18,9 +18,9 @@ class TestFormulas(unittest.TestCase):
     def test_atomic_proposition(self):
         s = 'p'
         a = AtomicProposition(s)
-        self.assertEquals(s, a)
+        self.assertEqual(s, a)
 
-        self.assertEquals(s, '{}'.format(a))
+        self.assertEqual(s, '{}'.format(a))
 
         with self.assertRaises(TypeError):
             AtomicProposition(1)
@@ -28,9 +28,9 @@ class TestFormulas(unittest.TestCase):
     def test_boolean(self):
         b = False
         a = Bool(b)
-        self.assertEquals(b, a)
+        self.assertEqual(b, a)
 
-        self.assertEquals(a, '{}'.format(b))
+        self.assertEqual(a, '{}'.format(b))
 
         with self.assertRaises(TypeError):
             Bool('a')
@@ -39,19 +39,19 @@ class TestFormulas(unittest.TestCase):
         i = 0
         for phi in self.formulas:
             s = '{}({})'.format(op_str, phi)
-            self.assertEquals(s, '{}'.format(op(phi)))
+            self.assertEqual(s, '{}'.format(op(phi)))
             if (equivalent_restricted_op is not None and
                     isinstance(phi, Formula)):
-                self.assertEquals(op(phi).get_equivalent_restricted_formula(),
-                                  equivalent_restricted_op(phi))
+                self.assertEqual(op(phi).get_equivalent_restricted_formula(),
+                                 equivalent_restricted_op(phi))
 
     def test_not(self):
         for phi in self.formulas:
-            self.assertEquals('not {}'.format(phi), '{}'.format(Not(phi)))
+            self.assertEqual('not {}'.format(phi), '{}'.format(Not(phi)))
             if (isinstance(phi, Formula)):
                 not_formula = Not(phi).get_equivalent_restricted_formula()
                 lnot_formula = LNot(phi.get_equivalent_restricted_formula())
-                self.assertEquals(not_formula, lnot_formula)
+                self.assertEqual(not_formula, lnot_formula)
 
     def test_A(self):
         formula = (lambda phi:
@@ -82,15 +82,15 @@ class TestFormulas(unittest.TestCase):
         for phi in self.formulas:
             for psi in self.formulas:
                 s = '({} {} {})'.format(phi, middle_op_str, psi)
-                self.assertEquals(s, '{}'.format(op(phi, psi)))
+                self.assertEqual(s, '{}'.format(op(phi, psi)))
                 if (equivalent_restricted_op is not None and
                         isinstance(psi, Formula) and
                         isinstance(phi, Formula)):
 
                     formula = op(phi, psi).get_equivalent_restricted_formula()
 
-                    self.assertEquals(formula,
-                                      equivalent_restricted_op(phi, psi))
+                    self.assertEqual(formula,
+                                     equivalent_restricted_op(phi, psi))
 
     def test_U(self):
         formula = (lambda phi, psi: U(phi.get_equivalent_restricted_formula(),

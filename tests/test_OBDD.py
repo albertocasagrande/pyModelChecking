@@ -27,8 +27,8 @@ class TestOBDD(unittest.TestCase):
                                   (self.c, '~c & ~a', ['a', 'c']),
                                   (self.d, '~b', ['b'])]:
 
-            self.assertEquals('{}'.format(bdd), text)
-            self.assertEquals(bdd.variables(), set(vars))
+            self.assertEqual('{}'.format(bdd), text)
+            self.assertEqual(bdd.variables(), set(vars))
 
         get_ancestors = (lambda: ['{}'.format(BDD) for BDD in BDDNode.nodes()])
 
@@ -43,8 +43,8 @@ class TestOBDD(unittest.TestCase):
 
         after_e = get_ancestors()
 
-        self.assertEquals(before_e, after_e)
-        self.assertNotEquals(with_e, after_e)
+        self.assertEqual(before_e, after_e)
+        self.assertNotEqual(with_e, after_e)
 
     def test_OBDD(self):
         oa = OBDD(self.a, self.ordering)
@@ -62,11 +62,11 @@ class TestOBDD(unittest.TestCase):
                       (~(oa & ob) | (oa | ob), 'lambda c,a: 1', [])]
 
         for (obdd, text, vars) in tests_list:
-            self.assertEquals('{}'.format(obdd), text)
-            self.assertEquals(obdd.variables(), set(vars))
+            self.assertEqual('{}'.format(obdd), text)
+            self.assertEqual(obdd.variables(), set(vars))
 
-        self.assertEquals(ob.restrict('a', True), 0)
-        self.assertEquals(~(oa & ob) | (oa | ob), 1)
+        self.assertEqual(ob.restrict('a', True), 0)
+        self.assertEqual(~(oa & ob) | (oa | ob), 1)
 
         with self.assertRaises(RuntimeError):
             OBDD(self.d, self.ordering)
@@ -76,15 +76,15 @@ class TestOBDD(unittest.TestCase):
         ob = OBDD(self.c, self.ordering)
 
         for obdd in [oa, ob, ~ob, oa & ob,  oa | ob,  ~(oa & ob) | (oa | ob)]:
-            self.assertEquals(OBDD('{}'.format(obdd.root), self.ordering),
-                              obdd)
+            self.assertEqual(OBDD('{}'.format(obdd.root), self.ordering),
+                             obdd)
 
         for (a, b) in [('a & ~a', '0'),
                        ('a | ~a', '1'),
                        ('~a | c', '~(a & ~c)'),
                        ('~~~~a', 'a'),
                        ('~(~a|~c)', 'a&c')]:
-            self.assertEquals(OBDD(a, self.ordering), OBDD(b, self.ordering))
+            self.assertEqual(OBDD(a, self.ordering), OBDD(b, self.ordering))
 
         with self.assertRaises(RuntimeError):
             OBDD('a|~b', self.ordering)

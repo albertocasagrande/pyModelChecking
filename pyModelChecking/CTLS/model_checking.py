@@ -122,7 +122,7 @@ def modelcheck(kripke, formula, F=None):
 
         return CTL.modelcheck(kripkeC, CTL_frml)
 
-    except TypeError, e:
+    except TypeError as e:
         print(e)
 
         raise TypeError('expected a CTL* state formula, ' +

@@ -15,7 +15,7 @@ __status__ = "Development"
 
 
 def parse_args(args_node):
-    return Ordering([arg.id for arg in args_node.args])
+    return Ordering([id(arg) for arg in args_node.args])
 
 
 def parse_name(ordering, node):

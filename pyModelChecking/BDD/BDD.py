@@ -322,6 +322,9 @@ class BDDNonTerminalNode(BDDNode):
                                            self.high.__invert__(r_cache))
         return r_cache[self]
 
+    def __hash__(self):
+        return id(self)
+
     def __eq__(self, O):
         ''' Test the equivalence of two BDDs.
 
@@ -411,6 +414,9 @@ class BDDTerminalNode(BDDNode):
         r_cache[self] = BDDTerminalNode(not self.value)
 
         return r_cache[self]
+
+    def __hash__(self):
+        return id(self)
 
     def __eq__(self, O):
         ''' Test the equivalence of two BDDs.

@@ -94,6 +94,9 @@ class Formula(object):
     def __hash__(self):
         return str(self).__hash__()
 
+    def __eq__(self, other):
+        return str(self)==str(other)
+
     def __cmp__(self, other):
         self_str = str(self)
         other_str = str(other)

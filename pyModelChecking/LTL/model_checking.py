@@ -5,7 +5,7 @@
 .. moduleauthor:: Alberto Casagrande <acasagrande@units.it>
 """
 
-from language import *
+from .language import *
 from pyModelChecking.graph import DiGraph
 from pyModelChecking.graph import compute_SCCs
 from pyModelChecking.kripke import Kripke

@@ -53,7 +53,7 @@ class TestCTLModelChecking(unittest.TestCase):
             for formula, solution, Fconstraints in instances:
                 S = modelcheck(kripke, formula, Fconstraints)
 
-                self.assertEquals(set(S), solution)
+                self.assertEqual(set(S), solution)
 
 
 if __name__ == '__main__':
