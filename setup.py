@@ -6,7 +6,7 @@ with open('README.md') as f:
     long_desc = f.read()
 
 setup(name='pyModelChecking',
-      version='0.2',
+      version='1.0',
       description='A simple Python model checking package',
       long_description=long_desc,
       long_description_content_type='text/markdown', 
@@ -19,6 +19,8 @@ setup(name='pyModelChecking',
       test_suite="tests",
       classifiers=[
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.6",
         "Development Status :: 4 - Beta",
         "Topic :: Scientific/Engineering",
         "Operating System :: OS Independent",
