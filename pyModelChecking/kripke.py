@@ -9,7 +9,7 @@
 from .graph import DiGraph
 from .graph import compute_SCCs
 
-from .__init__ import __version__
+from .__init__ import __release__
 
 class Kripke(DiGraph):
     '''
@@ -47,7 +47,7 @@ class Kripke(DiGraph):
                                'is supposed be total (see Kripke ' +
                                'definition at ' +
                                'https://pymodelchecking.readthedocs.io/en/' +
-                               __version__ +
+                               'v'+__release__ +
                                '/models.html#kripke-structures), ' +
                                'but it does not contains as sources ' +
                                'the nodes {}'.format(pots))
