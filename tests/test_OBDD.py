@@ -2,15 +2,6 @@ from pyModelChecking.BDD import *
 
 import unittest
 
-__author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015-2018"
-__credits__ = ["Alberto Casagrande"]
-__license__ = "GPL"
-__version__ = "0.2"
-__maintainer__ = "Alberto Casagrande"
-__email__ = "acasagrande@units.it"
-__status__ = "Development"
-
 
 class TestOBDD(unittest.TestCase):
     def setUp(self):
