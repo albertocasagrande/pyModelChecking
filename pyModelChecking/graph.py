@@ -5,16 +5,6 @@
 .. moduleauthor:: Alberto Casagrande <acasagrande@units.it>
 """
 
-__author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015"
-__credits__ = ["Alberto Casagrande"]
-__license__ = "GPL"
-__version__ = "0.2"
-__maintainer__ = "Alberto Casagrande"
-__email__ = "acasagrande@units.it"
-__status__ = "Development"
-
-
 class DiGraph(object):
     '''
     A class to represent directed graphs.

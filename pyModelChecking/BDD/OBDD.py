@@ -4,15 +4,6 @@ from .BDD import BDDNode
 from .BDD import apply as BDDapply
 from .ordering import *
 
-__author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015-2018"
-__credits__ = ["Alberto Casagrande"]
-__license__ = "GPL"
-__version__ = "0.2"
-__maintainer__ = "Alberto Casagrande"
-__email__ = "acasagrande@units.it"
-__status__ = "Development"
-
 
 def parse_args(args_node):
     return Ordering([id(arg) for arg in args_node.args])

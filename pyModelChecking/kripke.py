@@ -9,15 +9,7 @@
 from .graph import DiGraph
 from .graph import compute_SCCs
 
-__author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015-2018"
-__credits__ = ["Alberto Casagrande"]
-__license__ = "GPL"
-__version__ = "0.2"
-__maintainer__ = "Alberto Casagrande"
-__email__ = "acasagrande@units.it"
-__status__ = "Development"
-
+from .__init__ import __version__
 
 class Kripke(DiGraph):
     '''
@@ -51,9 +43,14 @@ class Kripke(DiGraph):
 
         pots = set(self.nodes())-set(self.sources())
         if pots:
-            raise RuntimeError(('R=\'{}\' must be total, while '.format(R)) +
-                               'it does not contains the states' +
-                               '{}'.format(pots))
+            raise RuntimeError('R=\'{}\' '.format(R) +
+                               'is supposed be total (see Kripke ' +
+                               'definition at ' +
+                               'https://pymodelchecking.readthedocs.io/en/' +
+                               __version__ +
+                               '/models.html#kripke-structures), ' +
+                               'but it does not contains as sources ' +
+                               'the nodes {}'.format(pots))
 
         if L is None:
             L = dict()

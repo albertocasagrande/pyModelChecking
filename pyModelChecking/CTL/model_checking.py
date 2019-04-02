@@ -15,15 +15,6 @@ import sys
 
 CTLS = sys.modules['pyModelChecking.CTLS']
 
-__author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015-2018"
-__credits__ = ["Alberto Casagrande"]
-__license__ = "GPL"
-__version__ = "0.2"
-__maintainer__ = "Alberto Casagrande"
-__email__ = "acasagrande@units.it"
-__status__ = "Development"
-
 
 def _init_formula_in(formula, L):
     if formula not in L:

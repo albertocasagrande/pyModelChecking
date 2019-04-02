@@ -2,11 +2,13 @@
 
 from setuptools import setup, find_packages
 
+import pyModelChecking
+
 with open('README.md') as f:
     long_desc = f.read()
 
 setup(name='pyModelChecking',
-      version='1.0',
+      version=pyModelChecking.__version__,
       description='A simple Python model checking package',
       long_description=long_desc,
       long_description_content_type='text/markdown', 

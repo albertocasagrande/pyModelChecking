@@ -1,15 +1,6 @@
 from weakref import WeakSet
 from .ordering import Ordering
 
-__author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015-2018"
-__credits__ = ["Alberto Casagrande"]
-__license__ = "GPL"
-__version__ = "0.2"
-__maintainer__ = "Alberto Casagrande"
-__email__ = "acasagrande@units.it"
-__status__ = "Development"
-
 
 def BDDsons_and_BDD(operator, A, B, ordering, r_cache):
     low = apply(operator, A.low, B, ordering, r_cache)

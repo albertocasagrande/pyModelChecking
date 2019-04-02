@@ -16,15 +16,6 @@ import pyModelChecking.LTL
 CTL = sys.modules['pyModelChecking.CTL']
 LTL = sys.modules['pyModelChecking.LTL']
 
-__author__ = "Alberto Casagrande"
-__copyright__ = "Copyright 2015-2018"
-__credits__ = ["Alberto Casagrande"]
-__license__ = "GPL"
-__version__ = "0.2"
-__maintainer__ = "Alberto Casagrande"
-__email__ = "acasagrande@units.it"
-__status__ = "Development"
-
 
 def _get_a_new_atomic_proposition_for(kripke, formula):
     f_str = '[{}]'.format(formula)
