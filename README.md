@@ -59,7 +59,23 @@ Traceback (most recent call last):
 TypeError: expected a CTL state formula, got the CTL path formula G p
 ```
 
-The function `modelcheck` in module `CTL` finds the states of Kripke structure that model a given CTL formula.
+It is also possible to parse a string representing a CTL formula by using the `Parser` class in the module `CTL`.
+
+```python
+>>> parser = Parser()
+
+>>> psi = parser("A(true U (q or not E X p))")
+
+>>> print(psi)
+
+A(True U (q or not EX p))
+
+>>> print(psi.__class__)
+
+<class 'pyModelChecking.CTL.language.A'>
+```
+
+The function `modelcheck` in the module `CTL` finds the states of Kripke structure that model a given CTL formula.
 
 ```python
 >>>  modelcheck(K,phi)
@@ -83,6 +99,14 @@ A(G(F(p))
 >>> modelcheck(K,psi)
 
 set([3])
+```
+
+Strings representing formulas in the opportune language can be used too as a parameter of the model checking function.
+
+```python
+>>> modelcheck(K,'A G F p')
+
+set([3]
 ```
 
 The module `CTLS` is meant to deal with CTL* formulas. It can also combine and model checks CTL and LTL formulas.
