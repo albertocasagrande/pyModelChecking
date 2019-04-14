@@ -1,7 +1,5 @@
 from lark import Lark, Transformer
 
-from .. import CTLS
-
 
 class AST_to_TemporalLogics(Transformer):
     ''' A class to transform AST into temporal logics.
@@ -117,6 +115,8 @@ class Parser(object):
         """
 
     def __init__(self):
+        import pyModelChecking.CTLS as CTLS
+
         self._parser = Lark(Parser.grammar, start='formula', parser='lalr',
                             transformer=AST_to_TemporalLogics(CTLS))
 
@@ -131,4 +131,5 @@ class Parser(object):
         :returns: a temporal formula.
         :rtype: a temporal formula type
         '''
+
         return self._parser.parse(string)

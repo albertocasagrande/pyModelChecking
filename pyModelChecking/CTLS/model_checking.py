@@ -8,6 +8,8 @@
 from .language import *
 from pyModelChecking.kripke import Kripke
 
+from .parser import Parser
+
 import sys
 
 import pyModelChecking.CTL
@@ -80,7 +82,7 @@ def _checkQuantifiedFormula(kripke, formula, fair_label=None):
         return LTL.modelcheck(kripke, formula)
 
 
-def modelcheck(kripke, formula, F=None):
+def modelcheck(kripke, formula, parser=None, F=None):
     ''' Model checks any CTL* formula on a Kripke structure.
 
     This method performs CTL* model checking of a formula on a given
@@ -89,11 +91,19 @@ def modelcheck(kripke, formula, F=None):
     :param kripke: a Kripke structure.
     :type kripke: Kripke
     :param formula: the formula to model check.
-    :type formula: a type castable in a CTLS.Formula
+    :type formula: a type castable in a CTLS.Formula or a string representing
+                   a CTLS formula
+    :param parser: a parser to parse a string into a CTLS.Formula.
+    :type parser: CTLS.Parser
     :param F: a list of fair states
     :type F: Container
     :returns: a list of the Kripke structure states that satisfy the formula.
     '''
+
+    if isinstance(formula, str):
+        if parser is None:
+            parser = Parser()
+        formula = parser(formula)
 
     if not isinstance(kripke, Kripke):
         raise TypeError('expected a Kripke structure, got {}'.format(kripke))

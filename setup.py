@@ -18,6 +18,7 @@ setup(name='pyModelChecking',
       license='GNU General Public License, version 2',
       url='https://github.com/albertocasagrande/pyModelChecking',
       packages=find_packages(),
+      install_requires=['lark-parser'],
       test_suite="tests",
       classifiers=[
         "Programming Language :: Python",

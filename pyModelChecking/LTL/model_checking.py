@@ -11,6 +11,8 @@ from pyModelChecking.graph import compute_SCCs
 from pyModelChecking.kripke import Kripke
 from pyModelChecking.CTLS import LNot as LNot
 
+from .parser import Parser
+
 import sys
 
 # if 'pyModelChecking.CTLS' not in sys.modules:
@@ -251,7 +253,7 @@ def _checkE_path_formula(kripke, p_formula):
     return set([T.atoms[i].state for i in R if p_formula in T.atoms[i]])
 
 
-def modelcheck(kripke, formula, F=None):
+def modelcheck(kripke, formula, parser=None, F=None):
     ''' Model checks any LTL formula on a Kripke structure.
 
     This method performs LTL model checking of a formula on a given
@@ -260,11 +262,19 @@ def modelcheck(kripke, formula, F=None):
     :param kripke: a Kripke structure.
     :type kripke: Kripke
     :param formula: the formula to model check.
-    :type formula: a type castable in a LTL.Formula
+    :type formula: a type castable in a LTL.Formula or a string representing
+                   a LTL formula
+    :param parser: a parser to parse a string into a LTL.Formula.
+    :type parser: LTL.Parser
     :param F: a list of fair states
     :type F: Container
     :returns: a list of the Kripke structure states that satisfy the formula.
     '''
+
+    if isinstance(formula, str):
+        if parser is None:
+            parser = Parser()
+        formula = parser(formula)
 
     if not (isinstance(formula, CTLS.A)):
         raise TypeError('expected a LTL state formula, got {}'.format(formula))

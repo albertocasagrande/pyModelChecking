@@ -3,8 +3,6 @@ from lark import Lark
 from ..CTLS.parser import Parser as CLTS_Parser
 from ..CTLS.parser import AST_to_TemporalLogics
 
-from .. import CTL
-
 
 class Parser(CLTS_Parser):
     grammar = r"""
@@ -39,5 +37,7 @@ class Parser(CLTS_Parser):
         """
 
     def __init__(self):
+        import pyModelChecking.CTL as CTL
+
         self._parser = Lark(Parser.grammar, start='formula', parser='lalr',
                             transformer=AST_to_TemporalLogics(CTL))

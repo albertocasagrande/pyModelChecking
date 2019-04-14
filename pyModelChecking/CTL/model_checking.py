@@ -11,6 +11,8 @@ from pyModelChecking.kripke import Kripke
 
 import pyModelChecking.CTLS
 
+from .parser import Parser
+
 import sys
 
 CTLS = sys.modules['pyModelChecking.CTLS']
@@ -164,7 +166,7 @@ def _checkStateFormula(kripke, formula, L):
     return Lalter_formula
 
 
-def modelcheck(kripke, formula, F=None):
+def modelcheck(kripke, formula, parser=None, F=None):
     ''' Model checks any CTL formula on a Kripke structure.
 
     This method performs CTL model checking of a formula on a given
@@ -173,11 +175,19 @@ def modelcheck(kripke, formula, F=None):
     :param kripke: a Kripke structure.
     :type kripke: Kripke
     :param formula: the formula to model check.
-    :type formula: a type castable in a CTL.Formula
+    :type formula: a type castable in a CTL.Formula or a string representing
+                   a CTL formula
+    :param parser: a parser to parse a string into a CTL.Formula.
+    :type parser: CTL.Parser
     :param F: a list of fair states
     :type F: Container
     :returns: a list of the Kripke structure states that satisfy the formula.
     '''
+
+    if isinstance(formula, str):
+        if parser is None:
+            parser = Parser()
+        formula = parser(formula)
 
     if not isinstance(formula, Formula):
         try:

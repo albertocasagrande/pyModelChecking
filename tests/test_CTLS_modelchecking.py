@@ -35,7 +35,7 @@ class TestCTLSModelChecking(unittest.TestCase):
     def test_modelchecking(self):
         for kripke, instances in self.problems:
             for formula, solution, Fconstraints in instances:
-                S = modelcheck(kripke, formula, Fconstraints)
+                S = modelcheck(kripke, formula, F=Fconstraints)
 
                 self.assertEqual(set(S), solution)
 

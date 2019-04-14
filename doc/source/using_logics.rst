@@ -88,8 +88,8 @@ negation of the parameter and minimise the number of outermost :math:`\neg`.
 
 .. _TL_encoding:
 
-Temporal Logics Encoding
-========================
+Temporal Logics Implementation
+==============================
 
 CTL* formulas can be defined by using the
 :py:mod:`pyModelChecking.CTLS` sub-module.
@@ -108,16 +108,30 @@ Boolean values as objects of the classes
 
 .. code-block:: Python
 
-    >>> f = A(G(
+    >>> phi = A(G(
     ...         Imply(And(Not('Close'),
     ...                   'Start'),
     ...               A(Or(G(Not('Heat')),
     ...                    F(Not('Error')))))
     ...         ))
-    >>> f
+    >>> phi
 
     A(G(((not Close and Start) --> A((G(not Heat) or F(not Error))))))
 
+In order to simplify the use of the library, a parsing class
+:py:class:`pyModelChecking.CTLS.Parser`: has been implemented. Its objects
+read a formula from a string and, when it is possible, translate it into a
+corresponding :py:class:`pyModelChecking.CTLS.Formula` objects.
+
+.. code-block:: Python
+
+    >>> parser = Parser()
+    >>> psi_str = 'A G ((not Close and Start) --> ' +
+    ...           'A(G(not Heat) or F(not Error)))'
+    >>> psi = parser(psi_str)
+    >>> psi
+
+    A(G(((not Close and Start) --> A((G(not Heat) or F(not Error))))))
 
 The sub-module also implements the CTL* model checking and fair model checking
 algorithms described in [CGP00]_.
@@ -132,13 +146,28 @@ algorithms described in [CGP00]_.
     ...               4: set(['Start', 'Close', 'Error']),
     ...               5: set(['Start', 'Close']),
     ...               6: set(['Start', 'Close', 'Heat'])})
-    >>> modelcheck(K, f)
+    >>> modelcheck(K, psi)
 
     set([0, 1, 2, 3, 4, 5, 6])
 
-    >>> modelcheck(K, f, F=[6])
+    >>> modelcheck(K, psi, F=[6])
 
     set([])
+
+It is also possible to model check a string representation of a CTL* formula by
+either passing an object of the class :py:class:`pyModelChecking.CTLS.Parser`
+or leaving the remit of creating such an object to the function
+:py:func:`pyModelChecking.CTLS.modelcheck`.
+
+.. code-block:: Python
+
+    >>> modelcheck(K, psi_str)
+
+    set([0, 1, 2, 3, 4, 5, 6])
+
+    >>> modelcheck(K, psi_str, parser=parser)
+
+    set([0, 1, 2, 3, 4, 5, 6])
 
 Analogous functionality are provided for :ref:`CTL<CTL>` and :ref:`LTL<LTL>`
 by the sub-modules :py:mod:`pyModelChecking.CTL` and
