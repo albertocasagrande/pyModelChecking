@@ -79,6 +79,31 @@ class Formula(object):
         '''
         return self.__class__(*[sf.clone() for sf in self._subformula])
 
+    def __and__(self, obj):
+        Lang = sys.modules[self.__module__]
+
+        return Lang.And(self, obj)
+
+    def __rand__(self, obj):
+        Lang = sys.modules[self.__module__]
+
+        return Lang.And(obj, self)
+
+    def __or__(self, obj):
+        Lang = sys.modules[self.__module__]
+
+        return Lang.Or(self, obj)
+
+    def __ror__(self, obj):
+        Lang = sys.modules[self.__module__]
+
+        return Lang.Or(obj, self)
+
+    def __invert__(self):
+        Lang = sys.modules[self.__module__]
+
+        return Lang.Not(self)
+
     def __hash__(self):
         return str(self).__hash__()
 
