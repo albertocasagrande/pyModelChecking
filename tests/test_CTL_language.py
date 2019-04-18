@@ -1,10 +1,16 @@
 from pyModelChecking.CTL import *
 import unittest
 
+from .test_CTLS_language import formula_into_str
+
 
 class TestFormulas(unittest.TestCase):
     def setUp(self):
-        self.formulas = [True, 'p', AtomicProposition('q')]
+        self.formulas = [True, 'p', AtomicProposition('q'), AF(EG('q')),
+                         AG('p'), EF('p'), AX('p'), AU('q', 'p'), ER('q', 'p'),
+                         Imply(AF(EG('q')), AG('p')),
+                         AG(Imply(And(Not('Close'), 'Start'),
+                                  Or(AG(Not('Heat')), EF(Not('Error')))))]
 
     def test_atomic_proposition(self):
         s = 'p'
@@ -17,11 +23,10 @@ class TestFormulas(unittest.TestCase):
             AtomicProposition(1)
 
     def test_boolean(self):
-        b = False
-        a = Bool(b)
-        self.assertEqual(b, a)
-
-        self.assertEqual(a, '{}'.format(b))
+        for b in [False, True]:
+            a = Bool(b)
+            self.assertEqual(b, a)
+            self.assertEqual(a, b)
 
         with self.assertRaises(TypeError):
             Bool('a')
@@ -29,7 +34,7 @@ class TestFormulas(unittest.TestCase):
     def generic_test_unaryop(self, op, op_str, equivalent_restricted_op=None):
         i = 0
         for phi in self.formulas:
-            s = '{} {}'.format(op_str, phi)
+            s = '{} {}'.format(op_str, formula_into_str(phi))
             self.assertEqual(s, '{}'.format(op(phi)))
             if (equivalent_restricted_op is not None and
                     isinstance(phi, Formula)):
@@ -66,8 +71,8 @@ class TestFormulas(unittest.TestCase):
         i = 0
         for phi in self.formulas:
             for psi in self.formulas:
-                s = '{}({} {} {})'.format(prefix_op_str, phi,
-                                          middle_op_str, psi)
+                s = '{}({} {} {})'.format(prefix_op_str, formula_into_str(phi),
+                                          middle_op_str, formula_into_str(psi))
                 self.assertEqual(s, '{}'.format(op(phi, psi)))
                 if (equivalent_restricted_op is not None and
                         isinstance(psi, Formula) and isinstance(phi, Formula)):

@@ -1,33 +1,31 @@
-from lark import Lark
-
-from ..CTLS.parser import Parser as CLTS_Parser
+from ..parser import Parser as BaseParser
 from ..CTLS.parser import AST_to_TemporalLogics
 
 
-class Parser(CLTS_Parser):
+class Parser(BaseParser):
     grammar = r"""
-        a_prop: /[a-zA-Z_][a-zA-Z_0-9]*/ -> string
-              | ESCAPED_STRING           -> e_string
-
-        s_formula: "true"     -> true
-                 | "false"    -> false
+        s_formula: "{}"     -> true
+                 | "{}"    -> false
                  | a_prop
-                 | "A" p_formula  -> forall_formula
-                 | "E" p_formula  -> exists_formula
-                 | "not" s_formula -> not_formula
+                 | "{}" p_formula       -> forall_formula
+                 | "{}" p_formula       -> exists_formula
+                 | "{}" s_formula       -> not_formula
                  | "(" u_formula ")"
 
         u_formula: s_formula
-                  | s_formula ( "or" s_formula )+ -> or_formula
-                  | s_formula ( "and" s_formula )+ -> and_formula
-                  | s_formula "-->" s_formula -> imply_formula
+                  | s_formula ( "{}" s_formula )+      -> or_formula
+                  | s_formula ( "{}" s_formula )+      -> and_formula
+                  | s_formula "{}" s_formula           -> imply_formula
 
-        p_formula: "X" s_formula  -> next_formula
-                 | "F" s_formula  -> eventually_formula
-                 | "G" s_formula  -> globally_formula
-                 | s_formula "U" s_formula -> until_formula
-                 | s_formula "R" s_formula -> release_formula
+        p_formula: "{}" s_formula  -> next_formula
+                 | "{}" s_formula  -> eventually_formula
+                 | "{}" s_formula  -> globally_formula
+                 | s_formula "{}" s_formula -> until_formula
+                 | s_formula "{}" s_formula -> release_formula
                  | "(" p_formula ")"
+
+        a_prop: /[a-zA-Z_][a-zA-Z_0-9]*/ -> string
+              | ESCAPED_STRING           -> e_string
 
         formula: p_formula | u_formula
 
@@ -36,8 +34,33 @@ class Parser(CLTS_Parser):
         %ignore WS
         """
 
-    def __init__(self):
-        import pyModelChecking.CTL as CTL
+    def __init__(self, language=None):
+        if language is None:
+            import pyModelChecking.CTL as CTL
 
-        self._parser = Lark(Parser.grammar, start='formula', parser='lalr',
-                            transformer=AST_to_TemporalLogics(CTL))
+            language = CTL
+
+        super(Parser, self).__init__(grammar=Parser.grammar,
+                                     language=language,
+                                     AST_Transformer=AST_to_TemporalLogics)
+
+
+def init_submodule():
+    from .language import alphabet
+
+    Parser.grammar = Parser.grammar.format(alphabet['Bool'].symbols[True],
+                                           alphabet['Bool'].symbols[False],
+                                           alphabet['A'].symbol,
+                                           alphabet['E'].symbol,
+                                           alphabet['Not'].symbol,
+                                           alphabet['Or'].symbol,
+                                           alphabet['And'].symbol,
+                                           alphabet['Imply'].symbol,
+                                           alphabet['X'].symbol,
+                                           alphabet['F'].symbol,
+                                           alphabet['G'].symbol,
+                                           alphabet['U'].symbol,
+                                           alphabet['R'].symbol)
+
+
+init_submodule()

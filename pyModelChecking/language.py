@@ -1,6 +1,6 @@
 """
 .. module:: language
-   :synopsis: Represents formulas and propositional logics.
+   :synopsis: Represents formulas and logics.
 
 .. moduleauthor:: Alberto Casagrande <acasagrande@units.it>
 """
@@ -8,8 +8,9 @@
 import sys
 import inspect
 
+
 class Formula(object):
-    ''' A class to represent propositional formulas.
+    ''' A class to represent formulas.
 
     Formulas are represented as nodes in labelled trees: leaves are terminal
     symbols (e.g., atomic propositions and Boolean values), while internal
@@ -22,7 +23,7 @@ class Formula(object):
     representing it has two sons.
     '''
 
-    __desc__ = 'propositional formula'
+    __desc__ = 'formula'
 
     def __init__(self, *phi):
         self.wrap_subformulas(phi, sys.modules[self.__module__].Formula)
@@ -56,22 +57,19 @@ class Formula(object):
             if isinstance(phi, bool):
                 self._subformula.append(Lang.Bool(phi))
             else:
-                if isinstance(phi, str):
-                    self._subformula.append(Lang.AtomicProposition(phi))
-                else:
+                if not isinstance(phi, FormulaClass):
+                    if (isinstance(phi, Lang.Formula) or
+                            not isinstance(phi, Formula)):
+
+                        raise TypeError(err_msg(phi))
+
+                    phi = phi.cast_to(Lang)
+
                     if not isinstance(phi, FormulaClass):
-                        if (isinstance(phi, Lang.Formula) or
-                                not isinstance(phi, Formula)):
+                        raise TypeError(err_msg(phi))
 
-                            raise TypeError(err_msg(phi))
-
-                        phi = phi.cast_to(Lang)
-
-                        if not isinstance(phi, FormulaClass):
-                            raise TypeError(err_msg(phi))
-
-                    self._subformula.append(phi)
-                    self.height = max(self.height, phi.height+1)
+                self._subformula.append(phi)
+                self.height = max(self.height, phi.height+1)
 
     def clone(self):
         ''' Clones a formula
@@ -85,7 +83,7 @@ class Formula(object):
         return str(self).__hash__()
 
     def __eq__(self, other):
-        return str(self)==str(other)
+        return str(self) == str(other)
 
     def __cmp__(self, other):
         self_str = str(self)
@@ -116,104 +114,25 @@ class Formula(object):
         '''
         return self._subformula
 
-    def cast_to(self, Lang):
-        ''' Casts the current object in a formula of a different class.
-
-        This method .
-
-        :param self: this formula
-        :type self: Formula
-        :param Lang: a class representing a language
-        :type self: class
-        :returns: a syntactically equivalent formula in language represented by
-           :class:`Lang`
-        :rtype: Lang
-        '''
-        if isinstance(self, Bool):
-            return Lang.Bool(bool(self._value))
-        if isinstance(self, AtomicProposition):
-            return Lang.AtomicProposition(str(self.name))
-
-        symbol_name = self.__class__.__name__
-        if symbol_name not in Lang.alphabet:
-            raise TypeError('{} is not in the alphabet '.format(symbol_name) +
-                            'of {}, thus {} is '.format(Lang.__name__, self) +
-                            'not a {} formula'.format(Lang.__name__))
-
-        subformulas = []
-        for subformula in self.subformulas():
-            subformulas.append(Formula.cast_to(subformula, Lang))
-
-        return Lang.alphabet[symbol_name](*subformulas)
-
     def __repr__(self):
         return str(self)
 
 
-class AlphabeticSymbol(object):
-    pass
-
-
-class AtomicProposition(Formula, AlphabeticSymbol):
+class Bool(Formula):
     '''
-    The class representing atomic propositionic propositions.
+    The class of Boolean values.
 
     '''
-    def __init__(self, name):
-        ''' Initialize a atomic proposition.
 
-        This method builds a atomic propositionic proposition.
-
-        :param name: the name of the atomic proposition.
-        :type name: str
-        '''
-        if not isinstance(name, str):
-            raise TypeError('name = \'{}\' must be a string'.format(name))
-        self.name = str(name)
-        self.height = 0
-
-    def clone(self):
-        ''' Clones an atomic proposition
-
-        :returns: a clone of the current atomic proposition
-        :rtype: AtomicProposition
-        '''
-        return self.__class__(str(self.name))
-
-    def subformula(self, i):
-        ''' Returns the :math:`i`-th subformula.
-
-        :param i: the index of the subformula to be returned
-        :type i: Integer
-        :raise TypeError: atomic propositions have not subformulas
-        '''
-        raise TypeError('AtomicPropositions have not subformulas.')
-
-    def subformulas(self):
-        ''' Returns the list of all the subformulas.
-
-        :returns: returns the empty list of the subformulas of the current
-            formula
-        :rtype: list
-        '''
-        return []
-
-    def __str__(self):
-        return '%s' % (self.name)
-
-
-class Bool(AtomicProposition):
-    '''
-    The class of Boolean atomic propositions.
-
-    '''
+    symbols = {True: 'true',
+               False: 'false'}
 
     def __init__(self, value):
-        ''' Initialize a Boolean atomic proposition.
+        ''' Initialize a Boolean value.
 
-        This method builds either a True or a False atomic proposition.
+        This method builds either a True or a False value.
 
-        :param value: the boolean atomic proposition.
+        :param value: the boolean value.
         :type value: bool
 
         '''
@@ -235,7 +154,7 @@ class Bool(AtomicProposition):
 
         :param i: the index of the subformula to be returned
         :type i: Integer
-        :raise TypeError: atomic propositions have not subformulas
+        :raise TypeError: Boolean values have not subformulas
         '''
         raise TypeError('Bools have not subformulas.')
 
@@ -248,13 +167,30 @@ class Bool(AtomicProposition):
         '''
         return []
 
-    def __str__(self):
-        ''' Return a string depicting the Boolean atomic proposition.
+    def __hash__(self):
+        return str(self).__hash__()
 
-        :returns: a string depicting the current Boolean atomic proposition.
+    def __eq__(self, other):
+
+        if isinstance(other, bool):
+            return self._value == other
+
+        if isinstance(other, Bool):
+            return self._value == other._value
+
+        return False
+
+    def __str__(self):
+        ''' Return a string depicting the Boolean value.
+
+        :returns: a string depicting the current Boolean value.
         :rtype: str
         '''
-        return '%s' % (self._value)
+        return Bool.symbols[self._value]
+
+
+class AlphabeticSymbol(object):
+    pass
 
 
 class LogicOperator(Formula):
@@ -262,7 +198,13 @@ class LogicOperator(Formula):
     A class to represent logic operator such as :math:`\land` or :math:`\lor`.
 
     '''
-    pass
+    def __str__(self):
+        if len(self._subformula) == 1:
+            return '{} {}'.format(self.__class__.symbol,
+                                  self._subformula[0])
+        else:
+            sep = ' {} '.format(self.__class__.symbol)
+            return '({})'.format(sep.join([str(f) for f in self._subformula]))
 
 
 class Not(LogicOperator, AlphabeticSymbol):
@@ -270,11 +212,11 @@ class Not(LogicOperator, AlphabeticSymbol):
     Represents logic negation.
 
     '''
+
+    symbol = 'not'
+
     def __init__(self, phi):
         super(Not, self).__init__(phi)
-
-    def __str__(self):
-        return 'not {}'.format(self._subformula[0])
 
 
 class Or(LogicOperator, AlphabeticSymbol):
@@ -282,9 +224,7 @@ class Or(LogicOperator, AlphabeticSymbol):
     Represents logic non-exclusive disjunction.
 
     '''
-    def __str__(self):
-        return '({})'.format(' or '.join(['{}'.format(f)
-                                          for f in self._subformula]))
+    symbol = 'or'
 
 
 class And(LogicOperator, AlphabeticSymbol):
@@ -292,9 +232,7 @@ class And(LogicOperator, AlphabeticSymbol):
     Represents logic conjunction.
 
     '''
-    def __str__(self):
-        return '({})'.format(' and '.join(['{}'.format(f)
-                                           for f in self._subformula]))
+    symbol = 'and'
 
 
 class Imply(LogicOperator, AlphabeticSymbol):
@@ -302,11 +240,10 @@ class Imply(LogicOperator, AlphabeticSymbol):
     Represents logic implication.
 
     '''
+    symbol = '-->'
+
     def __init__(self, phi, psi):
         super(Imply, self).__init__(phi, psi)
-
-    def __str__(self):
-        return '({} --> {})'.format(self._subformula[0], self._subformula[1])
 
 
 def get_alphabet(name):
@@ -316,6 +253,19 @@ def get_alphabet(name):
             alphabet[name] = obj
 
     return alphabet
+
+
+def get_symbols(alphabet):
+    symbols = list()
+
+    for name, c in alphabet.items():
+        if name == 'Bool':
+            symbols.extend(Bool.symbols.values())
+        else:
+            if name != 'AtomicProposition':
+                symbols.append(c.symbol)
+
+    return symbols
 
 
 def LNot(formula):
@@ -341,3 +291,4 @@ def LNot(formula):
 
 
 alphabet = get_alphabet(__name__)
+symbols = get_symbols(alphabet)

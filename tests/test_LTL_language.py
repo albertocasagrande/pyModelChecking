@@ -1,4 +1,4 @@
-from pyModelChecking.CTLS import *
+from pyModelChecking.LTL import *
 import unittest
 
 
@@ -10,11 +10,8 @@ def formula_into_str(phi):
 
 class TestFormulas(unittest.TestCase):
     def setUp(self):
-        self.formulas = [True, 'p', AtomicProposition('q'), A(F(G('q'))),
-                         G('p'), F('p'), X('p'), U('q', 'p'), R('q', 'p'),
-                         A(Imply(F(G('q')), E(G('p')))),
-                         A(G(Imply(And(Not('Close'), 'Start'),
-                                   A(Or(G(Not('Heat')), F(Not('Error')))))))]
+        self.formulas = [True, 'p', AtomicProposition('q'),
+                         G('p'), F('p'), X('p'), U('q', 'p'), R('q', 'p')]
 
     def test_atomic_proposition(self):
         s = 'p'
@@ -53,15 +50,6 @@ class TestFormulas(unittest.TestCase):
                 not_formula = Not(phi).get_equivalent_restricted_formula()
                 lnot_formula = LNot(phi.get_equivalent_restricted_formula())
                 self.assertEqual(not_formula, lnot_formula)
-
-    def test_A(self):
-        formula = (lambda phi:
-                   Not(E(LNot(phi.get_equivalent_restricted_formula()))))
-        self.generic_test_unaryop(A, 'A', formula)
-
-    def test_E(self):
-        formula = (lambda phi: E(phi.get_equivalent_restricted_formula()))
-        self.generic_test_unaryop(E, 'E', formula)
 
     def test_G(self):
         formula = (lambda phi:

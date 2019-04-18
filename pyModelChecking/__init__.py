@@ -15,8 +15,8 @@ __maintainer__ = "Alberto Casagrande"
 __email__ = "acasagrande@units.it"
 __status__ = "Development"
 
+from .kripke import *
+from .language import *
+from .parser import UnexpectedCharacters, UnexpectedToken
 
 name = "pyModelChecking"
-
-from .kripke import *
-

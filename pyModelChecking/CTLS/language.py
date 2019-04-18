@@ -5,14 +5,16 @@
 .. moduleauthor:: Alberto Casagrande <acasagrande@units.it>
 """
 
-import sys
-import inspect
 
-from .. import language as PL
+from pyModelChecking import PL
 
 from ..language import LNot
-from ..language import AlphabeticSymbol
 from ..language import get_alphabet
+from pyModelChecking.PL import get_symbols
+
+from ..language import AlphabeticSymbol
+
+import sys
 
 
 class Formula(PL.Formula):
@@ -169,7 +171,13 @@ class TemporalOperator(PathFormula):
     A class to represent temporal operators such as :math:`R` or :math:`X`.
 
     '''
-    pass
+    def __str__(self):
+        if len(self._subformula) == 1:
+            return '{}({})'.format(self.__class__.symbol,
+                                   self._subformula[0])
+        else:
+            sep = ' {} '.format(self.__class__.symbol)
+            return '({})'.format(sep.join([str(f) for f in self._subformula]))
 
 
 class PathQuantifier(StateFormula):
@@ -180,6 +188,9 @@ class PathQuantifier(StateFormula):
 
     def __init__(self, phi):
         self.wrap_subformulas([phi], Formula)
+
+    def __str__(self):
+        return '{}({})'.format(self.__class__.symbol, self._subformula[0])
 
 
 class LogicOperator(Formula, PL.LogicOperator):
@@ -244,6 +255,8 @@ class A(PathQuantifier, AlphabeticSymbol):
 
     '''
 
+    symbol = 'A'
+
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -268,15 +281,14 @@ class A(PathQuantifier, AlphabeticSymbol):
 
         return self.__class__(LNot(Lang.And(LNot(sf), fairAP)))
 
-    def __str__(self):
-        return 'A(%s)' % (self._subformula[0])
-
 
 class E(PathQuantifier, AlphabeticSymbol):
     '''
     A class representing CTL* A-formulas.
 
     '''
+
+    symbol = 'E'
 
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
@@ -301,11 +313,10 @@ class E(PathQuantifier, AlphabeticSymbol):
         Lang = sys.modules[self.__module__]
         return Lang.E(Lang.And(fairAP, fair_sf))
 
-    def __str__(self):
-        return 'E({})'.format(self._subformula[0])
-
 
 class X(TemporalOperator, AlphabeticSymbol):
+    symbol = 'X'
+
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -323,11 +334,10 @@ class X(TemporalOperator, AlphabeticSymbol):
         Lang = sys.modules[self.__module__]
         return Lang.X(subformula)
 
-    def __str__(self):
-        return 'X({})'.format(self._subformula[0])
-
 
 class F(TemporalOperator, AlphabeticSymbol):
+    symbol = 'F'
+
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -345,11 +355,10 @@ class F(TemporalOperator, AlphabeticSymbol):
         Lang = sys.modules[self.__module__]
         return Lang.U(True, subformula)
 
-    def __str__(self):
-        return 'F({})'.format(self._subformula[0])
-
 
 class G(TemporalOperator, AlphabeticSymbol):
+    symbol = 'G'
+
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -366,9 +375,6 @@ class G(TemporalOperator, AlphabeticSymbol):
 
         Lang = sys.modules[self.__module__]
         return Lang.Not(Lang.U(True, LNot(subformula)))
-
-    def __str__(self):
-        return 'G({})'.format(self._subformula[0])
 
 
 class Or(LogicOperator, PL.Or):
@@ -434,6 +440,8 @@ class Imply(LogicOperator, PL.Imply):
 
 
 class U(TemporalOperator, AlphabeticSymbol):
+    symbol = 'U'
+
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -454,10 +462,14 @@ class U(TemporalOperator, AlphabeticSymbol):
         return Lang.U(*subformulas)
 
     def __str__(self):
-        return '({} U {})'.format(self._subformula[0], self._subformula[1])
+        return '({} {} {})'.format(self._subformula[0],
+                                   U.symbol,
+                                   self._subformula[1])
 
 
 class R(TemporalOperator, AlphabeticSymbol):
+    symbol = 'R'
+
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
 
@@ -478,8 +490,6 @@ class R(TemporalOperator, AlphabeticSymbol):
         Lang = sys.modules[self.__module__]
         return Lang.Not(Lang.U(*subformulas))
 
-    def __str__(self):
-        return '({} R {})'.format(self._subformula[0], self._subformula[1])
-
 
 alphabet = get_alphabet(__name__)
+symbols = get_symbols(alphabet)

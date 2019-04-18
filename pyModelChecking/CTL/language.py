@@ -7,10 +7,10 @@
 
 import sys
 
-import pyModelChecking.CTLS
-
 from ..language import LNot
-from ..language import get_alphabet
+from ..language import get_alphabet, get_symbols
+
+import pyModelChecking.CTLS
 
 CTLS = sys.modules['pyModelChecking.CTLS']
 
@@ -449,3 +449,4 @@ def ER(psi, phi):
 
 
 alphabet = get_alphabet(__name__)
+symbols = get_symbols(alphabet)

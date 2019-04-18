@@ -5,12 +5,12 @@
 .. moduleauthor:: Alberto Casagrande <acasagrande@units.it>
 """
 
-import pyModelChecking.CTLS
+import sys
 
 from ..language import LNot
-from ..language import get_alphabet
+from ..language import get_alphabet, get_symbols
 
-import sys
+import pyModelChecking.CTLS
 
 CTLS = sys.modules['pyModelChecking.CTLS']
 
@@ -156,3 +156,4 @@ class A(StateFormula, CTLS.A):
 
 
 alphabet = get_alphabet(__name__)
+symbols = get_symbols(alphabet)
