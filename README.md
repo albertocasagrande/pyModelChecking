@@ -106,7 +106,7 @@ Strings representing formulas in the opportune language can be used too as a par
 ```python
 >>> modelcheck(K,'A G F p')
 
-set([3]
+set([3])
 ```
 
 The module `CTLS` is meant to deal with CTL* formulas. It can also combine and model checks CTL and LTL formulas.
