@@ -11,7 +11,6 @@ from .graph import compute_SCCs
 
 from .__init__ import __release__
 
-
 class Kripke(DiGraph):
     '''
     A class to represent Kripke structures.

@@ -2,13 +2,13 @@
 
 from setuptools import setup, find_packages
 
-import pyModelChecking
+from pyModelChecking import __version__
 
 with open('README.md') as f:
     long_desc = f.read()
 
 setup(name='pyModelChecking',
-      version=pyModelChecking.__version__,
+      version=__version__,
       description='A simple Python model checking package',
       long_description=long_desc,
       long_description_content_type='text/markdown', 
@@ -18,7 +18,9 @@ setup(name='pyModelChecking',
       license='GNU General Public License, version 2',
       url='https://github.com/albertocasagrande/pyModelChecking',
       packages=find_packages(),
-      install_requires=['lark-parser'],
+      install_requires=[
+          'lark-parser',
+      ],
       test_suite="tests",
       classifiers=[
         "Programming Language :: Python",

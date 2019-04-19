@@ -9,7 +9,7 @@ __copyright__ = "Copyright 2015-2019"
 __credits__ = ["Alberto Casagrande"]
 __license__ = "GPL"
 __release__ = "1.1"
-__subrelease__ = "0"
+__subrelease__ = "1"
 __version__ = __release__+"."+__subrelease__
 __maintainer__ = "Alberto Casagrande"
 __email__ = "acasagrande@units.it"
@@ -17,6 +17,5 @@ __status__ = "Development"
 
 from .kripke import *
 from .language import *
-from .parser import UnexpectedCharacters, UnexpectedToken
 
 name = "pyModelChecking"
