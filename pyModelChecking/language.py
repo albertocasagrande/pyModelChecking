@@ -225,10 +225,10 @@ class LogicOperator(Formula):
     '''
     def __str__(self):
         if len(self._subformula) == 1:
-            return '{} {}'.format(self.__class__.symbol,
+            return '{} {}'.format(self.__class__.symbols[0],
                                   self._subformula[0])
         else:
-            sep = ' {} '.format(self.__class__.symbol)
+            sep = ' {} '.format(self.__class__.symbols[0])
             return '({})'.format(sep.join([str(f) for f in self._subformula]))
 
 
@@ -238,7 +238,7 @@ class Not(LogicOperator, AlphabeticSymbol):
 
     '''
 
-    symbol = 'not'
+    symbols = ['not', '~']
 
     def __init__(self, phi):
         super(Not, self).__init__(phi)
@@ -249,7 +249,7 @@ class Or(LogicOperator, AlphabeticSymbol):
     Represents logic non-exclusive disjunction.
 
     '''
-    symbol = 'or'
+    symbols = ['or', '|']
 
 
 class And(LogicOperator, AlphabeticSymbol):
@@ -257,7 +257,7 @@ class And(LogicOperator, AlphabeticSymbol):
     Represents logic conjunction.
 
     '''
-    symbol = 'and'
+    symbols = ['and', '&']
 
 
 class Imply(LogicOperator, AlphabeticSymbol):
@@ -265,7 +265,7 @@ class Imply(LogicOperator, AlphabeticSymbol):
     Represents logic implication.
 
     '''
-    symbol = '-->'
+    symbols = ['-->']
 
     def __init__(self, phi, psi):
         super(Imply, self).__init__(phi, psi)
@@ -288,7 +288,7 @@ def get_symbols(alphabet):
             symbols.extend(Bool.symbols.values())
         else:
             if name != 'AtomicProposition':
-                symbols.append(c.symbol)
+                symbols.extend(c.symbols)
 
     return symbols
 

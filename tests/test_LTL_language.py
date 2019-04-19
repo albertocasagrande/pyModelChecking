@@ -13,6 +13,17 @@ class TestFormulas(unittest.TestCase):
         self.formulas = [True, 'p', AtomicProposition('q'),
                          G('p'), F('p'), X('p'), U('q', 'p'), R('q', 'p')]
 
+    def test_simplified_syntax(self):
+        formulas = [(And(True, 'p'), Bool(True) & 'p'),
+                    (Not(And(True, 'p')), ~(Bool(True) & 'p')),
+                    (And(Not(True), 'p'), ~Bool(True) & 'p'),
+                    (Or(True, Not('p')), Bool(True) | Not('p')),
+                    (Or(True, Not('p')), True | Not('p')),
+                    (A(Or(True, Not(X('p')))), A(True | ~X('p')))]
+
+        for old_syntax, new_syntax in formulas:
+            self.assertEqual(old_syntax, new_syntax)
+
     def test_atomic_proposition(self):
         s = 'p'
         a = AtomicProposition(s)

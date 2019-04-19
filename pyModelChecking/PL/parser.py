@@ -66,14 +66,14 @@ class Parser(BaseParser):
                  | a_prop
                  | "(" s_formula ")"
 
-        u_formula: "{}" u_formula  -> not_formula
+        u_formula: {} u_formula  -> not_formula
                  | "(" b_formula ")"
                  | s_formula
 
         b_formula: u_formula
-                 | u_formula ( "{}" u_formula )+ -> or_formula
-                 | u_formula ( "{}" u_formula )+ -> and_formula
-                 | u_formula "{}" u_formula -> imply_formula
+                 | u_formula ( {} u_formula )+ -> or_formula
+                 | u_formula ( {} u_formula )+ -> and_formula
+                 | u_formula {} u_formula -> imply_formula
 
         a_prop: /[a-zA-Z_][a-zA-Z_0-9]*/ -> string
               | ESCAPED_STRING           -> e_string
@@ -101,12 +101,16 @@ class Parser(BaseParser):
 def init_submodule():
     from .language import symbols, alphabet
 
+    def format_symbols_for(operator):
+        return '({})'.format('|'.join(['\"{}\"'.format(s)
+                                       for s in alphabet[operator].symbols]))
+
     Parser.grammar = Parser.grammar.format(alphabet['Bool'].symbols[True],
                                            alphabet['Bool'].symbols[False],
-                                           alphabet['Not'].symbol,
-                                           alphabet['Or'].symbol,
-                                           alphabet['And'].symbol,
-                                           alphabet['Imply'].symbol)
+                                           format_symbols_for('Not'),
+                                           format_symbols_for('Or'),
+                                           format_symbols_for('And'),
+                                           format_symbols_for('Imply'))
 
 
 init_submodule()

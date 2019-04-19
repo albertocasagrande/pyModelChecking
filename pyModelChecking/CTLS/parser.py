@@ -49,23 +49,23 @@ class Parser(BaseParser):
         s_formula: "{}"     -> true
                  | "{}"    -> false
                  | a_prop
-                 | "{}" u_formula  -> forall_formula
-                 | "{}" u_formula  -> exists_formula
+                 | {} u_formula  -> forall_formula
+                 | {} u_formula  -> exists_formula
                  | "(" s_formula ")"
 
-        u_formula: "{}" u_formula  -> next_formula
-                 | "{}" u_formula  -> eventually_formula
-                 | "{}" u_formula  -> globally_formula
-                 | "{}" u_formula  -> not_formula
+        u_formula: {} u_formula  -> next_formula
+                 | {} u_formula  -> eventually_formula
+                 | {} u_formula  -> globally_formula
+                 | {} u_formula  -> not_formula
                  | "(" p_formula ")"
                  | s_formula
 
         p_formula: u_formula
-                 | u_formula ( "{}" u_formula )+ -> or_formula
-                 | u_formula ( "{}" u_formula )+ -> and_formula
-                 | u_formula "{}" u_formula -> imply_formula
-                 | u_formula "{}" u_formula -> until_formula
-                 | u_formula "{}" u_formula -> release_formula
+                 | u_formula ( {} u_formula )+ -> or_formula
+                 | u_formula ( {} u_formula )+ -> and_formula
+                 | u_formula {} u_formula -> imply_formula
+                 | u_formula {} u_formula -> until_formula
+                 | u_formula {} u_formula -> release_formula
 
         a_prop: /[a-zA-Z_][a-zA-Z_0-9]*/ -> string
               | ESCAPED_STRING           -> e_string
@@ -89,21 +89,25 @@ class Parser(BaseParser):
 
 
 def init_submodule():
-    from .language import symbols, alphabet
+    from .language import alphabet
+
+    def format_symbols_for(operator):
+        return '({})'.format('|'.join(['\"{}\"'.format(s)
+                                       for s in alphabet[operator].symbols]))
 
     Parser.grammar = Parser.grammar.format(alphabet['Bool'].symbols[True],
                                            alphabet['Bool'].symbols[False],
-                                           alphabet['A'].symbol,
-                                           alphabet['E'].symbol,
-                                           alphabet['X'].symbol,
-                                           alphabet['F'].symbol,
-                                           alphabet['G'].symbol,
-                                           alphabet['Not'].symbol,
-                                           alphabet['Or'].symbol,
-                                           alphabet['And'].symbol,
-                                           alphabet['Imply'].symbol,
-                                           alphabet['U'].symbol,
-                                           alphabet['R'].symbol)
+                                           format_symbols_for('A'),
+                                           format_symbols_for('E'),
+                                           format_symbols_for('X'),
+                                           format_symbols_for('F'),
+                                           format_symbols_for('G'),
+                                           format_symbols_for('Not'),
+                                           format_symbols_for('Or'),
+                                           format_symbols_for('And'),
+                                           format_symbols_for('Imply'),
+                                           format_symbols_for('U'),
+                                           format_symbols_for('R'))
 
 
 init_submodule()

@@ -213,7 +213,7 @@ def get_symbols(alphabet):
             symbols.extend(Bool.symbols.values())
         else:
             if name != 'AtomicProposition':
-                symbols.append(c.symbol)
+                symbols.extend(c.symbols)
 
     return symbols
 

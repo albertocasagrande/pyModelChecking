@@ -173,10 +173,10 @@ class TemporalOperator(PathFormula):
     '''
     def __str__(self):
         if len(self._subformula) == 1:
-            return '{}({})'.format(self.__class__.symbol,
+            return '{}({})'.format(self.__class__.symbols[0],
                                    self._subformula[0])
         else:
-            sep = ' {} '.format(self.__class__.symbol)
+            sep = ' {} '.format(self.__class__.symbols[0])
             return '({})'.format(sep.join([str(f) for f in self._subformula]))
 
 
@@ -190,7 +190,7 @@ class PathQuantifier(StateFormula):
         self.wrap_subformulas([phi], Formula)
 
     def __str__(self):
-        return '{}({})'.format(self.__class__.symbol, self._subformula[0])
+        return '{}({})'.format(self.__class__.symbols[0], self._subformula[0])
 
 
 class LogicOperator(Formula, PL.LogicOperator):
@@ -255,7 +255,7 @@ class A(PathQuantifier, AlphabeticSymbol):
 
     '''
 
-    symbol = 'A'
+    symbols = ['A']
 
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
@@ -288,7 +288,7 @@ class E(PathQuantifier, AlphabeticSymbol):
 
     '''
 
-    symbol = 'E'
+    symbols = ['E']
 
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
@@ -315,7 +315,7 @@ class E(PathQuantifier, AlphabeticSymbol):
 
 
 class X(TemporalOperator, AlphabeticSymbol):
-    symbol = 'X'
+    symbols = ['X']
 
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
@@ -336,7 +336,7 @@ class X(TemporalOperator, AlphabeticSymbol):
 
 
 class F(TemporalOperator, AlphabeticSymbol):
-    symbol = 'F'
+    symbols = ['F']
 
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
@@ -357,7 +357,7 @@ class F(TemporalOperator, AlphabeticSymbol):
 
 
 class G(TemporalOperator, AlphabeticSymbol):
-    symbol = 'G'
+    symbols = ['G']
 
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
@@ -440,7 +440,7 @@ class Imply(LogicOperator, PL.Imply):
 
 
 class U(TemporalOperator, AlphabeticSymbol):
-    symbol = 'U'
+    symbols = ['U']
 
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.
@@ -461,14 +461,9 @@ class U(TemporalOperator, AlphabeticSymbol):
         Lang = sys.modules[self.__module__]
         return Lang.U(*subformulas)
 
-    def __str__(self):
-        return '({} {} {})'.format(self._subformula[0],
-                                   U.symbol,
-                                   self._subformula[1])
-
 
 class R(TemporalOperator, AlphabeticSymbol):
-    symbol = 'R'
+    symbols = ['R']
 
     def get_equivalent_restricted_formula(self):
         ''' Return an equivalent formula in the restricted syntax.

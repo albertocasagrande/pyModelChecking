@@ -16,6 +16,17 @@ class TestFormulas(unittest.TestCase):
                          A(G(Imply(And(Not('Close'), 'Start'),
                                    A(Or(G(Not('Heat')), F(Not('Error')))))))]
 
+    def test_simplified_syntax(self):
+        formulas = [(And(True, 'p'), Bool(True) & 'p'),
+                    (Not(And(True, 'p')), ~(Bool(True) & 'p')),
+                    (And(Not(True), 'p'), ~Bool(True) & 'p'),
+                    (Or(True, Not('p')), Bool(True) | Not('p')),
+                    (Or(True, Not('p')), True | Not('p')),
+                    (Or(A(True), Not(X('p'))), A(True) | ~X('p'))]
+
+        for old_syntax, new_syntax in formulas:
+            self.assertEqual(old_syntax, new_syntax)
+
     def test_atomic_proposition(self):
         s = 'p'
         a = AtomicProposition(s)
