@@ -1,3 +1,31 @@
+********************
+Propositional Logics
+********************
+
+.. _PL:
+
+**Propositional Logics** or **PL** is an extension of Boolean logics that 
+handles propositional symbols. Beside the standard logical operators 
+logical operators :math:`\neg`, :math:`\land`, :math:`\lor`, and
+:math:`\rightarrow`, it is also equipped with propositional variables whose 
+Boolean values can be declared at evalutation time. An **atomic proposition** 
+or **AP** is either a Boolean value --i.e., :math:`\top` (true) or 
+:math:`\bot` (false)-- or 
+a prositional variable.
+
+------
+Syntax
+------
+
+A PL formula is either:
+
+- :math:`\top` or :math:`\bot`
+- a propositional variable
+- :math:`\neg\varphi_1`, :math:`\varphi_1 \land \varphi_2`,
+  :math:`\varphi_1 \lor \varphi_2`, or
+  :math:`\varphi_1 \rightarrow \varphi_2` where both :math:`\varphi_1` and
+  :math:`\varphi_2` are PL formulas
+ 
 ***************
 Temporal Logics
 ***************
@@ -27,13 +55,13 @@ truth value depend on an infinite path).
 A CTL* state formula is either:
 
 - :math:`\top` or :math:`\bot`
-- an atomic proposition
+- a propositional variable
 - :math:`\neg\varphi_1`, :math:`\varphi_1 \land \varphi_2`,
   :math:`\varphi_1 \lor \varphi_2`, or
   :math:`\varphi_1 \rightarrow \varphi_2` where both :math:`\varphi_1` and
   :math:`\varphi_2` are CTL* state formulas
-- :math:`\mathbf{A} \psi` or :math:`\mathbf{E} \psi` where :math:`\psi` is a CTL* path
-  formula
+- :math:`\mathbf{A} \psi` or :math:`\mathbf{E} \psi` where :math:`\psi` is a 
+  CTL* path formula
 
 A CTL* path formula is either:
 
@@ -155,7 +183,7 @@ Syntax
 More formally, a CTL state formula is either:
 
 - :math:`\top` or :math:`\bot`
-- an atomic proposition
+- propositional variable
 - :math:`\neg \varphi_1`, :math:`\varphi_1 \land \varphi_2`,
   :math:`\varphi_1 \lor \varphi_2`, or :math:`\varphi_1 \rightarrow \varphi_2`,
   where both :math:`\varphi_1` and :math:`\varphi_2` are CTL state formulas
@@ -210,7 +238,7 @@ LTL formulas have the form :math:`A \rho` where :math:`\rho`
 is a LTL path formula and a LTL path formula is either:
 
 - :math:`\top` or :math:`\bot`
-- an atomic proposition
+- propositional variable
 - :math:`\neg \varphi_1`, :math:`\varphi_1 \land \varphi_2`,
   :math:`\varphi_1 \lor \varphi_2`, or :math:`\varphi_1 \rightarrow \varphi_2`,
   where both :math:`\varphi_1` and :math:`\varphi_2` are LTL path formulas

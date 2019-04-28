@@ -40,7 +40,7 @@ class Formula(BooleanLogics.Formula):
         elements of :param subformulas:.
 
         :param self: this object
-        :type self: Formula
+        :type self: PL.Formula
         :param subformulas: the set of objects to be used as model for the
             replacement
         :type subformulas: Container
@@ -131,7 +131,7 @@ class AtomicProposition(Formula, BooleanLogics.AlphabeticSymbol):
         ''' Clones an atomic proposition
 
         :returns: a clone of the current atomic proposition
-        :rtype: AtomicProposition
+        :rtype: PL.AtomicProposition
         '''
         return self.__class__(str(self.name))
 

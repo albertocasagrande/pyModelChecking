@@ -203,9 +203,9 @@ def compute_SCCs(G):
     Nuutila and Soisalon-Soinen's algorithm ([ns94]_) to compute the
     strongly connected components of a DiGraph.
 
-    ..[ns94] E. Nuutila and E. Soisalon-Soinen. "On finding the strongly
-      connected components in a directed graph.", Information Processing
-      Letters 49(1): 9-14, (1994)
+    .. [ns94] E. Nuutila and E. Soisalon-Soinen. "On finding the strongly
+       connected components in a directed graph.", Information Processing
+       Letters 49(1): 9-14, (1994)
 
     :param G: the DiGraph object
     :type G: DiGraph

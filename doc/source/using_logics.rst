@@ -23,46 +23,84 @@ represents atomic propositions and Boolean values through the
 
 .. code-block:: Python
 
-    >>> from pyModelChecking.formula import *
+    >>> from pyModelChecking.PL import *
     >>> AtomicProposition('p')
 
     p
 
     >>> Bool(True)
 
-    True
+    true
 
-Moreover, the `pyModelChecking.language` sub-module
+Moreover, the :mod:`pyModelChecking.PL` sub-module
 implements the logic operators :math:`\land`, :math:`\lor`, :math:`\rightarrow`
 and :math:`\neg` by mean of the classes
-:class:`pyModelChecking.formula.And`, :class:`pyModelChecking.formula.Or`,
-:class:`pyModelChecking.formula.Imply` and
-:class:`pyModelChecking.formula.Not`, respectively. These classes
+:class:`pyModelChecking.PL.And`, :class:`pyModelChecking.PL.Or`,
+:class:`pyModelChecking.PL.Imply` and
+:class:`pyModelChecking.PL.Not`, respectively. These classes
 automatically wrap strings and Boolean values as objects of the classes
-:class:`pyModelChecking.formula.AtomicProposition` and
-:class:`pyModelChecking.formula.Bool`, respectively.
+:class:`pyModelChecking.PL.AtomicProposition` and
+:class:`pyModelChecking.PL.Bool`, respectively. All cited classes are 
+subclasses of the class :class:`pyModelChecking.PL.Formula`.
 
 .. code-block:: Python
 
-    >>> And('p', True)
+    >>> And('p', true)
+ 
+    (p and true)
 
-    (p and True)
+    >>> And('p', true, 'p')
 
-    >>> And('p', True, 'p')
-
-    (p and True and p)
+    (p and true and p)
 
     >>> f = Imply('q','p')
     >>> And('p', f, Imply(Not(f), Or('q','s', f)))
 
     (p and (q --> p) and (not (q --> p) --> (q or s or (q --> p))))
 
-    >> Imply('p', 'q', 'p')
+    >>> Imply('p', 'q', 'p')
     Traceback (most recent call last):
       File "<stdin>", line 1, in <module>
     TypeError: __init__() takes exactly 3 arguments (4 given)
 
-For user convenience, the function :py:meth:`pyModelChecking.formula.LNot`
+In order to simplify formula encoding, the operators `~`, `&`, and `|` --i.e., 
+:meth:`pyModelChecking.PL.__not__`, 
+:meth:`pyModelChecking.PL.__and__`, and 
+:meth:`pyModelChecking.PL.__or__`-- were 
+overwritten to be used as shortcuts to :class:`pyModelChecking.PL.Not`, 
+:class:`pyModelChecking.PL.And`, and :class:`pyModelChecking.PL.Or` 
+constructors, respectively. At least one of the operator parameters should 
+be an object of the class :class:`pyModelChecking.PL.Formula`.
+
+.. code-block:: Python
+
+    >>> AtomicProposition('p') & True
+
+    (p and true)
+
+    >>> True & AtomicProposition('p')
+
+    (true and p)
+
+    >>> f = 'p' & Bool(True)
+    >>> f 
+
+    (p and true)
+
+    >>> True & 'p' & Bool(True)
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    TypeError: unsupported operand type(s) for &: 'bool' and 'str'
+
+    >>> 'p' & Bool(True) & 'p'
+
+    ((p and true) and p)
+
+    >>> ~('p' & Bool(True)) | And(~f,'b')
+
+    (not (p and true) or (not (p and true) and b))
+
+For user convenience, the function :func:`pyModelChecking.PL.LNot`
 is also provided. This function returns a formula equivalent to logic
 negation of the parameter and minimise the number of outermost :math:`\neg`.
 
@@ -85,14 +123,65 @@ negation of the parameter and minimise the number of outermost :math:`\neg`.
 
     not (p and not q)
 
+Parsing Formulas
+----------------
+
+The module :mod:`pyModelChecking.PL` also provides a parsing class
+:class:`pyModelChecking.PL.Parser` for propositional formula. 
+Its objects read a formula from a string and, when it is possible, 
+translate it into a corresponding :class:`pyModelChecking.PL.Formula` 
+objects.
+
+.. code-block:: Python
+
+    >>> p = Parser()
+
+    >>> p('p and true')
+
+    (p and true)
+
+    >>> p('(~p and q) --> ((q | p))')
+
+    ((not p and q) --> (q or p))
+
+A complete description of the parser grammar is contained in class member
+:attr:`pyModelChecking.PL.Parser.grammar`
+
+.. code-block:: Python
+
+    >>> print(p.grammar)
+
+        s_formula: "true"     -> true
+                 | "false"    -> false
+                 | a_prop
+                 | "(" s_formula ")"
+
+        u_formula: ("not"|"~") u_formula  -> not_formula
+                 | "(" b_formula ")"
+                 | s_formula
+
+        b_formula: u_formula
+                 | u_formula ( ("or"|"|") u_formula )+ -> or_formula
+                 | u_formula ( ("and"|"&") u_formula )+ -> and_formula
+                 | u_formula ("-->") u_formula -> imply_formula
+
+        a_prop: /[a-zA-Z_][a-zA-Z_0-9]*/ -> string
+              | ESCAPED_STRING           -> e_string
+
+        formula: b_formula
+
+        %import common.ESCAPED_STRING
+        %import common.WS
+        %import WS
+
 
 .. _TL_encoding:
-
+ 
 Temporal Logics Implementation
 ==============================
 
 CTL* formulas can be defined by using the
-:py:mod:`pyModelChecking.CTLS` sub-module.
+:mod:`pyModelChecking.CTLS` sub-module.
 
 .. code-block:: Python
 
@@ -100,7 +189,7 @@ CTL* formulas can be defined by using the
 
 Path quantifiers :math:`A` and :math:`E` as well as temporal operators
 :math:`X`, :math:`F`, :math:`G`, :math:`U` and :math:`R`  are provided as
-classes (see ref:`CTLS sub-module<ctls_api>` for more details).
+classes (see :ref:`CTLS sub-module<ctls_api>` for more details).
 As in the case of propositional logics, these classes wrap strings and
 Boolean values as objects of the classes
 :class:`pyModelChecking.CTLS.language.AtomicProposition` and
@@ -118,20 +207,21 @@ Boolean values as objects of the classes
 
     A(G(((not Close and Start) --> A((G(not Heat) or F(not Error))))))
 
-In order to simplify the use of the library, a parsing class
-:py:class:`pyModelChecking.CTLS.Parser`: has been implemented. Its objects
-read a formula from a string and, when it is possible, translate it into a
-corresponding :py:class:`pyModelChecking.CTLS.Formula` objects.
+As far as parsing capabilities and siplifying syntax concern, 
+:mod:`pyModelChecking.CTLS` has the same facilities 
+:mod:`pyModelChecking.PL` had and implements :math:`CTL*` specific 
+version of both class :class:`pyModelChecking.CTLS.Parser` and 
+operators `~`, `&`, and `|`. 
 
 .. code-block:: Python
+   
+   >>> p=Parser()
+   >>> p('G(not Heat)') | p('A(F(not Error))')
 
-    >>> parser = Parser()
-    >>> psi_str = 'A G ((not Close and Start) --> ' +
-    ...           'A(G(not Heat) or F(not Error)))'
-    >>> psi = parser(psi_str)
-    >>> psi
+   (G(not Heat) or A(F(not Error)))
 
-    A(G(((not Close and Start) --> A((G(not Heat) or F(not Error))))))
+Model Checking Formulas
+=======================
 
 The sub-module also implements the CTL* model checking and fair model checking
 algorithms described in [CGP00]_.
@@ -155,9 +245,9 @@ algorithms described in [CGP00]_.
     set([])
 
 It is also possible to model check a string representation of a CTL* formula by
-either passing an object of the class :py:class:`pyModelChecking.CTLS.Parser`
+either passing an object of the class :class:`pyModelChecking.CTLS.Parser`
 or leaving the remit of creating such an object to the function
-:py:func:`pyModelChecking.CTLS.modelcheck`.
+:func:`pyModelChecking.CTLS.modelcheck`.
 
 .. code-block:: Python
 
@@ -170,5 +260,5 @@ or leaving the remit of creating such an object to the function
     set([0, 1, 2, 3, 4, 5, 6])
 
 Analogous functionality are provided for :ref:`CTL<CTL>` and :ref:`LTL<LTL>`
-by the sub-modules :py:mod:`pyModelChecking.CTL` and
-:py:mod:`pyModelChecking.LTL`, respectively.
+by the sub-modules :mod:`pyModelChecking.CTL` and
+:mod:`pyModelChecking.LTL`, respectively.

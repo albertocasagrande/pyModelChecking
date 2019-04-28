@@ -87,7 +87,7 @@ class Parser(BaseParser):
 
     def __init__(self, language=None):
         if language is None:
-            import pyModelChecking as PL
+            import pyModelChecking.PL as PL
 
             language = PL
 

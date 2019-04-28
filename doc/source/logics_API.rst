@@ -7,6 +7,26 @@ are contained in *pyModelChecking* sub-modules. CTL*, CTL, and LTL
 are handled by :ref:`CTLS sub-module<ctls_api>`, :ref:`CTL sub-module<ctl_api>`
 and :ref:`LTL sub-module<ltl_api>`, respectively.
 
+.. _PL_api:
+
+Propositional Logics sub-module API
+===================================
+
+It represents :ref:`Proposition Logics formulas<PL>`.
+
+.. automodule:: pyModelChecking.PL
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Language
+--------
+
+.. automodule:: pyModelChecking.PL.language
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. _ctls_api:
 
 CTLS sub-module API
