@@ -1,8 +1,12 @@
-********************
-Propositional Logics
-********************
+******
+Logics
+******
 
 .. _PL:
+
+--------------------
+Propositional Logics
+--------------------
 
 **Propositional Logics** or **PL** is an extension of Boolean logics that 
 handles propositional symbols. Beside the standard logical operators 
@@ -13,9 +17,8 @@ or **AP** is either a Boolean value --i.e., :math:`\top` (true) or
 :math:`\bot` (false)-- or 
 a prositional variable.
 
-------
 Syntax
-------
+======
 
 A PL formula is either:
 
@@ -25,28 +28,53 @@ A PL formula is either:
   :math:`\varphi_1 \lor \varphi_2`, or
   :math:`\varphi_1 \rightarrow \varphi_2` where both :math:`\varphi_1` and
   :math:`\varphi_2` are PL formulas
- 
-***************
-Temporal Logics
-***************
+
+Semantics
+=========
+
+Since `pyModelChecking` is primary meant to support model checking, we 
+provide the semantics of propositional formulas with respect to a
+:ref:`Kripke structure<kripke_structure>`. If :math:`K` is a Kripke structure,
+:math:`s` one of its states, and :math:`\varphi` a propositional formula,
+we write :math:`K,s \models \varphi` (to be read ":math:`K` and :math:`s`
+satisfy :math:`\varphi`") meaning that :math:`\varphi` holds at state
+:math:`s` in :math:`K`. 
+
+Let :math:`K` be the Kripke structure :math:`(S,S_0,R,L)`;
+the relation :math:`\models` is defined recursively as follows:
+
+- :math:`K,s \models \top` and :math:`K,s \not\models \bot` for any state
+  :math:`s \in S`
+- if :math:`p \in AP`, then :math:`K,s \models p`
+  :math:`\Longleftrightarrow` :math:`p \in L(s)`
+- :math:`K,s \models \neg\varphi`
+  :math:`\Longleftrightarrow` :math:`K,s \not\models \varphi`
+- :math:`K,s \models \varphi_1 \land \varphi_2` :math:`\Longleftrightarrow`
+  :math:`K,s \models \varphi_1` and :math:`K,s \models \varphi_2`
+- :math:`K,s \models \varphi_1 \lor \varphi_2` :math:`\Longleftrightarrow`
+  :math:`K,s \models \varphi_1` or :math:`K,s \models \varphi_2`
+- :math:`K,s \models \varphi_1 \rightarrow \varphi_2`
+  :math:`\Longleftrightarrow`
+  :math:`K,s \not\models \varphi_1` or :math:`K,s \models \varphi_2`
 
 .. _CTLS:
 
+-------------------------
 Computational Tree Logic*
-=========================
+-------------------------
 
 The **Computational Tree Language**\ * or **CTL**\ * is a the temporal logic
 that describes the properties of computation trees over Kripke structures
-([CE81]_, [CES86]_). Beside a set of atomic propostions and the standard
+([CE81]_, [CES86]_). It is a proper extension of propositional logics and, 
+beside a set of atomic propostions and the standard
 logical operators :math:`\neg`, :math:`\land`, :math:`\lor`, and
 :math:`\rightarrow`, the alphabet of CTL* contains the two path quantifiers
 :math:`\mathbf{A}` ("for all paths") and :math:`\mathbf{E}` ("for some path") and the five
 temporal operators :math:`\mathbf{X}` ("at the next step"), :math:`\mathbf{G}` ("globally"),
 :math:`F` ("in the future"), :math:`\mathbf{U}` ("until"), and :math:`\mathbf{R}` ("release").
 
-------
 Syntax
-------
+======
 
 Any CTL* formula is either a *state formula* (i.e., a formula that are
 evaluated in a single state) or a *path formula* (i.e., a formula whose
@@ -76,15 +104,16 @@ A CTL* path formula is either:
 
 .. _CTLS_semantics:
 
----------
 Semantics
----------
-The semantics of CTL* formulas are given with respect to a
-:ref:`Kripke structure<kripke_structure>`. If :math:`K` is a Kripke structure,
+=========
+
+The semantics of CTL* formulas is given with respect to a
+:ref:`Kripke structure<kripke_structure>` and 
+it is a proper extension of the sematics of propositional logics. 
+If :math:`K` is a Kripke structure,
 :math:`s` one of its states, and :math:`\varphi` a state formula,
-we write :math:`K,s \models \varphi` (to be read ":math:`K` and :math:`s`
-satisfy :math:`\varphi`") meaning that :math:`\varphi` holds at state
-:math:`s` in :math:`K`. Analogously, If :math:`K` is a Kripke structure,
+we write :math:`K,s \models \varphi` meaning that :math:`\varphi` holds at 
+state :math:`s` in :math:`K`. Analogously, If :math:`K` is a Kripke structure,
 :math:`\pi` one of its computations, and :math:`\psi` a path formula,
 we write :math:`K,\pi \models \psi` meaning that :math:`\psi` holds
 along :math:`\pi` in :math:`K`.
@@ -150,9 +179,8 @@ and any :math:`\mathbf{G}` are **equivalent** if
 any formula :math:`\mathbf{G}` has an equivalent formula
 in :math:`\mathcal{F}` and vice versa.
 
------------------
 Restricted Syntax
------------------
+=================
 
 It is easy to prove that :math:`\bot`, :math:`\mathbf{F} \psi`, :math:`\mathbf{G} \psi`,
 :math:`\varphi \mathbf{R} \psi`, :math:`\mathbf{A} \varphi`, :math:`\varphi \land \psi`,
@@ -167,18 +195,18 @@ and atomic propositions is equivalent to the full CTL* language
 
 .. _CTL:
 
+------------------------
 Computational Tree Logic
-========================
+------------------------
 
 The **Computational Tree Language** or **CTL** is a subset of :ref:`CTL*<CTLS>`
 ([BMP83]_, [CE81]_, [CE80]_). In CTL, each occurence of the
 two path quantifiers :math:`\mathbf{A}` and :math:`\mathbf{E}` should be
 coupled to one of the temporal
 operators :math:`\mathbf{X}`, :math:`\mathbf{G}`, :math:`\mathbf{F}`, :math:`\mathbf{U}`, or :math:`\mathbf{U}`.
-
-------
+ 
 Syntax
-------
+======
 
 More formally, a CTL state formula is either:
 
@@ -196,14 +224,13 @@ A CTL path formula is either :math:`\mathbf{X} \varphi_1`,
 :math:`\varphi_1 \mathbf{R} \varphi_2` where both :math:`\varphi_1` and
 :math:`\varphi_2` are CTL state formulas.
 
----------
 Semantics
----------
+=========
+
 CTL has the same :ref:`semantics of CTL*<CTLS_semantics>`.
 
------------------
 Restricted Syntax
------------------
+=================
 
 Despite the apperent syntatic complexity of CTL, any possible property
 definable in it can be expressed by a CTL formula whose syntax is restricted
@@ -224,15 +251,15 @@ As a matter of the facts, it is easy to prove that:
 
 .. _LTL:
 
+-----------------
 Linear Time Logic
-=================
+-----------------
 
 The **Linear Time Logic** or **LTL** is a subset of of :ref:`CTL*<CTLS>`
 ([P77]_).
 
-------
 Syntax
-------
+======
 
 LTL formulas have the form :math:`A \rho` where :math:`\rho`
 is a LTL path formula and a LTL path formula is either:
@@ -247,14 +274,13 @@ is a LTL path formula and a LTL path formula is either:
   :math:`\varphi_1 \mathbf{R} \varphi_2` where both :math:`\varphi_1` and
   :math:`\varphi_2` are LTL path formulas.
 
----------
 Semantics
----------
-LTL has the same :ref:`semantics of CTL*<CTLS_semantics>`.
+=========
 
------------------
+LTL has the same :ref:`semantics of CTL*<CTLS_semantics>`.
+ 
 Restricted Syntax
------------------
+=================
 
 It is easy to prove that:
 
