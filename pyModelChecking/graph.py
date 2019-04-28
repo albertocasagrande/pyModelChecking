@@ -97,10 +97,10 @@ class DiGraph(object):
         ''' Return the next of a node
 
         Given a DiGraph :math:`(V,E)` and one of its node v, the
-        *next* of :math:`v \in V` is the set of all those nodes :math:`v'` that
-        are destination of some edge :math:`(v,v') \in E`.
+        *next* of :math:`v \in V` is the set of all those nodes :math:`v'` 
+        that are destination of some edge :math:`(v,v') \in E`.
 
-        :returns: the set of nodes :math:`{v' | (v,v') in E}`
+        :returns: the set of nodes :math:`\{v' | (v,v') \in E\}`
         :rtype: set
         '''
         if src not in self._next:

@@ -131,9 +131,9 @@ class Kripke(DiGraph):
         Given a Kripke structure :math:`K=(S,S0,R,L)` and one of its state
         :math:`s`, the *next* of :math:`s` in :math:`K` is the set of all
         those states that are destination of some edges whose source is
-        :math:`s` itself i.e., :math:`K.next(s)=\{s' | (s,s') in R\}`.
+        :math:`s` itself i.e., :math:`K.next(s)=\{s' | (s,s') \in R\}`.
 
-        :returns: the set of nodes :math:`\{s' | (s,s') in R\}`
+        :returns: the set of nodes :math:`\{s' | (s,s') \in R\}`
         :rtype: set
         '''
         try:
