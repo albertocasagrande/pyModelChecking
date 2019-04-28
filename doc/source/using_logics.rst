@@ -101,8 +101,9 @@ be an object of the class :class:`pyModelChecking.PL.Formula`.
     (not (p and true) or (not (p and true) and b))
 
 For user convenience, the function :func:`pyModelChecking.PL.LNot`
-is also provided. This function returns a formula equivalent to logic
-negation of the parameter and minimise the number of outermost :math:`\neg`.
+is also provided. This function returns a formula that is equivalent to the 
+logic negation of the parameter and minimises the number of outermost 
+:math:`\neg`.
 
 .. code-block:: Python
 
@@ -129,7 +130,7 @@ Parsing Formulas
 The module :mod:`pyModelChecking.PL` also provides a parsing class
 :class:`pyModelChecking.PL.Parser` for propositional formula. 
 Its objects read a formula from a string and, when it is possible, 
-translate it into a corresponding :class:`pyModelChecking.PL.Formula` 
+translate it into the corresponding :class:`pyModelChecking.PL.Formula` 
 objects.
 
 .. code-block:: Python
@@ -144,7 +145,7 @@ objects.
 
     ((not p and q) --> (q or p))
 
-A complete description of the parser grammar is contained in class member
+A complete description of the parser grammar is contained in class attribute  
 :attr:`pyModelChecking.PL.Parser.grammar`
 
 .. code-block:: Python
