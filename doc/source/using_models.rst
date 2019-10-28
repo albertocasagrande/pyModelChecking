@@ -69,7 +69,7 @@ directed graph.
 .. code-block:: Python
 
     >>> G.add_edge('b','a')
-    >>> print(list(compute_strongly_connected_components(G)))
+    >>> print(list(compute_SCCs(G)))
     [['a', 'b'], ['c'], [3]]
 
 

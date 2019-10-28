@@ -22,7 +22,7 @@ class TestCTLSParser(unittest.TestCase):
         self.wrong_formulas = [("p and", UnexpectedToken),
                                ("A U and G", UnexpectedToken),
                                ("A a --> +", UnexpectedCharacters),
-                               ("true\nfalse", UnexpectedCharacters)]
+                               ("true\nfalse", UnexpectedToken)]
 
     def test_parser(self):
         parser = Parser()

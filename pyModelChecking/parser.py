@@ -80,6 +80,10 @@ class Parser(object):
         try:
             return self._parser.parse(string)
         except exceptions.UnexpectedToken as e:
-            raise UnexpectedToken(string, e.pos_in_stream)
+            ex_class = UnexpectedToken
+            pos = int(e.pos_in_stream)
         except exceptions.UnexpectedCharacters as e:
-            raise UnexpectedCharacters(string, e.pos_in_stream)
+            ex_class = UnexpectedCharacters
+            pos = int(e.pos_in_stream)
+
+        raise ex_class(string, pos)

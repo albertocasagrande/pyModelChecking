@@ -22,8 +22,8 @@ class TestCTLParser(unittest.TestCase):
         self.wrong_formulas = [("p and", UnexpectedToken),
                                ("A U and G", UnexpectedToken),
                                ("A a --> +", UnexpectedToken),
-                               ("true\nfalse", UnexpectedCharacters),
-                               ("A (F G q --> E G p)", UnexpectedCharacters),
+                               ("true\nfalse", UnexpectedToken),
+                               ("A (F G q --> E G p)", UnexpectedToken),
                                ("A G ((not Close and Start) --> A " +
                                "((G not Heat) or (F not Error)))",
                                 UnexpectedToken)]

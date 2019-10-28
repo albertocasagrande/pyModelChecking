@@ -127,7 +127,13 @@ def _build_atoms(K, closure):
     for state in K.states():
         A.append(_TableuAtom(state))
 
-    for phi in sorted(list(closure), key=lambda a: a.height):
+    # this is to avoid issues with the "not X" case
+    cl_list = sorted(list(closure), key=(lambda a: a.height
+                                     if not (isinstance(a, CTLS.Not) and
+                                             isinstance(a.subformula(0), CTLS.X))
+                                     else a.height-1))
+
+    for phi in cl_list:
         Lang = sys.modules[phi.__module__]
 
         if phi != Lang.Not(True) and phi != Lang.Bool(False):
@@ -147,10 +153,9 @@ def _build_atoms(K, closure):
 
             if (isinstance(phi, CTLS.Or)):
                 sf = phi.subformulas()
-                neg_sf = [LNot(p) for p in sf]
 
                 for atom in A:
-                    if (sf[0] in atom or sf[1] in atom):
+                    if sum([f in atom for f in sf]):
                         atom.add(phi)
                     else:
                         atom.add(neg_phi)
@@ -170,7 +175,6 @@ def _build_atoms(K, closure):
 
             if isinstance(phi, CTLS.U):
                 sf = phi.subformulas()
-                neg_sf = [LNot(p) for p in sf]
 
                 for atom in A:
                     if (sf[1] in atom):

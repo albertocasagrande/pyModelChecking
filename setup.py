@@ -20,7 +20,7 @@ setup(name='pyModelChecking',
       install_requires=[
           'lark-parser',
       ],
-      test_suite="tests",
+      test_suite="pyModelChecking.tests",
       classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",

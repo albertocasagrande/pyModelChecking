@@ -1,8 +1,9 @@
 # pyModelChecking
-*pyModelChecking* is a small Python model checking package. Currently, it is able to represent
-[Kripke structures][Kripke], [CTL][CTL], [LTL][LTL], and [CTL*][CTLS] formulas and
-it provides [model checking][modelchecking] methods for LTL, CTL, and CTL*.
-In future, it will hopefully support symbolic model checking.
+*pyModelChecking* is a small Python model checking package. Currently, it is 
+able to represent [Kripke structures][Kripke], [CTL][CTL], [LTL][LTL], and 
+[CTL*][CTLS] formulas and it provides [model checking][modelchecking] methods 
+for LTL, CTL, and CTL*. In future, it will hopefully support symbolic model 
+checking.
 
 [Kripke]: https://en.wikipedia.org/wiki/Kripke_structure_%28model_checking%29
 [CTL]: https://en.wikipedia.org/wiki/Computation_tree_logic
@@ -59,7 +60,8 @@ Traceback (most recent call last):
 TypeError: expected a CTL state formula, got the CTL path formula G p
 ```
 
-It is also possible to parse a string representing a CTL formula by using the `Parser` class in the module `CTL`.
+It is also possible to parse a string representing a CTL formula by using 
+the `Parser` class in the module `CTL`.
 
 ```python
 >>> parser = Parser()
@@ -75,7 +77,8 @@ A(True U (q or not EX p))
 <class 'pyModelChecking.CTL.language.A'>
 ```
 
-The function `modelcheck` in the module `CTL` finds the states of Kripke structure that model a given CTL formula.
+The function `modelcheck` in the module `CTL` finds the states of Kripke 
+structure that model a given CTL formula.
 
 ```python
 >>>  modelcheck(K,phi)
@@ -83,9 +86,9 @@ The function `modelcheck` in the module `CTL` finds the states of Kripke structu
 set([1, 2])
 ```
 
-The formula `AFG p`, which we tried to build above, is a LTL formula.
-The `LTL` module can be used to represent and
-model check it over any Kripke structure.
+The formula `AFG p`, which we tried to build above, is a LTL formula. The 
+`LTL` module can be used to represent and model check it on any Kripke 
+structure.
 
 ```python
 >>> from pyModelChecking.LTL import *
@@ -101,7 +104,8 @@ A(G(F(p))
 set([3])
 ```
 
-Strings representing formulas in the opportune language can be used too as a parameter of the model checking function.
+Strings representing formulas in the opportune language can be used as a 
+parameter of the model checking function too.
 
 ```python
 >>> modelcheck(K,'A G F p')
@@ -109,7 +113,8 @@ Strings representing formulas in the opportune language can be used too as a par
 set([3])
 ```
 
-The module `CTLS` is meant to deal with CTL* formulas. It can also combine and model checks CTL and LTL formulas.
+The module `CTLS` is meant to deal with CTL* formulas. It can also combine and 
+model checks CTL and LTL formulas.
 
 ```python
 >>> from pyModelChecking.CTLS import *
@@ -146,8 +151,8 @@ set([])
 
 ```
 
-Whenever a CTL* formula is a CTL formula (LTL formula), CTL (LTL) model checking can
-be applied to it.
+Whenever a CTL* formula is a CTL formula (LTL formula), CTL (LTL) model 
+checking can be applied to it.
 
 ```python
 >>> import pyModelChecking.CTL as CTL

@@ -22,7 +22,12 @@ class TestLTLModelChecking(unittest.TestCase):
                                     5: set(['Start', 'Close']),
                                     6: set(['Start', 'Close', 'Heat'])}),
                           [(A(U(Not('Heat'), 'Close')),
-                            set([0, 1, 2, 3, 4, 5, 6]), None)])]
+                            set([0, 1, 2, 3, 4, 5, 6]), None)]),
+                         (Kripke(R=[(0, 1), (1, 2), (2, 3), (3, 3)],
+                                 L={0:set(['one']), 1:set(['two']), 
+                                    2:set(['three'])}),
+                          [(A(And('one',X(And('two',X('three'))))),
+                            set([0]), None)])]
 
     def test_modelchecking(self):
         for kripke, instances in self.problems:

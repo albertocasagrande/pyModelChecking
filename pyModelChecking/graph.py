@@ -40,7 +40,8 @@ class DiGraph(object):
                         self._next[dst] = set()
             except Exception:
                 raise RuntimeError(('E = \'{}\' '.format(E)) +
-                                   'must be a container of pairs.')
+                                   'must be a container of pairs ' +
+                                   'of hashable objects.')
 
     def add_node(self, v):
         ''' Add a new node to a DiGraph
@@ -105,7 +106,7 @@ class DiGraph(object):
         '''
         if src not in self._next:
             raise RuntimeError('src = \'{}\' is not a node '.format(src) +
-                               'of this DiGraph')
+                               'of {}'.format(str(self)))
 
         return self._next[src]
 
