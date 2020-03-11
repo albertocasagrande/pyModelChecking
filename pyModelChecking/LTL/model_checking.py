@@ -41,8 +41,8 @@ def _get_closure(formula):
                     T.append(Lang.X(LNot(sf)))
                 else:
                     if isinstance(phi, CTLS.Or):
-                        T.append(phi.subformula(0))
-                        T.append(phi.subformula(1))
+                        for sf in phi.subformulas():
+                            T.append(sf)
                     else:
                         if isinstance(phi, CTLS.U):
                             T.append(phi.subformula(0))

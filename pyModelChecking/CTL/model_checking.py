@@ -67,14 +67,10 @@ def _checkEX(kripke, formula, L):
 
 def _checkOr(kripke, formula, L):
     if formula not in L:
-        Lphi = []
-        for i in range(2):
-            subformula = formula.subformula(i)
-            Lphi.append(_checkStateFormula(kripke, subformula, L))
-
         Lformula = set()
-        for v in (Lphi[0] | Lphi[1]):
-            Lformula.add(v)
+        for sf in formula.subformulas():
+            for v in _checkStateFormula(kripke, sf, L):
+                Lformula.add(v)
 
         L[formula] = Lformula
 
