@@ -37,7 +37,10 @@ class TestCTLModelChecking(unittest.TestCase):
                           [(AG(Imply('Start', AF('Heat'))), set([]), None),
                            (AG(Imply('Start', AF('Heat'))),
                             set([0, 1, 2, 3, 4, 5, 6]),
-                            [set([5, 6])])])]
+                            [set([5, 6])])]),
+                         (Kripke(R  = [(0, 1), (1, 1)],
+                                 L  = {0: set(), 1: set('p')}),
+                          [(A(R(Bool(True), 'p')), set([1]), None)])]
 
     def test_modelchecking(self):
         for kripke, instances in self.problems:

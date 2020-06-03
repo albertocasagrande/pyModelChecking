@@ -94,7 +94,13 @@ def _checkEU(kripke, formula, L):
                 except Exception:
                     pass
 
-        T = Lphi[1]
+        # Some of the nodes satisfying p_formula.subformula(1)
+        # can be non-reachable from the reversed subgraph of
+        # the nodes satisfying p_formula.subformula(0).
+        # Hence, the former must be added to the
+        # investigated subgraph
+        for v in Lphi[1]-subgraph.nodes():
+            subgraph.add_node(v)
 
         L[formula] = subgraph.get_reachable_set_from(Lphi[1])
 
