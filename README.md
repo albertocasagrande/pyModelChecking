@@ -178,7 +178,7 @@ set([3])
 ### Copyright and license
 
 pyModelChecking
-Copyright (C) 2015-2019  Alberto Casagrande <acasagrande@units.it>
+Copyright (C) 2015-2020  Alberto Casagrande <acasagrande@units.it>
 
 pyModelChecking is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
