@@ -108,7 +108,7 @@ A Kripke structure is a tuple :math:`(S,S_0,R,L)` such that:
 - :math:`R\subseteq S\times S` is a set of *transitions* such that
   for all :math:`s \in S` there exists a :math:`(s,s') \in R` for some
   :math:`s' \in S`
-- :math:`L:S \rightarrow AP` maps each state into a set of
+- :math:`L:S \rightarrow 2^{AP}` maps each state into a set of
   atomic propositions
 
 Sometime, the set of initial states is omitted. In such cases, :math:`S` and
