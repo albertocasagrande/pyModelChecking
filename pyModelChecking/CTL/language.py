@@ -16,7 +16,7 @@ CTLS = sys.modules['pyModelChecking.CTLS']
 
 
 class Formula(CTLS.Formula):
-    '''
+    r'''
     A class representing CTL formulas.
 
     '''
@@ -25,7 +25,7 @@ class Formula(CTLS.Formula):
 
 
 class StateFormula(Formula, CTLS.StateFormula):
-    '''
+    r'''
     A class representing CTL* state formulas.
 
     '''
@@ -37,7 +37,7 @@ class StateFormula(Formula, CTLS.StateFormula):
 
 
 class PathFormula(Formula, CTLS.PathFormula):
-    '''
+    r'''
     A class representing CTL* path formulas.
 
     '''
@@ -49,7 +49,7 @@ class PathFormula(Formula, CTLS.PathFormula):
 
 
 class X(CTLS.X, PathFormula):
-    '''
+    r'''
     A class representing CTL X-formulas.
 
     '''
@@ -59,7 +59,7 @@ class X(CTLS.X, PathFormula):
 
 
 class F(CTLS.F, PathFormula):
-    '''
+    r'''
     A class representing CTL F-formulas.
 
     '''
@@ -69,7 +69,7 @@ class F(CTLS.F, PathFormula):
 
 
 class G(CTLS.G, PathFormula):
-    '''
+    r'''
     A class representing CTL G-formulas.
 
     '''
@@ -79,7 +79,7 @@ class G(CTLS.G, PathFormula):
 
 
 class U(CTLS.U, PathFormula):
-    '''
+    r'''
     A class representing CTL U-formulas.
 
     '''
@@ -88,7 +88,7 @@ class U(CTLS.U, PathFormula):
 
 
 class R(CTLS.R, PathFormula):
-    '''
+    r'''
     A class representing CTL R-formulas.
 
     '''
@@ -97,7 +97,7 @@ class R(CTLS.R, PathFormula):
 
 
 class AtomicProposition(CTLS.AtomicProposition, StateFormula):
-    '''
+    r'''
     A class representing CTL atomic propositions.
 
     '''
@@ -106,7 +106,7 @@ class AtomicProposition(CTLS.AtomicProposition, StateFormula):
 
 
 class Bool(CTLS.Bool, StateFormula):
-    '''
+    r'''
     A class representing CTL Boolean atomic propositions.
 
     '''
@@ -115,7 +115,7 @@ class Bool(CTLS.Bool, StateFormula):
 
 
 class Not(CTLS.Not, StateFormula):
-    '''
+    r'''
     A class representing CTL negations.
 
     '''
@@ -124,7 +124,7 @@ class Not(CTLS.Not, StateFormula):
 
 
 class Or(CTLS.Or, StateFormula):
-    '''
+    r'''
     A class representing CTL disjunctions.
 
     '''
@@ -133,7 +133,7 @@ class Or(CTLS.Or, StateFormula):
 
 
 class And(CTLS.And, StateFormula):
-    '''
+    r'''
     A class representing CTL conjunctions.
 
     '''
@@ -142,7 +142,7 @@ class And(CTLS.And, StateFormula):
 
 
 class Imply(CTLS.Imply, StateFormula):
-    '''
+    r'''
     A class representing CTL implications.
 
     '''
@@ -151,13 +151,13 @@ class Imply(CTLS.Imply, StateFormula):
 
 
 class A(CTLS.A, StateFormula):
-    '''
+    r'''
     A class representing CTL A-formulas.
 
     '''
 
     def get_equivalent_restricted_formula(self):
-        ''' Return a equivalent formula in the restricted syntax.
+        r''' Return a equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`\land`,
         :math:`\\rightarrow`, :math:`A`, :math:`F`, and :math:`R` and is
@@ -225,13 +225,13 @@ class A(CTLS.A, StateFormula):
 
 
 class E(CTLS.E, StateFormula):
-    '''
+    r'''
     A class representing CTL E-formulas.
 
     '''
 
     def get_equivalent_restricted_formula(self):
-        ''' Return a equivalent formula in the restricted syntax.
+        r''' Return a equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`\land`,
         :math:`\\rightarrow`, :math:`A`, :math:`F`, and :math:`R` and is
@@ -301,7 +301,7 @@ class E(CTLS.E, StateFormula):
 
 
 def AX(psi):
-    ''' A shortcut to build :math:`A(X(\psi))`.
+    r''' A shortcut to build :math:`A(X(\psi))`.
 
     This method returns the formula :math:`A(X(\psi))` where :math:`\psi` is
     the method parameter.
@@ -315,7 +315,7 @@ def AX(psi):
 
 
 def EX(psi):
-    ''' A shortcut to build :math:`E(X(\psi))`.
+    r''' A shortcut to build :math:`E(X(\psi))`.
 
     This method returns the formula :math:`E(X(\psi))` where :math:`\psi` is
     the method parameter.
@@ -329,7 +329,7 @@ def EX(psi):
 
 
 def AF(psi):
-    ''' A shortcut to build :math:`E(X(\psi))`.
+    r''' A shortcut to build :math:`E(X(\psi))`.
 
     This method returns the formula :math:`E(X(\psi))` where :math:`\psi` is
     the method parameter.
@@ -343,7 +343,7 @@ def AF(psi):
 
 
 def EF(psi):
-    ''' A shortcut to build :math:`E(F(\psi))`.
+    r''' A shortcut to build :math:`E(F(\psi))`.
 
     This method returns the formula :math:`E(F(\psi))` where :math:`\psi` is
     the method parameter.
@@ -357,7 +357,7 @@ def EF(psi):
 
 
 def AG(psi):
-    ''' A shortcut to build :math:`A(G(\psi))`.
+    r''' A shortcut to build :math:`A(G(\psi))`.
 
     This method returns the formula :math:`A(G(\psi))` where :math:`\psi` is
     the method parameter.
@@ -371,7 +371,7 @@ def AG(psi):
 
 
 def EG(psi):
-    ''' A shortcut to build :math:`E(G(\psi))`.
+    r''' A shortcut to build :math:`E(G(\psi))`.
 
     This method returns the formula :math:`E(G(\psi))` where :math:`\psi` is
     the method parameter.
@@ -385,7 +385,7 @@ def EG(psi):
 
 
 def AU(psi, phi):
-    ''' A shortcut to build :math:`A(U(\psi, \phi))`.
+    r''' A shortcut to build :math:`A(U(\psi, \phi))`.
 
     This method returns the formula :math:`A(U(\psi, \phi))` where
     :math:`\psi` and :math:`\phi` are the method parameters.
@@ -401,7 +401,7 @@ def AU(psi, phi):
 
 
 def EU(psi, phi):
-    ''' A shortcut to build :math:`E(U(\psi, \phi))`.
+    r''' A shortcut to build :math:`E(U(\psi, \phi))`.
 
     This method returns the formula :math:`E(U(\psi, \phi))` where
     :math:`\psi` and :math:`\phi` are the method parameters.
@@ -417,7 +417,7 @@ def EU(psi, phi):
 
 
 def AR(psi, phi):
-    ''' A shortcut to build :math:`A(R(\psi, \phi))`.
+    r''' A shortcut to build :math:`A(R(\psi, \phi))`.
 
     This method returns the formula :math:`A(R(\psi, \phi))` where
     :math:`\psi` and :math:`\phi` are the method parameters.
@@ -433,7 +433,7 @@ def AR(psi, phi):
 
 
 def ER(psi, phi):
-    ''' A shortcut to build :math:`E(R(\psi, \phi))`.
+    r''' A shortcut to build :math:`E(R(\psi, \phi))`.
 
     This method returns the formula :math:`E(R(\psi, \phi))` where
     :math:`\psi` and :math:`\phi` are the method parameters.

@@ -258,7 +258,7 @@ def _checkE_path_formula(kripke, p_formula):
 
 
 def modelcheck(kripke, formula, parser=None, F=None):
-    ''' Model checks any LTL formula on a Kripke structure.
+    r''' Model checks any LTL formula on a Kripke structure.
 
     This method performs LTL model checking of a formula on a given
     Kripke structure.

@@ -10,7 +10,7 @@ import inspect
 
 
 class Formula(object):
-    ''' A class to represent formulas.
+    r''' A class to represent formulas.
 
     Formulas are represented as nodes in labelled trees: leaves are terminal
     symbols (e.g., atomic propositions and Boolean values), while internal
@@ -29,7 +29,7 @@ class Formula(object):
         self.wrap_subformulas(phi, sys.modules[self.__module__].Formula)
 
     def wrap_subformulas(self, subformulas, FormulaClass):
-        ''' Replaces subformulas of the current object
+        r''' Replaces subformulas of the current object
 
         This method replaces the subformulas of the current object by
         using the :class:`FormulaClass` objects representing the
@@ -72,7 +72,7 @@ class Formula(object):
                 self.height = max(self.height, phi.height+1)
 
     def clone(self):
-        ''' Clones a formula
+        r''' Clones a formula
 
         :returns: a clone of the current formula
         :rtype: Formula
@@ -122,7 +122,7 @@ class Formula(object):
         return 0
 
     def subformula(self, i):
-        ''' Returns the :math:`i`-th subformula.
+        r''' Returns the :math:`i`-th subformula.
 
         :param i: the index of the subformula to be returned
         :type i: Integer
@@ -132,7 +132,7 @@ class Formula(object):
         return self._subformula[i]
 
     def subformulas(self):
-        ''' Returns the list of all the subformulas.
+        r''' Returns the list of all the subformulas.
 
         :returns: returns the list of the subformulas of the current formula
         :rtype: list
@@ -144,7 +144,7 @@ class Formula(object):
 
 
 class Bool(Formula):
-    '''
+    r'''
     The class of Boolean values.
 
     '''
@@ -153,7 +153,7 @@ class Bool(Formula):
                False: 'false'}
 
     def __init__(self, value):
-        ''' Initialize a Boolean value.
+        r''' Initialize a Boolean value.
 
         This method builds either a True or a False value.
 
@@ -167,7 +167,7 @@ class Bool(Formula):
         self.height = 0
 
     def clone(self):
-        ''' Clones an atomic proposition
+        r''' Clones an atomic proposition
 
         :returns: a clone of the current Bool value
         :rtype: Bool
@@ -175,7 +175,7 @@ class Bool(Formula):
         return self.__class__(bool(self._value))
 
     def subformula(self, i):
-        ''' Returns the :math:`i`-th subformula.
+        r''' Returns the :math:`i`-th subformula.
 
         :param i: the index of the subformula to be returned
         :type i: Integer
@@ -184,7 +184,7 @@ class Bool(Formula):
         raise TypeError('Bools have not subformulas.')
 
     def subformulas(self):
-        ''' Returns the list of all the subformulas.
+        r''' Returns the list of all the subformulas.
 
         :returns: returns the empty list of the subformulas of the current
             formula
@@ -206,7 +206,7 @@ class Bool(Formula):
         return False
 
     def __str__(self):
-        ''' Return a string depicting the Boolean value.
+        r''' Return a string depicting the Boolean value.
 
         :returns: a string depicting the current Boolean value.
         :rtype: str
@@ -219,7 +219,7 @@ class AlphabeticSymbol(object):
 
 
 class LogicOperator(Formula):
-    '''
+    r'''
     A class to represent logic operator such as :math:`\land` or :math:`\lor`.
 
     '''
@@ -233,7 +233,7 @@ class LogicOperator(Formula):
 
 
 class Not(LogicOperator, AlphabeticSymbol):
-    '''
+    r'''
     Represents logic negation.
 
     '''
@@ -245,7 +245,7 @@ class Not(LogicOperator, AlphabeticSymbol):
 
 
 class Or(LogicOperator, AlphabeticSymbol):
-    '''
+    r'''
     Represents logic non-exclusive disjunction.
 
     '''
@@ -253,7 +253,7 @@ class Or(LogicOperator, AlphabeticSymbol):
 
 
 class And(LogicOperator, AlphabeticSymbol):
-    '''
+    r'''
     Represents logic conjunction.
 
     '''
@@ -261,7 +261,7 @@ class And(LogicOperator, AlphabeticSymbol):
 
 
 class Imply(LogicOperator, AlphabeticSymbol):
-    '''
+    r'''
     Represents logic implication.
 
     '''
@@ -294,7 +294,7 @@ def get_symbols(alphabet):
 
 
 def LNot(formula):
-    ''' Logical Not - Returns an equivalent formula that does not begin
+    r''' Logical Not - Returns an equivalent formula that does not begin
     with two negations.
 
     This method negates the parameter and removes all the pairs of negations at

@@ -3,7 +3,7 @@ from ..parser import Parser as BaseParser
 
 
 class AST_to_TemporalLogics(AST_to_PropositionalLogics):
-    ''' A class to transform AST into a CTLS temporal formula.
+    r''' A class to transform AST into a CTLS temporal formula.
 
     This class implements a Lark's transformer to turn AST reprensenting
     temporal logics formulas into the corresponding temporal formulas.
@@ -38,7 +38,7 @@ class AST_to_TemporalLogics(AST_to_PropositionalLogics):
 
 
 class Parser(BaseParser):
-    ''' A class to parse a temporal logics formula.
+    r''' A class to parse a temporal logics formula.
 
     Every object of this class instanciates a Lark's parser to parse a string
     reprensenting CTLS formulas into the corresponding pyModelChecking's CTLS

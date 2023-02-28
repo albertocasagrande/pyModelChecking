@@ -16,7 +16,7 @@ CTLS = sys.modules['pyModelChecking.CTLS']
 
 
 class Formula(CTLS.Formula):
-    '''
+    r'''
     A class representing LTL formulas.
 
     '''
@@ -25,7 +25,7 @@ class Formula(CTLS.Formula):
 
 
 class PathFormula(Formula, CTLS.PathFormula):
-    '''
+    r'''
     A class representing LTL path formulas.
 
     '''
@@ -37,7 +37,7 @@ class PathFormula(Formula, CTLS.PathFormula):
 
 
 class X(PathFormula, CTLS.X):
-    '''
+    r'''
     A class representing LTL X-formulas.
 
     '''
@@ -46,7 +46,7 @@ class X(PathFormula, CTLS.X):
 
 
 class F(PathFormula, CTLS.F):
-    '''
+    r'''
     A class representing LTL F-formulas.
 
     '''
@@ -55,7 +55,7 @@ class F(PathFormula, CTLS.F):
 
 
 class G(PathFormula, CTLS.G):
-    '''
+    r'''
     A class representing LTL G-formulas.
 
     '''
@@ -64,7 +64,7 @@ class G(PathFormula, CTLS.G):
 
 
 class U(PathFormula, CTLS.U):
-    '''
+    r'''
     A class representing LTL U-formulas.
 
     '''
@@ -73,7 +73,7 @@ class U(PathFormula, CTLS.U):
 
 
 class R(PathFormula, CTLS.R):
-    '''
+    r'''
     A class representing LTL R-formulas.
 
     '''
@@ -82,7 +82,7 @@ class R(PathFormula, CTLS.R):
 
 
 class AtomicProposition(CTLS.AtomicProposition, PathFormula):
-    '''
+    r'''
     A class representing LTL atomic propositions.
 
     '''
@@ -91,7 +91,7 @@ class AtomicProposition(CTLS.AtomicProposition, PathFormula):
 
 
 class Bool(CTLS.Bool, PathFormula):
-    '''
+    r'''
     A class representing LTL Boolean atomic propositions.
 
     '''
@@ -100,7 +100,7 @@ class Bool(CTLS.Bool, PathFormula):
 
 
 class Not(PathFormula, CTLS.Not):
-    '''
+    r'''
     A class representing LTL negations.
 
     '''
@@ -109,7 +109,7 @@ class Not(PathFormula, CTLS.Not):
 
 
 class Or(PathFormula, CTLS.Or):
-    '''
+    r'''
     A class representing LTL disjunctions.
 
     '''
@@ -118,7 +118,7 @@ class Or(PathFormula, CTLS.Or):
 
 
 class And(PathFormula, CTLS.And):
-    '''
+    r'''
     A class representing LTL conjunctions.
 
     '''
@@ -127,7 +127,7 @@ class And(PathFormula, CTLS.And):
 
 
 class Imply(PathFormula, CTLS.Imply):
-    '''
+    r'''
     A class representing LTL implications.
 
     '''
@@ -136,7 +136,7 @@ class Imply(PathFormula, CTLS.Imply):
 
 
 class StateFormula(Formula, CTLS.StateFormula):
-    '''
+    r'''
     A class representing LTL state formulas.
 
     '''
@@ -148,7 +148,7 @@ class StateFormula(Formula, CTLS.StateFormula):
 
 
 class A(StateFormula, CTLS.A):
-    '''
+    r'''
     A class representing LTL A-formulas.
 
     '''

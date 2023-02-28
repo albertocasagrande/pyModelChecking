@@ -81,7 +81,7 @@ def parse_binary_expr(ordering, node):
 
 
 class BinaryParser(object):
-    '''
+    r'''
     A class to represent parsers of binary functions.
 
     The objects of this class can parse strings representing binary functions
@@ -90,7 +90,7 @@ class BinaryParser(object):
     '''
 
     def __init__(self, ordering):
-        ''' Initialize a binary parser.
+        r''' Initialize a binary parser.
 
         :param ordering: an ordering for the variables to be parsed
         :type ordering: Ordering
@@ -106,7 +106,7 @@ class BinaryParser(object):
 
     @staticmethod
     def parse_function(binary_funct):
-        ''' Parse a binary function.
+        r''' Parse a binary function.
 
         :param ordering: an ordering for the variables to be parsed
         :type ordering: Ordering
@@ -137,12 +137,12 @@ class BinaryParser(object):
 
 
 class OBDD(object):
-    '''
+    r'''
     A class to represent Ordered Binary Decision Diagrams (OBDDs).
     '''
 
     def __init__(self, bfunct, ordering=None, check_ordering=True):
-        ''' Initialize an OBDD.
+        r''' Initialize an OBDD.
 
         :param bfunct: either a BDDNode,  a string that represents a binary
                 expression,  or a string that represent a binary function in
@@ -186,7 +186,7 @@ class OBDD(object):
                                 '{}'.format(bfunct))
 
     def restrict(self, var, value):
-        ''' Partially evaluate the binary function encoded by an OBDD.
+        r''' Partially evaluate the binary function encoded by an OBDD.
 
         :param var: name of the variable to be set
         :type var: str
@@ -200,7 +200,7 @@ class OBDD(object):
         return OBDD(self.root.restrict(var, value), self.ordering)
 
     def variables(self):
-        ''' Return the variables in an OBDD.
+        r''' Return the variables in an OBDD.
 
         :returns: the set of the variables represented in the OBDD
         :rtype: set
@@ -208,7 +208,7 @@ class OBDD(object):
         return self.root.variables()
 
     def __eq__(self, A):
-        ''' Check whether two OBDD are the same.
+        r''' Check whether two OBDD are the same.
 
         :param A: either a BDDNode,  an OBDD,  a binary,  or a Boolean value
         :type A: BDDNode,  OBDD,  binary,  or Boolean value
@@ -228,7 +228,7 @@ class OBDD(object):
         raise TypeError('expected an OBDD, got %s' % (A))
 
     def __req__(self, A):
-        ''' Check whether two OBDD are the same.
+        r''' Check whether two OBDD are the same.
 
         :param A: either a BDDNode,  an OBDD,  a binary,  or a Boolean value
         :type A: BDDNode,  OBDD,  binary,  or Boolean value
@@ -239,7 +239,7 @@ class OBDD(object):
         return self == A
 
     def apply(self, operator, B):
-        ''' Apply a binary binary operator to two OBDD.
+        r''' Apply a binary binary operator to two OBDD.
 
         :param operator: a binary boolean operator
         :type operator: function
@@ -266,7 +266,7 @@ class OBDD(object):
         return OBDD(bdd, self.ordering, check_ordering=False)
 
     def __and__(self, A):
-        ''' Build the conjunction of two OBDD.
+        r''' Build the conjunction of two OBDD.
 
         :param A: an OBDD
         :type A: OBDD
@@ -277,7 +277,7 @@ class OBDD(object):
         return self.apply((lambda a, b: a and b), A)
 
     def __or__(self, A):
-        ''' Build the non-exclusive disjunction of two OBDD.
+        r''' Build the non-exclusive disjunction of two OBDD.
 
         :param A: an OBDD
         :type A: OBDD
@@ -288,7 +288,7 @@ class OBDD(object):
         return self.apply((lambda a, b: a or b), A)
 
     def __xor__(self, A):
-        ''' Build the exclusive disjunction of two OBDD.
+        r''' Build the exclusive disjunction of two OBDD.
 
         :param A: an OBDD
         :type A: OBDD
@@ -299,7 +299,7 @@ class OBDD(object):
         return self.apply((lambda a, b: a ^ b), A)
 
     def __invert__(self):
-        ''' Build the negation of an OBDD.
+        r''' Build the negation of an OBDD.
 
         :param A: an OBDD
         :type A: OBDD
@@ -309,7 +309,7 @@ class OBDD(object):
         return OBDD(~self.root, self.ordering)
 
     def __str__(self):
-        ''' Return a string that represents an OBDD
+        r''' Return a string that represents an OBDD
 
         :returns: a string that represents the OBDD
         :rtype: str
@@ -326,7 +326,7 @@ class OBDD(object):
         return '{}'.format(self.root)
 
     def __repr__(self):
-        ''' Return a string that represents an OBDD
+        r''' Return a string that represents an OBDD
 
         :returns: a string that represents the OBDD
         :rtype: str

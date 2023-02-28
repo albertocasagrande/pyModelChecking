@@ -1,5 +1,5 @@
 class Ordering(object):
-    '''
+    r'''
     A class representing variable ordering.
 
     '''
@@ -27,7 +27,7 @@ class Ordering(object):
 
 
 class FunctionOrdering(Ordering):
-    '''
+    r'''
     A class representing variable ordering specified by a function.
 
     '''
@@ -87,7 +87,7 @@ def cmp_to_key(mycmp):
 
 
 class ListOrdering(Ordering):
-    '''
+    r'''
     A class representing variable ordering specified by a list.
 
     '''
