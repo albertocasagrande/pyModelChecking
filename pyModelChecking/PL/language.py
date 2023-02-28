@@ -9,12 +9,11 @@ import sys
 
 from .. import language as BooleanLogics
 
-from ..language import LNot
 from ..language import get_alphabet
 
 
 class Formula(BooleanLogics.Formula):
-    ''' A class to represent propositional formulas.
+    r''' A class to represent propositional formulas.
 
     Formulas are represented as nodes in labelled trees: leaves are terminal
     symbols (e.g., atomic propositions and Boolean values), while internal
@@ -33,7 +32,7 @@ class Formula(BooleanLogics.Formula):
         self.wrap_subformulas(phi, sys.modules[self.__module__].Formula)
 
     def wrap_subformulas(self, subformulas, FormulaClass):
-        ''' Replaces subformulas of the current object
+        r''' Replaces subformulas of the current object
 
         This method replaces the subformulas of the current object by
         using the :class:`FormulaClass` objects representing the
@@ -79,7 +78,7 @@ class Formula(BooleanLogics.Formula):
                     self.height = max(self.height, phi.height+1)
 
     def cast_to(self, Lang):
-        ''' Casts the current object in a formula of a different class.
+        r''' Casts the current object in a formula of a different class.
 
         :param self: this formula
         :type self: Formula
@@ -108,12 +107,12 @@ class Formula(BooleanLogics.Formula):
 
 
 class AtomicProposition(Formula, BooleanLogics.AlphabeticSymbol):
-    '''
+    r'''
     The class representing atomic propositionic propositions.
 
     '''
     def __init__(self, name):
-        ''' Initialize a atomic proposition.
+        r''' Initialize a atomic proposition.
 
         This method builds a atomic propositionic proposition.
 
@@ -128,7 +127,7 @@ class AtomicProposition(Formula, BooleanLogics.AlphabeticSymbol):
         self.height = 0
 
     def clone(self):
-        ''' Clones an atomic proposition
+        r''' Clones an atomic proposition
 
         :returns: a clone of the current atomic proposition
         :rtype: PL.AtomicProposition
@@ -136,7 +135,7 @@ class AtomicProposition(Formula, BooleanLogics.AlphabeticSymbol):
         return self.__class__(str(self.name))
 
     def subformula(self, i):
-        ''' Returns the :math:`i`-th subformula.
+        r''' Returns the :math:`i`-th subformula.
 
         :param i: the index of the subformula to be returned
         :type i: Integer
@@ -145,7 +144,7 @@ class AtomicProposition(Formula, BooleanLogics.AlphabeticSymbol):
         raise TypeError('AtomicPropositions have not subformulas.')
 
     def subformulas(self):
-        ''' Returns the list of all the subformulas.
+        r''' Returns the list of all the subformulas.
 
         :returns: returns the empty list of the subformulas of the current
             formula
@@ -158,7 +157,7 @@ class AtomicProposition(Formula, BooleanLogics.AlphabeticSymbol):
 
 
 class Bool(BooleanLogics.Bool, AtomicProposition):
-    '''
+    r'''
     The class of Boolean atomic propositions.
 
     '''
@@ -166,7 +165,7 @@ class Bool(BooleanLogics.Bool, AtomicProposition):
 
 
 class LogicOperator(Formula, BooleanLogics.LogicOperator):
-    '''
+    r'''
     A class to represent logic operator such as :math:`\land` or :math:`\lor`.
 
     '''
@@ -174,7 +173,7 @@ class LogicOperator(Formula, BooleanLogics.LogicOperator):
 
 
 class Not(LogicOperator, BooleanLogics.Not):
-    '''
+    r'''
     Represents logic negation.
 
     '''
@@ -182,7 +181,7 @@ class Not(LogicOperator, BooleanLogics.Not):
 
 
 class Or(LogicOperator,  BooleanLogics.Or):
-    '''
+    r'''
     Represents logic non-exclusive disjunction.
 
     '''
@@ -190,7 +189,7 @@ class Or(LogicOperator,  BooleanLogics.Or):
 
 
 class And(LogicOperator, BooleanLogics.And):
-    '''
+    r'''
     Represents logic conjunction.
 
     '''
@@ -198,7 +197,7 @@ class And(LogicOperator, BooleanLogics.And):
 
 
 class Imply(LogicOperator, BooleanLogics.Imply):
-    '''
+    r'''
     Represents logic implication.
 
     '''

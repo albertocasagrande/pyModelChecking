@@ -83,7 +83,7 @@ def _checkQuantifiedFormula(kripke, formula, fair_label=None):
 
 
 def modelcheck(kripke, formula, parser=None, F=None):
-    ''' Model checks any CTL* formula on a Kripke structure.
+    r''' Model checks any CTL* formula on a Kripke structure.
 
     This method performs CTL* model checking of a formula on a given
     Kripke structure.

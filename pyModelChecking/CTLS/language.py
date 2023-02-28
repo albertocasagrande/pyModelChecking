@@ -18,7 +18,7 @@ import sys
 
 
 class Formula(PL.Formula):
-    ''' A class to represent CTL* formulas.
+    r''' A class to represent CTL* formulas.
 
     Formulas are represented as nodes in labelled trees: leaves are
     terminal symbols (e.g., atomic propositions and Boolean values),
@@ -44,7 +44,7 @@ class Formula(PL.Formula):
         return self.__class__(*fair_sfs)
 
     def is_a_state_formula(self):
-        ''' Returns True if and only if the object represents a state formula.
+        r''' Returns True if and only if the object represents a state formula.
 
         This method should return True if and only if the current object
         represents a state formula. Since this is a general class meant to
@@ -62,7 +62,7 @@ class Formula(PL.Formula):
 
 
 class PathFormula(Formula):
-    '''
+    r'''
     A class representing CTL* path formulas.
 
     '''
@@ -70,7 +70,7 @@ class PathFormula(Formula):
     __desc__ = 'CTL* path formula'
 
     def is_a_state_formula(self):
-        ''' Returns True if and only if the object has type :class:`StateFormula`.
+        r''' Check whether the object has type :class:`StateFormula`.
 
         This method returns True if and only if the current object has
         type :class:`CTLS.StateFormula`. Since this is a method of the
@@ -88,7 +88,7 @@ class PathFormula(Formula):
 
 
 class StateFormula(PathFormula):
-    '''
+    r'''
     A class representing CTL* state formulas.
 
     '''
@@ -96,7 +96,7 @@ class StateFormula(PathFormula):
     __desc__ = 'CTL* state formula'
 
     def is_a_state_formula(self):
-        ''' Returns True if and only if the object has type :class:`StateFormula`.
+        r''' Check whether object has type :class:`StateFormula`.
 
         This method returns True if and only if the current object has
         type :class:`CTLS.StateFormula`. Since this is a method of the
@@ -114,12 +114,12 @@ class StateFormula(PathFormula):
 
 
 class AtomicProposition(PL.AtomicProposition, StateFormula):
-    '''
+    r'''
     The class representing atomic propositionic propositions.
 
     '''
     def __init__(self, name):
-        ''' Initialize a CTL* atomic proposition.
+        r''' Initialize a CTL* atomic proposition.
 
         This method builds a CTL* atomic propositionic proposition.
 
@@ -129,7 +129,7 @@ class AtomicProposition(PL.AtomicProposition, StateFormula):
         super(AtomicProposition, self).__init__(name)
 
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -149,13 +149,13 @@ class AtomicProposition(PL.AtomicProposition, StateFormula):
 
 
 class Bool(PL.Bool, AtomicProposition):
-    '''
+    r'''
     The class of Boolean atomic propositions.
 
     '''
 
     def __init__(self, value):
-        ''' Initialize a Boolean atomic proposition.
+        r''' Initialize a Boolean atomic proposition.
 
         This method builds either a True or a False atomic proposition.
 
@@ -167,7 +167,7 @@ class Bool(PL.Bool, AtomicProposition):
 
 
 class TemporalOperator(PathFormula):
-    '''
+    r'''
     A class to represent temporal operators such as :math:`R` or :math:`X`.
 
     '''
@@ -181,7 +181,7 @@ class TemporalOperator(PathFormula):
 
 
 class PathQuantifier(StateFormula):
-    '''
+    r'''
     A class to represent the path quantifiers :math:`A` or :math:`E`.
 
     '''
@@ -194,13 +194,13 @@ class PathQuantifier(StateFormula):
 
 
 class LogicOperator(Formula, PL.LogicOperator):
-    '''
+    r'''
     A class to represent logic operator such as :math:`\land` or :math:`\lor`.
 
     '''
 
     def is_a_state_formula(self):
-        ''' Returns True if and only if the object represents a state formula.
+        r''' Returns True if and only if the object represents a state formula.
 
         This method returns True if and only if the current object represents
         a state formula.
@@ -220,7 +220,7 @@ class LogicOperator(Formula, PL.LogicOperator):
 class Not(LogicOperator, PL.Not):
 
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -236,7 +236,7 @@ class Not(LogicOperator, PL.Not):
         return LNot(subformula)
 
     def is_a_state_formula(self):
-        ''' Returns True if and only if the object represents a state formula.
+        r''' Returns True if and only if the object represents a state formula.
 
         This method returns True if and only if the current object represents
         a state formula.
@@ -250,7 +250,7 @@ class Not(LogicOperator, PL.Not):
 
 
 class A(PathQuantifier, AlphabeticSymbol):
-    '''
+    r'''
     A class representing CTL* A-formulas.
 
     '''
@@ -258,7 +258,7 @@ class A(PathQuantifier, AlphabeticSymbol):
     symbols = ['A']
 
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -283,7 +283,7 @@ class A(PathQuantifier, AlphabeticSymbol):
 
 
 class E(PathQuantifier, AlphabeticSymbol):
-    '''
+    r'''
     A class representing CTL* A-formulas.
 
     '''
@@ -291,7 +291,7 @@ class E(PathQuantifier, AlphabeticSymbol):
     symbols = ['E']
 
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -318,7 +318,7 @@ class X(TemporalOperator, AlphabeticSymbol):
     symbols = ['X']
 
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -339,7 +339,7 @@ class F(TemporalOperator, AlphabeticSymbol):
     symbols = ['F']
 
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -360,7 +360,7 @@ class G(TemporalOperator, AlphabeticSymbol):
     symbols = ['G']
 
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -379,7 +379,7 @@ class G(TemporalOperator, AlphabeticSymbol):
 
 class Or(LogicOperator, PL.Or):
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -399,7 +399,7 @@ class Or(LogicOperator, PL.Or):
 
 class And(LogicOperator, PL.And):
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -421,7 +421,7 @@ class And(LogicOperator, PL.And):
 
 class Imply(LogicOperator, PL.Imply):
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -443,7 +443,7 @@ class U(TemporalOperator, AlphabeticSymbol):
     symbols = ['U']
 
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to
@@ -466,7 +466,7 @@ class R(TemporalOperator, AlphabeticSymbol):
     symbols = ['R']
 
     def get_equivalent_restricted_formula(self):
-        ''' Return an equivalent formula in the restricted syntax.
+        r''' Return an equivalent formula in the restricted syntax.
 
         This method returns a formula that avoids :math:`A`, :math:`F`,
         :math:`R`, :math:`\land` and :math:`\\rightarrow` and is equivalent to

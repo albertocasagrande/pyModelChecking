@@ -3,7 +3,7 @@ from ..parser import AST_to_Logics
 
 
 class AST_to_PropositionalLogics(AST_to_Logics):
-    ''' A class to transform AST into a propositional formula.
+    r''' A class to transform AST into a propositional formula.
 
     This class implements a Lark's transformer to turn AST reprensenting
     propositional logics formulas into the corresponding propositional formula.
@@ -53,7 +53,7 @@ class AST_to_PropositionalLogics(AST_to_Logics):
 
 
 class Parser(BaseParser):
-    ''' A class to parse a propositional formula.
+    r''' A class to parse a propositional formula.
 
     Every object of this class instanciates a Lark's parser to parse a
     string reprensenting propositional formulas into the corresponding

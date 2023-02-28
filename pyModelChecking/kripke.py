@@ -11,8 +11,9 @@ from .graph import compute_SCCs
 
 from .__init__ import __release__
 
+
 class Kripke(DiGraph):
-    '''
+    r'''
     A class to represent Kripke structures.
 
     A Kripke structure is a directed graph equipped with a set of initial
@@ -22,7 +23,7 @@ class Kripke(DiGraph):
     '''
 
     def __init__(self, S=None, S0=None, R=None, L=None):
-        ''' Initialize a new Kripke structure
+        r''' Initialize a new Kripke structure
 
         :param S: a collection of states
         :type S: a collection
@@ -71,7 +72,7 @@ class Kripke(DiGraph):
                 self._labels[state] = set()
 
     def labelling_function(self):
-        ''' Return the labelling function
+        r''' Return the labelling function
 
         :returns: the labelling function
         :rtype: dict
@@ -79,7 +80,7 @@ class Kripke(DiGraph):
         return self._labels
 
     def replace_labelling_function(self, L):
-        ''' Replace the labelling function
+        r''' Replace the labelling function
 
         :param L: a new labelling function for this Kripke structure
         :type L: dict
@@ -97,7 +98,10 @@ class Kripke(DiGraph):
         return old_L
 
     def labels(self, state=None):
-        ''' Get the atomic propositions labelling either a state or the whole structure
+        r''' Get the atomic propositions
+
+        This method gets the atomic propositions labelling either a
+        state or the whole structure.
 
         :param state: either a state of the Kripke structure or None
         :returns: the atomic propositions that label either a
@@ -118,7 +122,7 @@ class Kripke(DiGraph):
         return AP
 
     def states(self):
-        ''' Return the states of a Kripke structure
+        r''' Return the states of a Kripke structure
 
         :returns: the states of the Kripke structure
         :rtype: set
@@ -126,7 +130,7 @@ class Kripke(DiGraph):
         return self.nodes()
 
     def next(self, src):
-        ''' Return the next of a state
+        r''' Return the next of a state
 
         Given a Kripke structure :math:`K=(S,S0,R,L)` and one of its state
         :math:`s`, the *next* of :math:`s` in :math:`K` is the set of all
@@ -143,7 +147,7 @@ class Kripke(DiGraph):
                                'of this Kripke structure')
 
     def transitions_iter(self):
-        ''' Return an interator of the edges of a Kripke structure
+        r''' Return an interator of the edges of a Kripke structure
 
         :returns: an interator of the set of edges of the Kripke structure
         :rtype: iterator
@@ -151,7 +155,7 @@ class Kripke(DiGraph):
         return self.edges_iter()
 
     def transitions(self):
-        ''' Return the edges of a Kripke structure
+        r''' Return the edges of a Kripke structure
 
         :returns: the set of edges of the Kripke structure
         :rtype: set
@@ -159,7 +163,7 @@ class Kripke(DiGraph):
         return self.edges()
 
     def clone(self):
-        ''' Clone a Kripke structure
+        r''' Clone a Kripke structure
 
         :returns: a clone of the current Kripke structure
         :rtype: Kripke
@@ -171,7 +175,7 @@ class Kripke(DiGraph):
         return Kripke(self.states(), self.S0, self.transitions(), L)
 
     def get_substructure(self, V):
-        ''' Return the sub-structure that respects a set of states
+        r''' Return the sub-structure that respects a set of states
 
         The sub-structure of a Kripke structure :math:`(V',E',L')` that
         respects a set of states :math:`V` is the Kripke structure
@@ -192,7 +196,7 @@ class Kripke(DiGraph):
         return Kripke(S, S0, E, L)
 
     def get_fair_states(self, F):
-        ''' Return a set of states from which leaves a fair path.
+        r''' Return a set of states from which leaves a fair path.
 
         :param F: a container of fairness constraints
         :type F: a container
@@ -221,7 +225,7 @@ class Kripke(DiGraph):
         return R_graph.get_reachable_set_from(F_set)
 
     def label_fair_states(self, F):
-        ''' Label all the fair states by a new atomic proposition.
+        r''' Label all the fair states by a new atomic proposition.
 
         This method labels all the states from which a fair path exists by
         using a new atomic proposition that means "there exists a fair path
@@ -245,7 +249,7 @@ class Kripke(DiGraph):
         return f_label
 
     def __str__(self):
-        ''' Return a string that represents a Kripke structure.
+        r''' Return a string that represents a Kripke structure.
 
         :returns: a string that represents the Kripke
         :rtype: str

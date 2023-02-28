@@ -6,7 +6,7 @@
 """
 
 class DiGraph(object):
-    '''
+    r'''
     A class to represent directed graphs.
 
     A *directed graph* is a couple (V,E) where V is a set of vertices and E
@@ -15,7 +15,7 @@ class DiGraph(object):
     '''
 
     def __init__(self, V=None, E=None):
-        ''' Initialize a new DiGraph
+        r''' Initialize a new DiGraph
 
         :param V: a collection of nodes
         :type V: a collection
@@ -44,7 +44,7 @@ class DiGraph(object):
                                    'of hashable objects.')
 
     def add_node(self, v):
-        ''' Add a new node to a DiGraph
+        r''' Add a new node to a DiGraph
 
         :param self: the DiGraph object
         :type self: DiGraph
@@ -56,7 +56,7 @@ class DiGraph(object):
         self._next[v] = set()
 
     def add_edge(self, src, dst):
-        ''' Add a new edge to a DiGraph
+        r''' Add a new edge to a DiGraph
 
         :param src: the source node of the edge
         :param dst: the destination node of the edge
@@ -74,7 +74,7 @@ class DiGraph(object):
         self._next[src].add(dst)
 
     def sources(self):
-        ''' Return the sources of a DiGraph.
+        r''' Return the sources of a DiGraph.
 
         The *sources* of a DiGraph G are the nodes that are sources of some
         edges in G itself.
@@ -87,7 +87,7 @@ class DiGraph(object):
                 yield src
 
     def nodes(self):
-        ''' Return the nodes of a DiGraph
+        r''' Return the nodes of a DiGraph
 
         :returns: the list of the nodes of the DiGraph
         :rtype: list
@@ -95,11 +95,12 @@ class DiGraph(object):
         return self._next.keys()
 
     def next(self, src):
-        ''' Return the next of a node
+        r''' Return the next of a node
 
         Given a DiGraph :math:`(V,E)` and one of its node v, the
-        *next* of :math:`v \in V` is the set of all those nodes :math:`v'` 
-        that are destination of some edge :math:`(v,v') \in E`.
+        *next* of :math:`v \in V` is the set of all those nodes
+        :math:`v'` that are destination of some edge
+        :math:`(v,v') \in E`.
 
         :returns: the set of nodes :math:`\{v' | (v,v') \in E\}`
         :rtype: set
@@ -111,7 +112,7 @@ class DiGraph(object):
         return self._next[src]
 
     def edges(self):
-        ''' Return the edges of a DiGraph
+        r''' Return the edges of a DiGraph
 
         :returns: a list of edges of the DiGraph
         :rtype: list
@@ -120,7 +121,7 @@ class DiGraph(object):
         return list(self.edges_iter())
 
     def edges_iter(self):
-        ''' Return the edges of a DiGraph
+        r''' Return the edges of a DiGraph
 
         :returns: the generator of edges of the DiGraph
         :rtype: generator
@@ -130,7 +131,7 @@ class DiGraph(object):
                 yield (src, dst)
 
     def clone(self):
-        ''' Clone a DiGraph
+        r''' Clone a DiGraph
 
         :returns: a clone of the DiGraph
         :rtype: DiGraph
@@ -144,7 +145,7 @@ class DiGraph(object):
         return nDG
 
     def __str__(self):
-        ''' Return a string that represents a DiGraph
+        r''' Return a string that represents a DiGraph
 
         :returns: a string that represents the DiGraph
         :rtype: str
@@ -152,7 +153,7 @@ class DiGraph(object):
         return '(V={}, E={})'.format(self.nodes(), self.edges())
 
     def get_subgraph(self, nodes):
-        ''' Build the subgraph that respects a set of nodes
+        r''' Build the subgraph that respects a set of nodes
 
         :returns: the subgraph that respects :param nodes:
         :rtype: DiGraph
@@ -166,7 +167,7 @@ class DiGraph(object):
         return DiGraph(V=V, E=E)
 
     def get_reversed_graph(self):
-        ''' Build the reversed graph
+        r''' Build the reversed graph
 
         :returns: the reversed graph
         :rtype: DiGraph
@@ -176,7 +177,7 @@ class DiGraph(object):
         return DiGraph(V=self.nodes(), E=rE)
 
     def get_reachable_set_from(self, nodes):
-        ''' Compute the reachable set
+        r''' Compute the reachable set
 
         :param nodes: the set of nodes from which the reachability
                       should be evaluated
@@ -198,7 +199,7 @@ class DiGraph(object):
 
 
 def compute_SCCs(G):
-    ''' Compute the strongly connected components of a DiGraph
+    r''' Compute the strongly connected components of a DiGraph
 
     This method implements a non-recursive version of the
     Nuutila and Soisalon-Soinen's algorithm ([ns94]_) to compute the
