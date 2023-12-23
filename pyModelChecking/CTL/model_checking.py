@@ -176,9 +176,9 @@ def modelcheck(kripke, formula, parser=None, F=None):
 
     :param kripke: a Kripke structure.
     :type kripke: Kripke
-    :param formula: the formula to model check.
+    :param formula: the state formula to model check.
     :type formula: a type castable in a CTL.Formula or a string representing
-                   a CTL formula
+                   a CTL state formula
     :param parser: a parser to parse a string into a CTL.Formula.
     :type parser: CTL.Parser
     :param F: a list of fair states
