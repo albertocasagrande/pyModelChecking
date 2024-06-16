@@ -15,7 +15,7 @@ logical operators :math:`\neg`, :math:`\land`, :math:`\lor`, and
 Boolean values can be declared at evalutation time. An **atomic proposition** 
 or **AP** is either a Boolean value --i.e., :math:`\top` (true) or 
 :math:`\bot` (false)-- or 
-a prositional variable.
+a propsitional variable.
 
 Syntax
 ======
