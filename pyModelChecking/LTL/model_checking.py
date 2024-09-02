@@ -155,7 +155,7 @@ def _build_atoms(K, closure):
                 sf = phi.subformulas()
 
                 for atom in A:
-                    if sum([f in atom for f in sf]):
+                    if sum([f in atom for f in sf])>0:
                         atom.add(phi)
                     else:
                         atom.add(neg_phi)
@@ -177,14 +177,19 @@ def _build_atoms(K, closure):
                 sf = phi.subformulas()
 
                 for atom in A:
-                    if (sf[1] in atom):
+                    if sf[1] in atom:
                         atom.add(phi)
-                        A_tail.append(atom | set([Lang.X(phi)]))
                     else:
-                        if (sf[0] in atom):
-                            A_tail.append(atom | set([phi, Lang.X(phi)]))
-                        atom.add(neg_phi)
-                    atom.add(Lang.Not(Lang.X(phi)))
+                        if sf[0] in atom:
+                            if Lang.X(phi) in atom:
+                                atom.add(phi)
+                            else:
+                                if Lang.Not(Lang.X(phi)) not in atom:
+                                    A_tail.append( atom | {Lang.Not(Lang.X(phi))})
+                                    atom.add(phi)
+                                    atom.add(Lang.X(phi))
+                        else:
+                            atom.add(neg_phi)
 
             A.extend(A_tail)
 
@@ -219,7 +224,7 @@ class _Tableu(DiGraph):
 
     def __str__(self):
         return '(V = {}, E = {}, A = {})'.format(self.nodes(),
-                                                 self.edges_iter(),
+                                                 list(self.edges_iter()),
                                                  self.atoms)
 
 
