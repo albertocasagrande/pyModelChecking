@@ -176,6 +176,9 @@ def _build_atoms(K, closure):
             if isinstance(phi, CTLS.U):
                 sf = phi.subformulas()
 
+                # phi = sf[0] U sf[1] is equivalent to
+                # sf[1] or (sf[0] and X(phi)): the atoms are built
+                # accordingly
                 for atom in A:
                     if sf[1] in atom:
                         atom.add(phi)
@@ -183,11 +186,16 @@ def _build_atoms(K, closure):
                         if sf[0] in atom:
                             if Lang.X(phi) in atom:
                                 atom.add(phi)
+                            elif Lang.Not(Lang.X(phi)) in atom:
+                                atom.add(neg_phi)
                             else:
-                                if Lang.Not(Lang.X(phi)) not in atom:
-                                    A_tail.append( atom | {Lang.Not(Lang.X(phi))})
-                                    atom.add(phi)
-                                    atom.add(Lang.X(phi))
+                                # split the atom: either X(phi) holds
+                                # and, since sf[0] does too, phi holds,
+                                # or neither X(phi) nor phi hold
+                                A_tail.append(atom | {Lang.Not(Lang.X(phi)),
+                                                      neg_phi})
+                                atom.add(phi)
+                                atom.add(Lang.X(phi))
                         else:
                             atom.add(neg_phi)
 
