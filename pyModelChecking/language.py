@@ -104,10 +104,35 @@ class Formula(object):
 
         return Lang.Not(self)
 
+    def __str__(self):
+        # Computed once (using self._compute_str), then cached.
+        try:
+            return self._str
+        except AttributeError:
+            self._str = self._compute_str()
+            return self._str
+
+    def _compute_str(self):
+        r''' Generates a string that represents the formula.
+        Should be overridden by concrete subclasses.
+
+        :returns: a string that represents the current formula
+        :rtype: str
+        '''
+        raise NotImplementedError(f'{self.__class__} does not implement `._compute_str()` yet.')
+
     def __hash__(self):
-        return str(self).__hash__()
+        try:
+            return self._hash
+        except AttributeError:
+            self._hash = hash(str(self))
+
+            return self._hash
 
     def __eq__(self, other):
+        if self is other:
+            return True
+
         return str(self) == str(other)
 
     def __cmp__(self, other):
@@ -205,7 +230,7 @@ class Bool(Formula):
 
         return False
 
-    def __str__(self):
+    def _compute_str(self):
         r''' Return a string depicting the Boolean value.
 
         :returns: a string depicting the current Boolean value.
@@ -223,7 +248,7 @@ class LogicOperator(Formula):
     A class to represent logic operator such as :math:`\land` or :math:`\lor`.
 
     '''
-    def __str__(self):
+    def _compute_str(self):
         if len(self._subformula) == 1:
             return '{} {}'.format(self.__class__.symbols[0],
                                   self._subformula[0])
