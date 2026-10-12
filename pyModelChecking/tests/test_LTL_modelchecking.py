@@ -24,10 +24,20 @@ class TestLTLModelChecking(unittest.TestCase):
                           [(A(U(Not('Heat'), 'Close')),
                             set([0, 1, 2, 3, 4, 5, 6]), None)]),
                          (Kripke(R=[(0, 1), (1, 2), (2, 3), (3, 3)],
-                                 L={0:set(['one']), 1:set(['two']), 
+                                 L={0:set(['one']), 1:set(['two']),
                                     2:set(['three'])}),
                           [(A(And('one',X(And('two',X('three'))))),
-                            set([0]), None)])]
+                            set([0]), None)]),
+                         # see https://github.com/albertocasagrande/
+                         #     pyModelChecking/issues/15
+                         (Kripke(S=[0, 1, 2],
+                                 R=[(0, 1), (0, 2), (1, 1), (2, 2)],
+                                 S0=[0],
+                                 L={0: set(), 1: set(['a']), 2: set()}),
+                          [(A(G('a')), set([1]), None),
+                           (A(F('a')), set([1]), None),
+                           (A(U(Not('a'), 'a')), set([1]), None),
+                           (A(U('a', 'a')), set([1]), None)])]
 
     def test_modelchecking(self):
         for kripke, instances in self.problems:

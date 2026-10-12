@@ -171,7 +171,7 @@ class TemporalOperator(PathFormula):
     A class to represent temporal operators such as :math:`R` or :math:`X`.
 
     '''
-    def __str__(self):
+    def _compute_str(self):
         if len(self._subformula) == 1:
             return '{}({})'.format(self.__class__.symbols[0],
                                    self._subformula[0])
@@ -189,7 +189,7 @@ class PathQuantifier(StateFormula):
     def __init__(self, phi):
         self.wrap_subformulas([phi], Formula)
 
-    def __str__(self):
+    def _compute_str(self):
         return '{}({})'.format(self.__class__.symbols[0], self._subformula[0])
 
 

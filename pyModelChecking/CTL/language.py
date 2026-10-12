@@ -54,7 +54,7 @@ class X(CTLS.X, PathFormula):
 
     '''
 
-    def __str__(self):
+    def _compute_str(self):
         return 'X {}'.format(self._subformula[0])
 
 
@@ -64,7 +64,7 @@ class F(CTLS.F, PathFormula):
 
     '''
 
-    def __str__(self):
+    def _compute_str(self):
         return 'F {}'.format(self._subformula[0])
 
 
@@ -74,7 +74,7 @@ class G(CTLS.G, PathFormula):
 
     '''
 
-    def __str__(self):
+    def _compute_str(self):
         return 'G {}'.format(self._subformula[0])
 
 
@@ -217,7 +217,7 @@ class A(CTLS.A, StateFormula):
 
         raise TypeError('{} is not a CTL formula'.format(self))
 
-    def __str__(self):
+    def _compute_str(self):
         return 'A{}'.format(self._subformula[0])
 
     def __init__(self, phi):
@@ -293,7 +293,7 @@ class E(CTLS.E, StateFormula):
 
         raise TypeError('{} is not a CTL formula'.format(self))
 
-    def __str__(self):
+    def _compute_str(self):
         return 'E{}'.format(self._subformula[0])
 
     def __init__(self, phi):

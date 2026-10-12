@@ -152,7 +152,7 @@ class AtomicProposition(Formula, BooleanLogics.AlphabeticSymbol):
         '''
         return []
 
-    def __str__(self):
+    def _compute_str(self):
         return '{}'.format(self.name)
 
 
